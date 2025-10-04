@@ -42,6 +42,12 @@ const Listings = () => {
       type: "Căn hộ chung cư",
       status: "Bán" as const,
       prominentFeatures: ["View đẹp", "Nội thất cao cấp", "Bảo vệ 24/7"],
+      attributes: {
+        balconyDirection: "Đông Nam",
+        interiorStatus: "Nội thất cao cấp",
+        legalStatus: "Sổ hồng",
+        floorNumber: 15,
+      },
     },
     {
       id: "2",
@@ -57,6 +63,13 @@ const Listings = () => {
       type: "Nhà riêng",
       status: "Bán" as const,
       prominentFeatures: ["Khu an ninh", "Sân vườn", "Gần trường học"],
+      attributes: {
+        houseDirection: "Đông",
+        facadeWidth: 6,
+        alleyWidth: 8,
+        numFloors: 3,
+        legalStatus: "Sổ hồng",
+      },
     },
     {
       id: "3",
@@ -72,6 +85,11 @@ const Listings = () => {
       type: "Căn hộ cao cấp",
       status: "Cho thuê" as const,
       prominentFeatures: ["View sông", "Full nội thất", "Tầng cao"],
+      attributes: {
+        balconyDirection: "Nam",
+        interiorStatus: "Nội thất cao cấp",
+        floorNumber: 25,
+      },
     },
     {
       id: "4",
