@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Bed, Bath, Square, Heart } from "lucide-react";
+import { MapPin, Bed, Bath, Square, Heart, Compass, Ruler } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +17,13 @@ interface PropertyCardProps {
   type: string;
   status: "Bán" | "Cho thuê";
   prominentFeatures?: string[];
+  attributes?: {
+    houseDirection?: string;
+    balconyDirection?: string;
+    landDirection?: string;
+    facadeWidth?: number;
+    [key: string]: any;
+  };
 }
 
 export const PropertyCard = ({
@@ -31,6 +38,7 @@ export const PropertyCard = ({
   type,
   status,
   prominentFeatures,
+  attributes,
 }: PropertyCardProps) => {
   const navigate = useNavigate();
   const [isFavorite, setIsFavorite] = useState(false);
@@ -38,6 +46,9 @@ export const PropertyCard = ({
   const handleViewDetails = () => {
     navigate(`/listings/${id}`);
   };
+
+  // Get direction from attributes (prioritize in order: houseDirection, balconyDirection, landDirection)
+  const direction = attributes?.houseDirection || attributes?.balconyDirection || attributes?.landDirection;
 
   return (
     <Card className="group overflow-hidden border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
@@ -84,7 +95,7 @@ export const PropertyCard = ({
           <span className="text-sm line-clamp-1">{location}</span>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
+        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3 flex-wrap">
           {bedrooms && (
             <div className="flex items-center gap-1">
               <Bed className="h-4 w-4" />
@@ -101,6 +112,18 @@ export const PropertyCard = ({
             <Square className="h-4 w-4" />
             <span>{area}m²</span>
           </div>
+          {direction && (
+            <div className="flex items-center gap-1">
+              <Compass className="h-4 w-4" />
+              <span>Hướng {direction}</span>
+            </div>
+          )}
+          {attributes?.facadeWidth && (
+            <div className="flex items-center gap-1">
+              <Ruler className="h-4 w-4" />
+              <span>MT {attributes.facadeWidth}m</span>
+            </div>
+          )}
         </div>
 
         {prominentFeatures && prominentFeatures.length > 0 && (
