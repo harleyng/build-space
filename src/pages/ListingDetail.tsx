@@ -51,6 +51,7 @@ const getListingById = (id: string) => {
         balconyDirection: "Đông Nam",
         interiorStatus: "Nội thất cao cấp",
         legalStatus: "Sổ hồng",
+        projectName: "The Manor",
       } as Record<string, any>,
       prominentFeatures: ["View đẹp", "Nội thất cao cấp", "An ninh 24/7"],
       images: [
@@ -317,6 +318,28 @@ const ListingDetail = () => {
                     <span className="text-muted-foreground">Hẻm</span>
                     <span className="font-medium text-foreground">{listing.attributes.alleyWidth}m</span>
                   </div>
+                )}
+                {listing.attributes.landDirection && (
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Hướng đất</span>
+                    <span className="font-medium text-foreground">{listing.attributes.landDirection}</span>
+                  </div>
+                )}
+                {listing.attributes.projectName && (
+                  <div className="flex justify-between py-2 border-b border-border">
+                    <span className="text-muted-foreground">Tên dự án</span>
+                    <span className="font-medium text-foreground">{listing.attributes.projectName}</span>
+                  </div>
+                )}
+                {listing.type === "BĐS khác" && listing.attributes.customAttributes && (
+                  <>
+                    {listing.attributes.customAttributes.map((attr: { name: string; value: string }, index: number) => (
+                      <div key={index} className="flex justify-between py-2 border-b border-border">
+                        <span className="text-muted-foreground">{attr.name}</span>
+                        <span className="font-medium text-foreground">{attr.value}</span>
+                      </div>
+                    ))}
+                  </>
                 )}
               </div>
             </Card>
