@@ -22,6 +22,11 @@ interface PropertyCardProps {
     balconyDirection?: string;
     landDirection?: string;
     facadeWidth?: number;
+    alleyWidth?: number;
+    legalStatus?: string;
+    interiorStatus?: string;
+    floorNumber?: number;
+    numFloors?: number;
     [key: string]: any;
   };
 }

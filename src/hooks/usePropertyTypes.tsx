@@ -6,8 +6,14 @@ export interface PropertyType {
   name: string;
   slug: string;
   filter_metadata: {
-    FOR_SALE?: string[];
-    FOR_RENT?: string[];
+    FOR_SALE?: {
+      available: boolean;
+      filters: string[];
+    };
+    FOR_RENT?: {
+      available: boolean;
+      filters: string[];
+    };
   };
   created_at: string;
   updated_at: string;

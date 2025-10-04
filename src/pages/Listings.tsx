@@ -10,14 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 import { Search, SlidersHorizontal, X } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { usePropertyTypes } from "@/hooks/usePropertyTypes";
 import apartmentSample from "@/assets/apartment-sample.jpg";
 import houseSample from "@/assets/house-sample.jpg";
 import penthouseSample from "@/assets/penthouse-sample.jpg";
 
 const Listings = () => {
-  const [purpose, setPurpose] = useState<"Mua" | "Thuê">("Mua");
+  const { data: propertyTypes, isLoading: isLoadingPropertyTypes } = usePropertyTypes();
+  
+  const [purpose, setPurpose] = useState<"FOR_SALE" | "FOR_RENT">("FOR_SALE");
   const [propertyType, setPropertyType] = useState<string>("");
   const [minPrice, setMinPrice] = useState<string>("");
   const [maxPrice, setMaxPrice] = useState<string>("");
@@ -26,6 +30,39 @@ const Listings = () => {
   const [numBedrooms, setNumBedrooms] = useState<string>("");
   const [numBathrooms, setNumBathrooms] = useState<string>("");
   const [district, setDistrict] = useState<string>("");
+  const [direction, setDirection] = useState<string>("");
+  const [facadeWidth, setFacadeWidth] = useState<string>("");
+  const [alleyWidth, setAlleyWidth] = useState<string>("");
+  const [legalStatus, setLegalStatus] = useState<string>("");
+  const [interiorStatus, setInteriorStatus] = useState<string>("");
+  const [floorNumber, setFloorNumber] = useState<string>("");
+  const [numFloors, setNumFloors] = useState<string>("");
+
+  // Get selected property type metadata
+  const selectedPropertyType = useMemo(() => {
+    if (!propertyTypes || !propertyType) return null;
+    return propertyTypes.find((pt) => pt.slug === propertyType);
+  }, [propertyTypes, propertyType]);
+
+  // Get available filters for the selected property type and purpose
+  const availableFilters = useMemo(() => {
+    if (!selectedPropertyType) return [];
+    const metadata = selectedPropertyType.filter_metadata[purpose];
+    return metadata?.filters || [];
+  }, [selectedPropertyType, purpose]);
+
+  // Reset dependent filters when purpose or property type changes
+  useEffect(() => {
+    setNumBedrooms("");
+    setNumBathrooms("");
+    setDirection("");
+    setFacadeWidth("");
+    setAlleyWidth("");
+    setLegalStatus("");
+    setInteriorStatus("");
+    setFloorNumber("");
+    setNumFloors("");
+  }, [purpose, propertyType]);
 
   const allProperties = [
     {
@@ -47,7 +84,7 @@ const Listings = () => {
         interiorStatus: "Nội thất cao cấp",
         legalStatus: "Sổ hồng",
         floorNumber: 15,
-      },
+      } as any,
     },
     {
       id: "2",
@@ -69,7 +106,7 @@ const Listings = () => {
         alleyWidth: 8,
         numFloors: 3,
         legalStatus: "Sổ hồng",
-      },
+      } as any,
     },
     {
       id: "3",
@@ -89,7 +126,7 @@ const Listings = () => {
         balconyDirection: "Nam",
         interiorStatus: "Nội thất cao cấp",
         floorNumber: 25,
-      },
+      } as any,
     },
     {
       id: "4",
@@ -140,12 +177,12 @@ const Listings = () => {
 
   const filteredProperties = useMemo(() => {
     return allProperties.filter((property) => {
-      // Filter by purpose (Mua/Thuê)
-      if (purpose === "Mua" && property.status !== "Bán") return false;
-      if (purpose === "Thuê" && property.status !== "Cho thuê") return false;
+      // Filter by purpose (FOR_SALE/FOR_RENT)
+      if (purpose === "FOR_SALE" && property.status !== "Bán") return false;
+      if (purpose === "FOR_RENT" && property.status !== "Cho thuê") return false;
 
       // Filter by property type
-      if (propertyType && propertyType !== "all" && property.type !== propertyType) return false;
+      if (propertyType && property.type !== propertyType) return false;
 
       // Filter by price
       if (minPrice && property.priceValue < parseFloat(minPrice)) return false;
@@ -156,29 +193,80 @@ const Listings = () => {
       if (maxArea && property.area > parseFloat(maxArea)) return false;
 
       // Filter by bedrooms
-      if (numBedrooms && numBedrooms !== "all" && property.bedrooms !== parseInt(numBedrooms)) return false;
+      if (numBedrooms && property.bedrooms !== parseInt(numBedrooms)) return false;
 
       // Filter by bathrooms
-      if (numBathrooms && numBathrooms !== "all" && property.bathrooms !== parseInt(numBathrooms)) return false;
+      if (numBathrooms && property.bathrooms !== parseInt(numBathrooms)) return false;
 
       // Filter by district
-      if (district && district !== "all" && property.district !== district) return false;
+      if (district && property.district !== district) return false;
+
+      // Filter by direction
+      if (direction && property.attributes) {
+        const propertyDirection = property.attributes.houseDirection || 
+                                  property.attributes.balconyDirection || 
+                                  property.attributes.landDirection || "";
+        if (propertyDirection !== direction) return false;
+      }
+
+      // Filter by facade width
+      if (facadeWidth && property.attributes?.facadeWidth) {
+        if (property.attributes.facadeWidth < parseFloat(facadeWidth)) return false;
+      }
+
+      // Filter by alley width
+      if (alleyWidth && property.attributes?.alleyWidth) {
+        if (property.attributes.alleyWidth < parseFloat(alleyWidth)) return false;
+      }
+
+      // Filter by legal status
+      if (legalStatus && property.attributes?.legalStatus !== legalStatus) return false;
+
+      // Filter by interior status
+      if (interiorStatus && property.attributes?.interiorStatus !== interiorStatus) return false;
+
+      // Filter by floor number
+      if (floorNumber && property.attributes?.floorNumber) {
+        if (property.attributes.floorNumber < parseInt(floorNumber)) return false;
+      }
+
+      // Filter by number of floors
+      if (numFloors && property.attributes?.numFloors) {
+        if (property.attributes.numFloors < parseInt(numFloors)) return false;
+      }
 
       return true;
     });
-  }, [purpose, propertyType, minPrice, maxPrice, minArea, maxArea, numBedrooms, numBathrooms, district]);
+  }, [purpose, propertyType, minPrice, maxPrice, minArea, maxArea, numBedrooms, numBathrooms, district, 
+      direction, facadeWidth, alleyWidth, legalStatus, interiorStatus, floorNumber, numFloors]);
 
   const resetFilters = () => {
-    setPurpose("Mua");
-    setPropertyType("all");
+    setPurpose("FOR_SALE");
+    setPropertyType("");
     setMinPrice("");
     setMaxPrice("");
     setMinArea("");
     setMaxArea("");
-    setNumBedrooms("all");
-    setNumBathrooms("all");
-    setDistrict("all");
+    setNumBedrooms("");
+    setNumBathrooms("");
+    setDistrict("");
+    setDirection("");
+    setFacadeWidth("");
+    setAlleyWidth("");
+    setLegalStatus("");
+    setInteriorStatus("");
+    setFloorNumber("");
+    setNumFloors("");
   };
+
+  // Get available property types for selected purpose
+  const availablePropertyTypes = useMemo(() => {
+    if (!propertyTypes) return [];
+    return propertyTypes.filter((pt) => {
+      const metadata = pt.filter_metadata[purpose];
+      return metadata?.available === true;
+    });
+  }, [propertyTypes, purpose]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -205,20 +293,20 @@ const Listings = () => {
 
               {/* Purpose Toggle */}
               <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">
+                <Label className="text-sm font-medium text-foreground mb-2 block">
                   Mục đích
-                </label>
+                </Label>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
-                    variant={purpose === "Mua" ? "default" : "outline"}
-                    onClick={() => setPurpose("Mua")}
+                    variant={purpose === "FOR_SALE" ? "default" : "outline"}
+                    onClick={() => setPurpose("FOR_SALE")}
                     className="w-full"
                   >
                     Mua
                   </Button>
                   <Button
-                    variant={purpose === "Thuê" ? "default" : "outline"}
-                    onClick={() => setPurpose("Thuê")}
+                    variant={purpose === "FOR_RENT" ? "default" : "outline"}
+                    onClick={() => setPurpose("FOR_RENT")}
                     className="w-full"
                   >
                     Thuê
@@ -228,35 +316,34 @@ const Listings = () => {
 
               {/* Property Type */}
               <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">
+                <Label className="text-sm font-medium text-foreground mb-2 block">
                   Loại hình BĐS
-                </label>
-                <Select value={propertyType} onValueChange={setPropertyType}>
-                  <SelectTrigger>
+                </Label>
+                <Select value={propertyType} onValueChange={setPropertyType} disabled={isLoadingPropertyTypes}>
+                  <SelectTrigger className="bg-popover">
                     <SelectValue placeholder="Chọn loại hình" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="Căn hộ chung cư">Căn hộ chung cư</SelectItem>
-                    <SelectItem value="Nhà riêng">Nhà riêng</SelectItem>
-                    <SelectItem value="Biệt thự">Biệt thự</SelectItem>
-                    <SelectItem value="Căn hộ cao cấp">Căn hộ cao cấp</SelectItem>
-                    <SelectItem value="Căn hộ dịch vụ">Căn hộ dịch vụ</SelectItem>
+                  <SelectContent className="bg-popover z-50">
+                    {availablePropertyTypes.map((pt) => (
+                      <SelectItem key={pt.id} value={pt.name}>
+                        {pt.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
               {/* District */}
               <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">
+                <Label className="text-sm font-medium text-foreground mb-2 block">
                   Khu vực
-                </label>
+                </Label>
                 <Select value={district} onValueChange={setDistrict}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-popover">
                     <SelectValue placeholder="Chọn khu vực" />
                   </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
+                  <SelectContent className="bg-popover z-50">
+                    <SelectItem value="">Tất cả</SelectItem>
                     <SelectItem value="Quận 1">Quận 1</SelectItem>
                     <SelectItem value="Quận 2">Quận 2</SelectItem>
                     <SelectItem value="Quận 3">Quận 3</SelectItem>
@@ -307,44 +394,168 @@ const Listings = () => {
                 </div>
               </div>
 
-              {/* Bedrooms */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  Số phòng ngủ
-                </label>
-                <Select value={numBedrooms} onValueChange={setNumBedrooms}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn số phòng" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="1">1 phòng</SelectItem>
-                    <SelectItem value="2">2 phòng</SelectItem>
-                    <SelectItem value="3">3 phòng</SelectItem>
-                    <SelectItem value="4">4 phòng</SelectItem>
-                    <SelectItem value="5">5+ phòng</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {/* Dynamic Filters Based on Property Type */}
+              {availableFilters.includes("numBedrooms") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Số phòng ngủ
+                  </Label>
+                  <Select value={numBedrooms} onValueChange={setNumBedrooms}>
+                    <SelectTrigger className="bg-popover">
+                      <SelectValue placeholder="Chọn số phòng" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="1">1 phòng</SelectItem>
+                      <SelectItem value="2">2 phòng</SelectItem>
+                      <SelectItem value="3">3 phòng</SelectItem>
+                      <SelectItem value="4">4 phòng</SelectItem>
+                      <SelectItem value="5">5+ phòng</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
 
-              {/* Bathrooms */}
-              <div className="mb-4">
-                <label className="text-sm font-medium text-foreground mb-2 block">
-                  Số phòng vệ sinh
-                </label>
-                <Select value={numBathrooms} onValueChange={setNumBathrooms}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn số phòng" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tất cả</SelectItem>
-                    <SelectItem value="1">1 phòng</SelectItem>
-                    <SelectItem value="2">2 phòng</SelectItem>
-                    <SelectItem value="3">3 phòng</SelectItem>
-                    <SelectItem value="4">4+ phòng</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {availableFilters.includes("numBathrooms") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Số phòng vệ sinh
+                  </Label>
+                  <Select value={numBathrooms} onValueChange={setNumBathrooms}>
+                    <SelectTrigger className="bg-popover">
+                      <SelectValue placeholder="Chọn số phòng" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="1">1 phòng</SelectItem>
+                      <SelectItem value="2">2 phòng</SelectItem>
+                      <SelectItem value="3">3 phòng</SelectItem>
+                      <SelectItem value="4">4+ phòng</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {(availableFilters.includes("houseDirection") || 
+                availableFilters.includes("balconyDirection") || 
+                availableFilters.includes("landDirection")) && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Hướng
+                  </Label>
+                  <Select value={direction} onValueChange={setDirection}>
+                    <SelectTrigger className="bg-popover">
+                      <SelectValue placeholder="Chọn hướng" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="Đông">Đông</SelectItem>
+                      <SelectItem value="Tây">Tây</SelectItem>
+                      <SelectItem value="Nam">Nam</SelectItem>
+                      <SelectItem value="Bắc">Bắc</SelectItem>
+                      <SelectItem value="Đông Bắc">Đông Bắc</SelectItem>
+                      <SelectItem value="Tây Bắc">Tây Bắc</SelectItem>
+                      <SelectItem value="Đông Nam">Đông Nam</SelectItem>
+                      <SelectItem value="Tây Nam">Tây Nam</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {availableFilters.includes("facadeWidth") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Chiều rộng mặt tiền tối thiểu (m)
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="VD: 5"
+                    value={facadeWidth}
+                    onChange={(e) => setFacadeWidth(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {availableFilters.includes("alleyWidth") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Chiều rộng đường vào tối thiểu (m)
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="VD: 4"
+                    value={alleyWidth}
+                    onChange={(e) => setAlleyWidth(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {availableFilters.includes("legalStatus") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Pháp lý
+                  </Label>
+                  <Select value={legalStatus} onValueChange={setLegalStatus}>
+                    <SelectTrigger className="bg-popover">
+                      <SelectValue placeholder="Chọn pháp lý" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="Sổ hồng">Sổ hồng</SelectItem>
+                      <SelectItem value="Sổ đỏ">Sổ đỏ</SelectItem>
+                      <SelectItem value="HĐMB">Hợp đồng mua bán</SelectItem>
+                      <SelectItem value="Đang chờ sổ">Đang chờ sổ</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {availableFilters.includes("interiorStatus") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Tình trạng nội thất
+                  </Label>
+                  <Select value={interiorStatus} onValueChange={setInteriorStatus}>
+                    <SelectTrigger className="bg-popover">
+                      <SelectValue placeholder="Chọn tình trạng" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover z-50">
+                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="Nội thất cao cấp">Nội thất cao cấp</SelectItem>
+                      <SelectItem value="Nội thất cơ bản">Nội thất cơ bản</SelectItem>
+                      <SelectItem value="Không nội thất">Không nội thất</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {availableFilters.includes("floorNumber") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Tầng tối thiểu
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="VD: 10"
+                    value={floorNumber}
+                    onChange={(e) => setFloorNumber(e.target.value)}
+                  />
+                </div>
+              )}
+
+              {availableFilters.includes("numFloors") && (
+                <div className="mb-4">
+                  <Label className="text-sm font-medium text-foreground mb-2 block">
+                    Số tầng tối thiểu
+                  </Label>
+                  <Input
+                    type="number"
+                    placeholder="VD: 3"
+                    value={numFloors}
+                    onChange={(e) => setNumFloors(e.target.value)}
+                  />
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="flex flex-col gap-2">
