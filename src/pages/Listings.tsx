@@ -127,7 +127,7 @@ const Listings = () => {
       if (purpose === "Thuê" && property.status !== "Cho thuê") return false;
 
       // Filter by property type
-      if (propertyType && property.type !== propertyType) return false;
+      if (propertyType && propertyType !== "all" && property.type !== propertyType) return false;
 
       // Filter by price
       if (minPrice && property.priceValue < parseFloat(minPrice)) return false;
@@ -138,13 +138,13 @@ const Listings = () => {
       if (maxArea && property.area > parseFloat(maxArea)) return false;
 
       // Filter by bedrooms
-      if (numBedrooms && property.bedrooms !== parseInt(numBedrooms)) return false;
+      if (numBedrooms && numBedrooms !== "all" && property.bedrooms !== parseInt(numBedrooms)) return false;
 
       // Filter by bathrooms
-      if (numBathrooms && property.bathrooms !== parseInt(numBathrooms)) return false;
+      if (numBathrooms && numBathrooms !== "all" && property.bathrooms !== parseInt(numBathrooms)) return false;
 
       // Filter by district
-      if (district && property.district !== district) return false;
+      if (district && district !== "all" && property.district !== district) return false;
 
       return true;
     });
@@ -152,14 +152,14 @@ const Listings = () => {
 
   const resetFilters = () => {
     setPurpose("Mua");
-    setPropertyType("");
+    setPropertyType("all");
     setMinPrice("");
     setMaxPrice("");
     setMinArea("");
     setMaxArea("");
-    setNumBedrooms("");
-    setNumBathrooms("");
-    setDistrict("");
+    setNumBedrooms("all");
+    setNumBathrooms("all");
+    setDistrict("all");
   };
 
   return (
@@ -218,7 +218,7 @@ const Listings = () => {
                     <SelectValue placeholder="Chọn loại hình" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tất cả</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
                     <SelectItem value="Căn hộ chung cư">Căn hộ chung cư</SelectItem>
                     <SelectItem value="Nhà riêng">Nhà riêng</SelectItem>
                     <SelectItem value="Biệt thự">Biệt thự</SelectItem>
@@ -238,7 +238,7 @@ const Listings = () => {
                     <SelectValue placeholder="Chọn khu vực" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tất cả</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
                     <SelectItem value="Quận 1">Quận 1</SelectItem>
                     <SelectItem value="Quận 2">Quận 2</SelectItem>
                     <SelectItem value="Quận 3">Quận 3</SelectItem>
@@ -299,7 +299,7 @@ const Listings = () => {
                     <SelectValue placeholder="Chọn số phòng" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tất cả</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
                     <SelectItem value="1">1 phòng</SelectItem>
                     <SelectItem value="2">2 phòng</SelectItem>
                     <SelectItem value="3">3 phòng</SelectItem>
@@ -319,7 +319,7 @@ const Listings = () => {
                     <SelectValue placeholder="Chọn số phòng" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">Tất cả</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
                     <SelectItem value="1">1 phòng</SelectItem>
                     <SelectItem value="2">2 phòng</SelectItem>
                     <SelectItem value="3">3 phòng</SelectItem>
