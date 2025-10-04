@@ -75,12 +75,18 @@ const Listings = () => {
   // Format price for display
   const formatPrice = (price: number, purpose: string) => {
     if (purpose === "FOR_RENT") {
-      return `${price.toLocaleString('vi-VN')} triệu/tháng`;
+      // Price is in VND, convert to millions
+      const priceInMillions = price / 1000000;
+      return `${priceInMillions.toLocaleString('vi-VN')} triệu/tháng`;
     }
-    if (price >= 1000) {
-      return `${(price / 1000).toFixed(1)} tỷ`;
+    // For sale - price is in VND, convert to billions
+    const priceInBillions = price / 1000000000;
+    if (priceInBillions >= 1) {
+      return `${priceInBillions.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} tỷ`;
     }
-    return `${price} triệu`;
+    // Less than 1 billion, show in millions
+    const priceInMillions = price / 1000000;
+    return `${priceInMillions.toLocaleString('vi-VN')} triệu`;
   };
 
   // Get property type name from slug
@@ -106,10 +112,12 @@ const Listings = () => {
       // Filter by property type
       if (propertyType && listing.property_type_slug !== propertyType) return false;
 
-      // Filter by price (convert to billions for FOR_SALE, millions for FOR_RENT)
-      const priceInBillions = purpose === "FOR_SALE" ? listing.price / 1000 : listing.price;
-      if (minPrice && priceInBillions < parseFloat(minPrice)) return false;
-      if (maxPrice && priceInBillions > parseFloat(maxPrice)) return false;
+      // Filter by price (convert database VND to billions for FOR_SALE, millions for FOR_RENT)
+      const priceValue = purpose === "FOR_SALE" 
+        ? listing.price / 1000000000  // Convert VND to billions
+        : listing.price / 1000000;     // Convert VND to millions
+      if (minPrice && priceValue < parseFloat(minPrice)) return false;
+      if (maxPrice && priceValue > parseFloat(maxPrice)) return false;
 
       // Filter by area
       if (minArea && Number(listing.area) < parseFloat(minArea)) return false;
