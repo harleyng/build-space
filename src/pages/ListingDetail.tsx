@@ -419,4 +419,4 @@ const ListingDetail = () => {
   );
 };
 
-export default ListingDetail;
+export { ListingDetail as default };

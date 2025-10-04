@@ -401,4 +401,4 @@ const Listings = () => {
   );
 };
 
-export default Listings;
+export { Listings as default };
