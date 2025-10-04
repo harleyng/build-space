@@ -48,6 +48,12 @@ const Listings = () => {
   const availableFilters = useMemo(() => {
     if (!selectedPropertyType) return [];
     const metadata = selectedPropertyType.filter_metadata[purpose];
+    
+    // Handle both old format (array) and new format (object with filters key)
+    if (Array.isArray(metadata)) {
+      return metadata;
+    }
+    
     return metadata?.filters || [];
   }, [selectedPropertyType, purpose]);
 
@@ -279,6 +285,12 @@ const Listings = () => {
     if (!propertyTypes) return [];
     return propertyTypes.filter((pt) => {
       const metadata = pt.filter_metadata[purpose];
+      
+      // Handle both old format (array - available if not empty) and new format (object with available key)
+      if (Array.isArray(metadata)) {
+        return metadata.length > 0;
+      }
+      
       return metadata?.available === true;
     });
   }, [propertyTypes, purpose]);
