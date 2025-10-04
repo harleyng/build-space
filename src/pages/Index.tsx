@@ -1,9 +1,9 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SearchBar } from "@/components/SearchBar";
-import { CategoryGrid } from "@/components/CategoryGrid";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
@@ -14,6 +14,7 @@ import penthouseSample from "@/assets/penthouse-sample.jpg";
 const Index = () => {
   const featuredProperties = [
     {
+      id: "1",
       image: apartmentSample,
       title: "Căn hộ cao cấp Vinhomes Central Park",
       price: "5.2 tỷ",
@@ -23,8 +24,10 @@ const Index = () => {
       area: 95,
       type: "Căn hộ chung cư",
       status: "Bán" as const,
+      prominentFeatures: ["View đẹp", "Nội thất cao cấp", "An ninh 24/7"],
     },
     {
+      id: "2",
       image: houseSample,
       title: "Nhà phố hiện đại khu compound",
       price: "8.5 tỷ",
@@ -34,8 +37,10 @@ const Index = () => {
       area: 120,
       type: "Nhà riêng",
       status: "Bán" as const,
+      prominentFeatures: ["Sân vườn", "Hồ bơi riêng", "Gara ô tô"],
     },
     {
+      id: "3",
       image: penthouseSample,
       title: "Penthouse sang trọng view sông",
       price: "45 triệu/tháng",
@@ -45,8 +50,10 @@ const Index = () => {
       area: 180,
       type: "Căn hộ cao cấp",
       status: "Cho thuê" as const,
+      prominentFeatures: ["Tầng cao", "View sông", "Full nội thất"],
     },
     {
+      id: "4",
       image: apartmentSample,
       title: "Căn hộ 2PN giá tốt The Sun Avenue",
       price: "3.8 tỷ",
@@ -56,6 +63,59 @@ const Index = () => {
       area: 75,
       type: "Căn hộ chung cư",
       status: "Bán" as const,
+      prominentFeatures: ["Giá tốt", "Vị trí đẹp", "Tiện ích đầy đủ"],
+    },
+    {
+      id: "5",
+      image: houseSample,
+      title: "Biệt thự vườn khu Thảo Điền",
+      price: "15.5 tỷ",
+      location: "Quận 2, TP.HCM",
+      bedrooms: 5,
+      bathrooms: 4,
+      area: 250,
+      type: "Biệt thự",
+      status: "Bán" as const,
+      prominentFeatures: ["Vườn rộng", "Thiết kế hiện đại", "Khu vip"],
+    },
+    {
+      id: "6",
+      image: penthouseSample,
+      title: "Căn hộ dịch vụ full nội thất",
+      price: "18 triệu/tháng",
+      location: "Quận 3, TP.HCM",
+      bedrooms: 2,
+      bathrooms: 2,
+      area: 65,
+      type: "Căn hộ dịch vụ",
+      status: "Cho thuê" as const,
+      prominentFeatures: ["Full nội thất", "Dọn dẹp hàng tuần", "Trung tâm"],
+    },
+    {
+      id: "7",
+      image: apartmentSample,
+      title: "Căn hộ 3PN tại Masteri Thảo Điền",
+      price: "6.8 tỷ",
+      location: "Quận 2, TP.HCM",
+      bedrooms: 3,
+      bathrooms: 2,
+      area: 105,
+      type: "Căn hộ chung cư",
+      status: "Bán" as const,
+      prominentFeatures: ["Tiện ích 5 sao", "View công viên", "Giao thông thuận lợi"],
+    },
+    {
+      id: "8",
+      image: houseSample,
+      title: "Nhà mặt tiền Quận 10",
+      price: "12 tỷ",
+      location: "Quận 10, TP.HCM",
+      bedrooms: 4,
+      bathrooms: 3,
+      area: 85,
+      type: "Nhà riêng",
+      status: "Bán" as const,
+      prominentFeatures: ["Mặt tiền", "Kinh doanh tốt", "Vị trí đắc địa"],
     },
   ];
 
@@ -77,26 +137,35 @@ const Index = () => {
     },
   ];
 
+  const propertyTypes = [
+    { label: "Căn hộ chung cư", slug: "can-ho-chung-cu", icon: "🏢" },
+    { label: "Nhà riêng", slug: "nha-rieng", icon: "🏠" },
+    { label: "Đất nền", slug: "dat-nen", icon: "🌾" },
+    { label: "Biệt thự", slug: "biet-thu", icon: "🏰" },
+    { label: "Nhà phố", slug: "nha-pho", icon: "🏘️" },
+    { label: "Kho, nhà xưởng", slug: "kho-nha-xuong", icon: "🏭" },
+  ];
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
       
-      {/* Hero Section */}
-      <section className="relative h-[500px] bg-gradient-to-r from-primary to-primary-hover overflow-hidden">
+      {/* Hero Section with Search Overlay */}
+      <section className="relative h-[600px] bg-gradient-to-r from-primary to-primary-hover overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={heroImage}
-            alt="Hero"
-            className="w-full h-full object-cover opacity-30"
+            alt="Tìm kiếm bất động sản"
+            className="w-full h-full object-cover opacity-40"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary-hover/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/60 to-primary/80" />
         </div>
         
-        <div className="relative container h-full flex flex-col justify-center items-center text-center z-10">
-          <h1 className="text-4xl md:text-6xl font-bold text-primary-foreground mb-4">
-            Tìm Ngôi Nhà Mơ Ước
+        <div className="relative container h-full flex flex-col justify-center items-center text-center z-10 px-4">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-3 drop-shadow-lg">
+            Tìm kiếm bất động sản mơ ước của bạn
           </h1>
-          <p className="text-lg md:text-xl text-primary-foreground/90 mb-8 max-w-2xl">
+          <p className="text-base md:text-lg lg:text-xl text-primary-foreground/95 mb-12 max-w-2xl drop-shadow">
             Khám phá hàng nghìn bất động sản chất lượng trên khắp Việt Nam
           </p>
         </div>
@@ -130,27 +199,45 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Popular Property Types - Khám phá theo loại hình */}
       <section className="container py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">
-              Danh Mục Bất Động Sản
-            </h2>
-            <p className="text-muted-foreground">
-              Tìm kiếm theo loại hình bất động sản
-            </p>
-          </div>
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-foreground mb-2">
+            Khám phá theo loại hình
+          </h2>
+          <p className="text-muted-foreground">
+            Tìm kiếm nhanh theo danh mục bất động sản
+          </p>
         </div>
-        <CategoryGrid />
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          {propertyTypes.map((type) => (
+            <Link
+              key={type.slug}
+              to={`/listings?propertyType=${type.slug}`}
+              className="group"
+            >
+              <Card className="h-full border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary">
+                <CardContent className="p-6 text-center">
+                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                    {type.icon}
+                  </div>
+                  <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                    {type.label}
+                  </h3>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      {/* Featured Properties */}
+      {/* Featured Listings - Bất động sản nổi bật */}
       <section className="container py-12">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-3xl font-bold text-foreground mb-2">
-              Bất Động Sản Nổi Bật
+              Bất động sản nổi bật
             </h2>
             <p className="text-muted-foreground">
               Những tin đăng được quan tâm nhất
