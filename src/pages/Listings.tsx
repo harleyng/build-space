@@ -14,12 +14,14 @@ import { Label } from "@/components/ui/label";
 import { Search, SlidersHorizontal, X } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { usePropertyTypes } from "@/hooks/usePropertyTypes";
+import { useListings } from "@/hooks/useListings";
 import apartmentSample from "@/assets/apartment-sample.jpg";
 import houseSample from "@/assets/house-sample.jpg";
 import penthouseSample from "@/assets/penthouse-sample.jpg";
 
 const Listings = () => {
   const { data: propertyTypes, isLoading: isLoadingPropertyTypes } = usePropertyTypes();
+  const { data: listings, isLoading: isLoadingListings } = useListings();
   
   const [purpose, setPurpose] = useState<"FOR_SALE" | "FOR_RENT">("FOR_SALE");
   const [propertyType, setPropertyType] = useState<string>("");
@@ -70,195 +72,95 @@ const Listings = () => {
     setNumFloors("");
   }, [purpose, propertyType]);
 
-  const allProperties = [
-    {
-      id: "1",
-      image: apartmentSample,
-      title: "Căn hộ cao cấp Vinhomes Central Park",
-      price: "5.2 tỷ",
-      priceValue: 5.2,
-      location: "Quận Bình Thạnh, TP.HCM",
-      district: "Bình Thạnh",
-      bedrooms: 3,
-      bathrooms: 2,
-      area: 95,
-      type: "Căn hộ chung cư",
-      status: "Bán" as const,
-      prominentFeatures: ["View đẹp", "Nội thất cao cấp", "Bảo vệ 24/7"],
-      attributes: {
-        balconyDirection: "Đông Nam",
-        interiorStatus: "Nội thất cao cấp",
-        legalStatus: "Sổ hồng",
-        floorNumber: 15,
-      } as any,
-    },
-    {
-      id: "2",
-      image: houseSample,
-      title: "Nhà phố hiện đại khu compound",
-      price: "8.5 tỷ",
-      priceValue: 8.5,
-      location: "Quận 2, TP.HCM",
-      district: "Quận 2",
-      bedrooms: 4,
-      bathrooms: 3,
-      area: 120,
-      type: "Nhà riêng",
-      status: "Bán" as const,
-      prominentFeatures: ["Khu an ninh", "Sân vườn", "Gần trường học"],
-      attributes: {
-        houseDirection: "Đông",
-        facadeWidth: 6,
-        alleyWidth: 8,
-        numFloors: 3,
-        legalStatus: "Sổ hồng",
-      } as any,
-    },
-    {
-      id: "3",
-      image: penthouseSample,
-      title: "Penthouse sang trọng view sông",
-      price: "45 triệu/tháng",
-      priceValue: 45,
-      location: "Quận 1, TP.HCM",
-      district: "Quận 1",
-      bedrooms: 4,
-      bathrooms: 4,
-      area: 180,
-      type: "Căn hộ cao cấp",
-      status: "Cho thuê" as const,
-      prominentFeatures: ["View sông", "Full nội thất", "Tầng cao"],
-      attributes: {
-        balconyDirection: "Nam",
-        interiorStatus: "Nội thất cao cấp",
-        floorNumber: 25,
-      } as any,
-    },
-    {
-      id: "4",
-      image: apartmentSample,
-      title: "Căn hộ 2PN giá tốt The Sun Avenue",
-      price: "3.8 tỷ",
-      priceValue: 3.8,
-      location: "Quận 2, TP.HCM",
-      district: "Quận 2",
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 75,
-      type: "Căn hộ chung cư",
-      status: "Bán" as const,
-      prominentFeatures: ["Giá tốt", "Gần Metro", "View thoáng"],
-      attributes: {
-        balconyDirection: "Nam",
-        interiorStatus: "Nội thất cơ bản",
-      } as any,
-    },
-    {
-      id: "5",
-      image: houseSample,
-      title: "Biệt thự vườn khu Thảo Điền",
-      price: "15.5 tỷ",
-      priceValue: 15.5,
-      location: "Quận 2, TP.HCM",
-      district: "Quận 2",
-      bedrooms: 5,
-      bathrooms: 4,
-      area: 250,
-      type: "Biệt thự",
-      status: "Bán" as const,
-      prominentFeatures: ["Vườn rộng", "Hồ bơi", "Khu VIP"],
-      attributes: {
-        houseDirection: "Tây Nam",
-        facadeWidth: 12,
-        numFloors: 2,
-        legalStatus: "Sổ hồng",
-      } as any,
-    },
-    {
-      id: "6",
-      image: penthouseSample,
-      title: "Căn hộ dịch vụ full nội thất",
-      price: "18 triệu/tháng",
-      priceValue: 18,
-      location: "Quận 3, TP.HCM",
-      district: "Quận 3",
-      bedrooms: 2,
-      bathrooms: 2,
-      area: 65,
-      type: "Căn hộ dịch vụ",
-      status: "Cho thuê" as const,
-      prominentFeatures: ["Full nội thất", "Dịch vụ tốt", "Trung tâm"],
-      attributes: {
-        balconyDirection: "Đông",
-        interiorStatus: "Nội thất cao cấp",
-        floorNumber: 8,
-      } as any,
-    },
-  ];
+  // Format price for display
+  const formatPrice = (price: number, purpose: string) => {
+    if (purpose === "FOR_RENT") {
+      return `${price.toLocaleString('vi-VN')} triệu/tháng`;
+    }
+    if (price >= 1000) {
+      return `${(price / 1000).toFixed(1)} tỷ`;
+    }
+    return `${price} triệu`;
+  };
+
+  // Get property type name from slug
+  const getPropertyTypeName = (slug: string) => {
+    const propertyType = propertyTypes?.find(pt => pt.slug === slug);
+    return propertyType?.name || slug;
+  };
+
+  // Get fallback image based on property type
+  const getFallbackImage = (slug: string) => {
+    if (slug.includes('can-ho') || slug.includes('chung-cu')) return apartmentSample;
+    if (slug.includes('nha') || slug.includes('biet-thu')) return houseSample;
+    return penthouseSample;
+  };
 
   const filteredProperties = useMemo(() => {
-    return allProperties.filter((property) => {
+    if (!listings) return [];
+    
+    return listings.filter((listing) => {
       // Filter by purpose (FOR_SALE/FOR_RENT)
-      if (purpose === "FOR_SALE" && property.status !== "Bán") return false;
-      if (purpose === "FOR_RENT" && property.status !== "Cho thuê") return false;
+      if (listing.purpose !== purpose) return false;
 
       // Filter by property type
-      if (propertyType && property.type !== propertyType) return false;
+      if (propertyType && listing.property_type_slug !== propertyType) return false;
 
-      // Filter by price
-      if (minPrice && property.priceValue < parseFloat(minPrice)) return false;
-      if (maxPrice && property.priceValue > parseFloat(maxPrice)) return false;
+      // Filter by price (convert to billions for FOR_SALE, millions for FOR_RENT)
+      const priceInBillions = purpose === "FOR_SALE" ? listing.price / 1000 : listing.price;
+      if (minPrice && priceInBillions < parseFloat(minPrice)) return false;
+      if (maxPrice && priceInBillions > parseFloat(maxPrice)) return false;
 
       // Filter by area
-      if (minArea && property.area < parseFloat(minArea)) return false;
-      if (maxArea && property.area > parseFloat(maxArea)) return false;
+      if (minArea && Number(listing.area) < parseFloat(minArea)) return false;
+      if (maxArea && Number(listing.area) > parseFloat(maxArea)) return false;
 
       // Filter by bedrooms
-      if (numBedrooms && numBedrooms !== "all" && property.bedrooms !== parseInt(numBedrooms)) return false;
+      if (numBedrooms && numBedrooms !== "all" && listing.num_bedrooms !== parseInt(numBedrooms)) return false;
 
       // Filter by bathrooms
-      if (numBathrooms && numBathrooms !== "all" && property.bathrooms !== parseInt(numBathrooms)) return false;
+      if (numBathrooms && numBathrooms !== "all" && listing.num_bathrooms !== parseInt(numBathrooms)) return false;
 
       // Filter by district
-      if (district && district !== "all" && property.district !== district) return false;
+      if (district && district !== "all" && listing.district !== district) return false;
 
       // Filter by direction
-      if (direction && direction !== "all" && property.attributes) {
-        const propertyDirection = property.attributes.houseDirection || 
-                                  property.attributes.balconyDirection || 
-                                  property.attributes.landDirection || "";
-        if (propertyDirection !== direction) return false;
+      if (direction && direction !== "all") {
+        const listingDirection = listing.house_direction || 
+                                  listing.balcony_direction || 
+                                  listing.land_direction || "";
+        if (listingDirection !== direction) return false;
       }
 
       // Filter by facade width
-      if (facadeWidth && property.attributes?.facadeWidth) {
-        if (property.attributes.facadeWidth < parseFloat(facadeWidth)) return false;
+      if (facadeWidth && listing.facade_width) {
+        if (Number(listing.facade_width) < parseFloat(facadeWidth)) return false;
       }
 
       // Filter by alley width
-      if (alleyWidth && property.attributes?.alleyWidth) {
-        if (property.attributes.alleyWidth < parseFloat(alleyWidth)) return false;
+      if (alleyWidth && listing.alley_width) {
+        if (Number(listing.alley_width) < parseFloat(alleyWidth)) return false;
       }
 
       // Filter by legal status
-      if (legalStatus && legalStatus !== "all" && property.attributes?.legalStatus !== legalStatus) return false;
+      if (legalStatus && legalStatus !== "all" && listing.legal_status !== legalStatus) return false;
 
       // Filter by interior status
-      if (interiorStatus && interiorStatus !== "all" && property.attributes?.interiorStatus !== interiorStatus) return false;
+      if (interiorStatus && interiorStatus !== "all" && listing.interior_status !== interiorStatus) return false;
 
       // Filter by floor number
-      if (floorNumber && property.attributes?.floorNumber) {
-        if (property.attributes.floorNumber < parseInt(floorNumber)) return false;
+      if (floorNumber && listing.floor_number) {
+        if (listing.floor_number < parseInt(floorNumber)) return false;
       }
 
       // Filter by number of floors
-      if (numFloors && property.attributes?.numFloors) {
-        if (property.attributes.numFloors < parseInt(numFloors)) return false;
+      if (numFloors && listing.num_floors) {
+        if (listing.num_floors < parseInt(numFloors)) return false;
       }
 
       return true;
     });
-  }, [purpose, propertyType, minPrice, maxPrice, minArea, maxArea, numBedrooms, numBathrooms, district, 
+  }, [listings, purpose, propertyType, minPrice, maxPrice, minArea, maxArea, numBedrooms, numBathrooms, district, 
       direction, facadeWidth, alleyWidth, legalStatus, interiorStatus, floorNumber, numFloors]);
 
   const resetFilters = () => {
@@ -615,10 +517,31 @@ const Listings = () => {
             </div>
 
             {/* Property Grid */}
-            {filteredProperties.length > 0 ? (
+            {isLoadingListings ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground">Đang tải dữ liệu...</p>
+              </div>
+            ) : filteredProperties.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProperties.map((property) => (
-                  <PropertyCard key={property.id} {...property} />
+                {filteredProperties.map((listing) => (
+                  <PropertyCard 
+                    key={listing.id}
+                    id={listing.id}
+                    image={listing.image_url || getFallbackImage(listing.property_type_slug)}
+                    title={listing.title}
+                    price={formatPrice(listing.price, listing.purpose)}
+                    location={listing.address || listing.district}
+                    bedrooms={listing.num_bedrooms || 0}
+                    bathrooms={listing.num_bathrooms || 0}
+                    area={Number(listing.area)}
+                    type={getPropertyTypeName(listing.property_type_slug)}
+                    status={listing.purpose === "FOR_SALE" ? "Bán" : "Cho thuê"}
+                    prominentFeatures={[
+                      listing.legal_status,
+                      listing.interior_status,
+                      listing.house_direction || listing.balcony_direction || listing.land_direction
+                    ].filter(Boolean) as string[]}
+                  />
                 ))}
               </div>
             ) : (
