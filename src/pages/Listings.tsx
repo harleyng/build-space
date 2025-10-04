@@ -193,16 +193,16 @@ const Listings = () => {
       if (maxArea && property.area > parseFloat(maxArea)) return false;
 
       // Filter by bedrooms
-      if (numBedrooms && property.bedrooms !== parseInt(numBedrooms)) return false;
+      if (numBedrooms && numBedrooms !== "all" && property.bedrooms !== parseInt(numBedrooms)) return false;
 
       // Filter by bathrooms
-      if (numBathrooms && property.bathrooms !== parseInt(numBathrooms)) return false;
+      if (numBathrooms && numBathrooms !== "all" && property.bathrooms !== parseInt(numBathrooms)) return false;
 
       // Filter by district
-      if (district && property.district !== district) return false;
+      if (district && district !== "all" && property.district !== district) return false;
 
       // Filter by direction
-      if (direction && property.attributes) {
+      if (direction && direction !== "all" && property.attributes) {
         const propertyDirection = property.attributes.houseDirection || 
                                   property.attributes.balconyDirection || 
                                   property.attributes.landDirection || "";
@@ -220,10 +220,10 @@ const Listings = () => {
       }
 
       // Filter by legal status
-      if (legalStatus && property.attributes?.legalStatus !== legalStatus) return false;
+      if (legalStatus && legalStatus !== "all" && property.attributes?.legalStatus !== legalStatus) return false;
 
       // Filter by interior status
-      if (interiorStatus && property.attributes?.interiorStatus !== interiorStatus) return false;
+      if (interiorStatus && interiorStatus !== "all" && property.attributes?.interiorStatus !== interiorStatus) return false;
 
       // Filter by floor number
       if (floorNumber && property.attributes?.floorNumber) {
@@ -343,7 +343,7 @@ const Listings = () => {
                     <SelectValue placeholder="Chọn khu vực" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover z-50">
-                    <SelectItem value="">Tất cả</SelectItem>
+                    <SelectItem value="all">Tất cả</SelectItem>
                     <SelectItem value="Quận 1">Quận 1</SelectItem>
                     <SelectItem value="Quận 2">Quận 2</SelectItem>
                     <SelectItem value="Quận 3">Quận 3</SelectItem>
@@ -405,7 +405,7 @@ const Listings = () => {
                       <SelectValue placeholder="Chọn số phòng" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="all">Tất cả</SelectItem>
                       <SelectItem value="1">1 phòng</SelectItem>
                       <SelectItem value="2">2 phòng</SelectItem>
                       <SelectItem value="3">3 phòng</SelectItem>
@@ -426,7 +426,7 @@ const Listings = () => {
                       <SelectValue placeholder="Chọn số phòng" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="all">Tất cả</SelectItem>
                       <SelectItem value="1">1 phòng</SelectItem>
                       <SelectItem value="2">2 phòng</SelectItem>
                       <SelectItem value="3">3 phòng</SelectItem>
@@ -448,7 +448,7 @@ const Listings = () => {
                       <SelectValue placeholder="Chọn hướng" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="all">Tất cả</SelectItem>
                       <SelectItem value="Đông">Đông</SelectItem>
                       <SelectItem value="Tây">Tây</SelectItem>
                       <SelectItem value="Nam">Nam</SelectItem>
@@ -500,7 +500,7 @@ const Listings = () => {
                       <SelectValue placeholder="Chọn pháp lý" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="all">Tất cả</SelectItem>
                       <SelectItem value="Sổ hồng">Sổ hồng</SelectItem>
                       <SelectItem value="Sổ đỏ">Sổ đỏ</SelectItem>
                       <SelectItem value="HĐMB">Hợp đồng mua bán</SelectItem>
@@ -520,7 +520,7 @@ const Listings = () => {
                       <SelectValue placeholder="Chọn tình trạng" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover z-50">
-                      <SelectItem value="">Tất cả</SelectItem>
+                      <SelectItem value="all">Tất cả</SelectItem>
                       <SelectItem value="Nội thất cao cấp">Nội thất cao cấp</SelectItem>
                       <SelectItem value="Nội thất cơ bản">Nội thất cơ bản</SelectItem>
                       <SelectItem value="Không nội thất">Không nội thất</SelectItem>
