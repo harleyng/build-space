@@ -352,7 +352,7 @@ const Listings = () => {
                   </SelectTrigger>
                   <SelectContent className="bg-popover z-50">
                     {availablePropertyTypes.map((pt) => (
-                      <SelectItem key={pt.id} value={pt.name}>
+                      <SelectItem key={pt.id} value={pt.slug}>
                         {pt.name}
                       </SelectItem>
                     ))}
