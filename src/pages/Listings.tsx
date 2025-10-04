@@ -142,6 +142,10 @@ const Listings = () => {
       type: "Căn hộ chung cư",
       status: "Bán" as const,
       prominentFeatures: ["Giá tốt", "Gần Metro", "View thoáng"],
+      attributes: {
+        balconyDirection: "Nam",
+        interiorStatus: "Nội thất cơ bản",
+      } as any,
     },
     {
       id: "5",
@@ -157,6 +161,12 @@ const Listings = () => {
       type: "Biệt thự",
       status: "Bán" as const,
       prominentFeatures: ["Vườn rộng", "Hồ bơi", "Khu VIP"],
+      attributes: {
+        houseDirection: "Tây Nam",
+        facadeWidth: 12,
+        numFloors: 2,
+        legalStatus: "Sổ hồng",
+      } as any,
     },
     {
       id: "6",
@@ -172,6 +182,11 @@ const Listings = () => {
       type: "Căn hộ dịch vụ",
       status: "Cho thuê" as const,
       prominentFeatures: ["Full nội thất", "Dịch vụ tốt", "Trung tâm"],
+      attributes: {
+        balconyDirection: "Đông",
+        interiorStatus: "Nội thất cao cấp",
+        floorNumber: 8,
+      } as any,
     },
   ];
 
