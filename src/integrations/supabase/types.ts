@@ -14,6 +14,135 @@ export type Database = {
   }
   public: {
     Tables: {
+      listings: {
+        Row: {
+          access_road_width: number | null
+          address: string | null
+          alley_width: number | null
+          area: number
+          balcony_direction: string | null
+          ceiling_height: number | null
+          created_at: string
+          custom_attributes: Json | null
+          depth: number | null
+          description: string | null
+          district: string
+          existing_structures: string | null
+          expected_move_in_date: string | null
+          facade_width: number | null
+          featured: boolean | null
+          fire_protection: boolean | null
+          floor_load: number | null
+          floor_number: number | null
+          house_direction: string | null
+          id: string
+          image_url: string | null
+          infrastructure: string | null
+          interior_status: string | null
+          land_direction: string | null
+          land_type: string | null
+          legal_status: string | null
+          num_bathrooms: number | null
+          num_bedrooms: number | null
+          num_floors: number | null
+          planning_info: string | null
+          price: number
+          project_name: string | null
+          property_type_slug: string
+          purpose: string
+          service_costs: number | null
+          title: string
+          transport_access: string | null
+          updated_at: string
+          verified: boolean | null
+          views_count: number | null
+        }
+        Insert: {
+          access_road_width?: number | null
+          address?: string | null
+          alley_width?: number | null
+          area: number
+          balcony_direction?: string | null
+          ceiling_height?: number | null
+          created_at?: string
+          custom_attributes?: Json | null
+          depth?: number | null
+          description?: string | null
+          district: string
+          existing_structures?: string | null
+          expected_move_in_date?: string | null
+          facade_width?: number | null
+          featured?: boolean | null
+          fire_protection?: boolean | null
+          floor_load?: number | null
+          floor_number?: number | null
+          house_direction?: string | null
+          id?: string
+          image_url?: string | null
+          infrastructure?: string | null
+          interior_status?: string | null
+          land_direction?: string | null
+          land_type?: string | null
+          legal_status?: string | null
+          num_bathrooms?: number | null
+          num_bedrooms?: number | null
+          num_floors?: number | null
+          planning_info?: string | null
+          price: number
+          project_name?: string | null
+          property_type_slug: string
+          purpose: string
+          service_costs?: number | null
+          title: string
+          transport_access?: string | null
+          updated_at?: string
+          verified?: boolean | null
+          views_count?: number | null
+        }
+        Update: {
+          access_road_width?: number | null
+          address?: string | null
+          alley_width?: number | null
+          area?: number
+          balcony_direction?: string | null
+          ceiling_height?: number | null
+          created_at?: string
+          custom_attributes?: Json | null
+          depth?: number | null
+          description?: string | null
+          district?: string
+          existing_structures?: string | null
+          expected_move_in_date?: string | null
+          facade_width?: number | null
+          featured?: boolean | null
+          fire_protection?: boolean | null
+          floor_load?: number | null
+          floor_number?: number | null
+          house_direction?: string | null
+          id?: string
+          image_url?: string | null
+          infrastructure?: string | null
+          interior_status?: string | null
+          land_direction?: string | null
+          land_type?: string | null
+          legal_status?: string | null
+          num_bathrooms?: number | null
+          num_bedrooms?: number | null
+          num_floors?: number | null
+          planning_info?: string | null
+          price?: number
+          project_name?: string | null
+          property_type_slug?: string
+          purpose?: string
+          service_costs?: number | null
+          title?: string
+          transport_access?: string | null
+          updated_at?: string
+          verified?: boolean | null
+          views_count?: number | null
+        }
+        Relationships: []
+      }
       property_types: {
         Row: {
           created_at: string
