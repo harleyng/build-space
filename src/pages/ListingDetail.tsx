@@ -12,7 +12,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Bed, Bath, Maximize, MapPin, Phone, Mail, User } from "lucide-react";
+import { Bed, Bath, Maximize, MapPin, Phone, Mail, User, Eye } from "lucide-react";
 
 // Mock data for listing detail - in a real app, this would come from an API
 const getListingById = (id: string) => {
@@ -112,6 +112,7 @@ const ListingDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [showPhone, setShowPhone] = useState(false);
 
   if (!id) {
     return (
@@ -395,9 +396,27 @@ const ListingDetail = () => {
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <Phone className="w-5 h-5 text-primary" />
                   </div>
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm text-muted-foreground">Số điện thoại</p>
-                    <p className="font-medium text-foreground">{listing.contactInfo.phone}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-foreground">
+                        {showPhone 
+                          ? listing.contactInfo.phone 
+                          : `****${listing.contactInfo.phone.slice(-3)}`
+                        }
+                      </p>
+                      {!showPhone && (
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => setShowPhone(true)}
+                          className="h-7 px-3"
+                        >
+                          <Eye className="w-3 h-3 mr-1" />
+                          Hiện
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
