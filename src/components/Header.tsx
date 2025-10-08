@@ -1,13 +1,48 @@
-import { Link } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { useState, useEffect } from "react";
+import { Session } from "@supabase/supabase-js";
 
 export const Header = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [session, setSession] = useState<Session | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast({
+      title: "Đăng xuất thành công",
+      description: "Hẹn gặp lại bạn!",
+    });
+    navigate("/");
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
@@ -34,16 +69,38 @@ export const Header = () => {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-            <Heart className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-            <User className="h-5 w-5" />
-          </Button>
-          <Button className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground">
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Đăng tin
-          </Button>
+          {session ? (
+            <>
+              <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
+                <Heart className="h-5 w-5" />
+              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
+                    <User className="h-5 w-5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Đăng xuất
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Button className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground">
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Đăng tin
+              </Button>
+            </>
+          ) : (
+            <Button 
+              onClick={() => navigate("/auth")}
+              className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground"
+            >
+              <User className="mr-2 h-4 w-4" />
+              Đăng nhập
+            </Button>
+          )}
 
           <Sheet>
             <SheetTrigger asChild>
