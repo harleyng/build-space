@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -110,10 +110,16 @@ export const Header = () => {
                     Đăng ký môi giới
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin/listings")}>
-                      <Shield className="mr-2 h-4 w-4" />
-                      Quản trị
-                    </DropdownMenuItem>
+                    <>
+                      <DropdownMenuItem onClick={() => navigate("/admin/listings")}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Quản trị tin đăng
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/admin/users")}>
+                        <Users className="mr-2 h-4 w-4" />
+                        Quản trị người dùng
+                      </DropdownMenuItem>
+                    </>
                   )}
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
