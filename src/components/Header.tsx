@@ -81,6 +81,10 @@ export const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/my-listings")}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Tin đăng của tôi
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Đăng xuất
@@ -126,13 +130,21 @@ export const Header = () => {
                   Dự án
                 </Link>
                 {session && (
-                  <Button 
-                    onClick={() => navigate("/submit-listing")}
-                    className="mt-4 bg-primary hover:bg-primary-hover text-primary-foreground"
-                  >
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Đăng tin
-                  </Button>
+                  <>
+                    <Link 
+                      to="/my-listings" 
+                      className="text-lg font-medium text-foreground hover:text-primary transition-colors"
+                    >
+                      Tin đăng của tôi
+                    </Link>
+                    <Button 
+                      onClick={() => navigate("/submit-listing")}
+                      className="mt-4 bg-primary hover:bg-primary-hover text-primary-foreground"
+                    >
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Đăng tin
+                    </Button>
+                  </>
                 )}
               </nav>
             </SheetContent>
