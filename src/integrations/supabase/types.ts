@@ -171,24 +171,36 @@ export type Database = {
       }
       profiles: {
         Row: {
+          agent_info: Json | null
           created_at: string
           email: string
           id: string
+          is_agent: boolean | null
+          kyc_status: Database["public"]["Enums"]["kyc_status"]
           name: string | null
+          rejection_reason: string | null
           updated_at: string
         }
         Insert: {
+          agent_info?: Json | null
           created_at?: string
           email: string
           id: string
+          is_agent?: boolean | null
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
           name?: string | null
+          rejection_reason?: string | null
           updated_at?: string
         }
         Update: {
+          agent_info?: Json | null
           created_at?: string
           email?: string
           id?: string
+          is_agent?: boolean | null
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
           name?: string | null
+          rejection_reason?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -264,6 +276,7 @@ export type Database = {
     }
     Enums: {
       app_role: "USER" | "ADMIN"
+      kyc_status: "NOT_APPLIED" | "PENDING_KYC" | "APPROVED" | "REJECTED"
       listing_status:
         | "DRAFT"
         | "PENDING_APPROVAL"
@@ -399,6 +412,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["USER", "ADMIN"],
+      kyc_status: ["NOT_APPLIED", "PENDING_KYC", "APPROVED", "REJECTED"],
       listing_status: [
         "DRAFT",
         "PENDING_APPROVAL",
