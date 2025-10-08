@@ -11,6 +11,7 @@ import Auth from "./pages/Auth";
 import SubmitListing from "./pages/SubmitListing";
 import MyListings from "./pages/MyListings";
 import AdminListings from "./pages/AdminListings";
+import AgentRegistration from "./pages/AgentRegistration";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/submit-listing" element={<SubmitListing />} />
           <Route path="/my-listings" element={<MyListings />} />
           <Route path="/admin/listings" element={<AdminListings />} />
+          <Route path="/register-agent" element={<AgentRegistration />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

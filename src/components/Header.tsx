@@ -105,6 +105,10 @@ export const Header = () => {
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Tin đăng của tôi
                   </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/register-agent")}>
+                    <User className="mr-2 h-4 w-4" />
+                    Đăng ký môi giới
+                  </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem onClick={() => navigate("/admin/listings")}>
                       <Shield className="mr-2 h-4 w-4" />
