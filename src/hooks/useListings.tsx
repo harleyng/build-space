@@ -6,10 +6,13 @@ export interface Listing {
   title: string;
   description: string | null;
   price: number;
+  price_unit: string;
   purpose: string;
   property_type_slug: string;
-  district: string;
-  address: string | null;
+  status: string;
+  address: any; // JSON
+  coordinates: any; // JSON
+  contact_info: any; // JSON
   area: number;
   num_bedrooms: number | null;
   num_bathrooms: number | null;
@@ -29,6 +32,8 @@ export interface Listing {
   views_count: number | null;
   created_at: string;
   updated_at: string;
+  attributes: any; // JSON
+  prominent_features: string[] | null;
   custom_attributes: any;
 }
 
@@ -39,6 +44,7 @@ export const useListings = () => {
       const { data, error } = await supabase
         .from("listings")
         .select("*")
+        .eq("status", "ACTIVE")
         .order("created_at", { ascending: false });
 
       if (error) throw error;

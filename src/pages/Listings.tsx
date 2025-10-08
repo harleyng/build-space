@@ -129,8 +129,11 @@ const Listings = () => {
       // Filter by bathrooms
       if (numBathrooms && numBathrooms !== "all" && listing.num_bathrooms !== parseInt(numBathrooms)) return false;
 
-      // Filter by district
-      if (district && district !== "all" && listing.district !== district) return false;
+      // Filter by district (from address JSON)
+      if (district && district !== "all") {
+        const listingDistrict = listing.address?.district || listing.custom_attributes?.old_district || "";
+        if (listingDistrict !== district) return false;
+      }
 
       // Filter by direction
       if (direction && direction !== "all") {
@@ -538,7 +541,7 @@ const Listings = () => {
                     image={listing.image_url || getFallbackImage(listing.property_type_slug)}
                     title={listing.title}
                     price={formatPrice(listing.price, listing.purpose)}
-                    location={listing.address || listing.district}
+                    location={listing.address?.district || listing.custom_attributes?.old_district || "Chưa cập nhật"}
                     bedrooms={listing.num_bedrooms || 0}
                     bathrooms={listing.num_bathrooms || 0}
                     area={Number(listing.area)}

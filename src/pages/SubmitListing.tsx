@@ -26,15 +26,19 @@ const SubmitListing = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
+  const [priceUnit, setPriceUnit] = useState<"TOTAL" | "PER_SQM" | "PER_MONTH">("TOTAL");
   const [area, setArea] = useState("");
+  const [province, setProvince] = useState("");
   const [district, setDistrict] = useState("");
-  const [address, setAddress] = useState("");
+  const [ward, setWard] = useState("");
+  const [street, setStreet] = useState("");
   const [purpose, setPurpose] = useState<"FOR_SALE" | "FOR_RENT">("FOR_SALE");
   const [propertyTypeSlug, setPropertyTypeSlug] = useState("");
   const [contactName, setContactName] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [projectName, setProjectName] = useState("");
+  const [prominentFeatures, setProminentFeatures] = useState("");
   
   // Dynamic attributes
   const [numBedrooms, setNumBedrooms] = useState("");
@@ -192,19 +196,47 @@ const SubmitListing = () => {
         return;
       }
 
-      // Create listing
+      // Create listing with new schema
       const { error } = await supabase.from("listings").insert({
         user_id: session.user.id,
         title: title.trim(),
         description: description.trim(),
         price: parseFloat(price),
+        price_unit: priceUnit,
         area: parseFloat(area),
-        district: district.trim(),
-        address: address.trim() || null,
+        address: {
+          province: province.trim() || null,
+          district: district.trim(),
+          ward: ward.trim() || null,
+          street: street.trim() || null,
+        },
+        contact_info: {
+          name: contactName.trim(),
+          phone: contactPhone.trim(),
+          email: contactEmail.trim(),
+        },
+        prominent_features: prominentFeatures ? prominentFeatures.split(',').map(f => f.trim()) : null,
         purpose,
         property_type_slug: propertyTypeSlug,
         image_url: imageUrl,
         project_name: projectName.trim() || null,
+        status: 'PENDING_APPROVAL',
+        // Dynamic attributes stored in attributes column
+        attributes: {
+          num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
+          num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
+          num_floors: numFloors ? parseInt(numFloors) : null,
+          floor_number: floorNumber ? parseInt(floorNumber) : null,
+          house_direction: houseDirection || null,
+          balcony_direction: balconyDirection || null,
+          land_direction: landDirection || null,
+          facade_width: facadeWidth ? parseFloat(facadeWidth) : null,
+          alley_width: alleyWidth ? parseFloat(alleyWidth) : null,
+          legal_status: legalStatus || null,
+          interior_status: interiorStatus || null,
+          land_type: landType || null,
+        },
+        // Keep backward compatibility for filtering
         num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
         num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
         num_floors: numFloors ? parseInt(numFloors) : null,
@@ -309,9 +341,9 @@ const SubmitListing = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Giá ({purpose === "FOR_RENT" ? "VND/tháng" : "VND"}) <span className="text-destructive">*</span></Label>
+                  <Label htmlFor="price">Giá <span className="text-destructive">*</span></Label>
                   <Input
                     id="price"
                     type="number"
@@ -321,6 +353,20 @@ const SubmitListing = () => {
                     required
                     min="0"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="priceUnit">Đơn vị tính giá <span className="text-destructive">*</span></Label>
+                  <Select value={priceUnit} onValueChange={(v: any) => setPriceUnit(v)} required>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="TOTAL">Tổng giá</SelectItem>
+                      <SelectItem value="PER_SQM">VND/m²</SelectItem>
+                      <SelectItem value="PER_MONTH">VND/tháng</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 <div className="space-y-2">
@@ -337,26 +383,66 @@ const SubmitListing = () => {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="district">Quận/Huyện <span className="text-destructive">*</span></Label>
-                <Input
-                  id="district"
-                  value={district}
-                  onChange={(e) => setDistrict(e.target.value)}
-                  placeholder="VD: Quận 1"
-                  required
-                  maxLength={100}
-                />
+              {/* Address Fields */}
+              <div className="space-y-4 p-4 border rounded-lg">
+                <h3 className="font-semibold">Địa chỉ</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="province">Tỉnh/Thành phố</Label>
+                    <Input
+                      id="province"
+                      value={province}
+                      onChange={(e) => setProvince(e.target.value)}
+                      placeholder="VD: TP. Hồ Chí Minh"
+                      maxLength={100}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="district">Quận/Huyện <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="district"
+                      value={district}
+                      onChange={(e) => setDistrict(e.target.value)}
+                      placeholder="VD: Quận 1"
+                      required
+                      maxLength={100}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="ward">Phường/Xã</Label>
+                    <Input
+                      id="ward"
+                      value={ward}
+                      onChange={(e) => setWard(e.target.value)}
+                      placeholder="VD: Phường Bến Nghé"
+                      maxLength={100}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="street">Số nhà, đường</Label>
+                    <Input
+                      id="street"
+                      value={street}
+                      onChange={(e) => setStreet(e.target.value)}
+                      placeholder="VD: 123 Nguyễn Huệ"
+                      maxLength={200}
+                    />
+                  </div>
+                </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address">Địa chỉ cụ thể</Label>
+                <Label htmlFor="prominentFeatures">Đặc điểm nổi bật</Label>
                 <Input
-                  id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="VD: 123 Nguyễn Huệ"
-                  maxLength={300}
+                  id="prominentFeatures"
+                  value={prominentFeatures}
+                  onChange={(e) => setProminentFeatures(e.target.value)}
+                  placeholder="VD: Gần trường học, View đẹp, An ninh 24/7 (cách nhau bởi dấu phẩy)"
+                  maxLength={500}
                 />
               </div>
 

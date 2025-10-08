@@ -17,16 +17,18 @@ export type Database = {
       listings: {
         Row: {
           access_road_width: number | null
-          address: string | null
+          address: Json | null
           alley_width: number | null
           area: number
+          attributes: Json | null
           balcony_direction: string | null
           ceiling_height: number | null
+          contact_info: Json | null
+          coordinates: Json | null
           created_at: string
           custom_attributes: Json | null
           depth: number | null
           description: string | null
-          district: string
           existing_structures: string | null
           expected_move_in_date: string | null
           facade_width: number | null
@@ -47,10 +49,13 @@ export type Database = {
           num_floors: number | null
           planning_info: string | null
           price: number
+          price_unit: Database["public"]["Enums"]["price_unit"]
           project_name: string | null
+          prominent_features: string[] | null
           property_type_slug: string
           purpose: string
           service_costs: number | null
+          status: Database["public"]["Enums"]["listing_status"]
           title: string
           transport_access: string | null
           updated_at: string
@@ -60,16 +65,18 @@ export type Database = {
         }
         Insert: {
           access_road_width?: number | null
-          address?: string | null
+          address?: Json | null
           alley_width?: number | null
           area: number
+          attributes?: Json | null
           balcony_direction?: string | null
           ceiling_height?: number | null
+          contact_info?: Json | null
+          coordinates?: Json | null
           created_at?: string
           custom_attributes?: Json | null
           depth?: number | null
           description?: string | null
-          district: string
           existing_structures?: string | null
           expected_move_in_date?: string | null
           facade_width?: number | null
@@ -90,10 +97,13 @@ export type Database = {
           num_floors?: number | null
           planning_info?: string | null
           price: number
+          price_unit?: Database["public"]["Enums"]["price_unit"]
           project_name?: string | null
+          prominent_features?: string[] | null
           property_type_slug: string
           purpose: string
           service_costs?: number | null
+          status?: Database["public"]["Enums"]["listing_status"]
           title: string
           transport_access?: string | null
           updated_at?: string
@@ -103,16 +113,18 @@ export type Database = {
         }
         Update: {
           access_road_width?: number | null
-          address?: string | null
+          address?: Json | null
           alley_width?: number | null
           area?: number
+          attributes?: Json | null
           balcony_direction?: string | null
           ceiling_height?: number | null
+          contact_info?: Json | null
+          coordinates?: Json | null
           created_at?: string
           custom_attributes?: Json | null
           depth?: number | null
           description?: string | null
-          district?: string
           existing_structures?: string | null
           expected_move_in_date?: string | null
           facade_width?: number | null
@@ -133,10 +145,13 @@ export type Database = {
           num_floors?: number | null
           planning_info?: string | null
           price?: number
+          price_unit?: Database["public"]["Enums"]["price_unit"]
           project_name?: string | null
+          prominent_features?: string[] | null
           property_type_slug?: string
           purpose?: string
           service_costs?: number | null
+          status?: Database["public"]["Enums"]["listing_status"]
           title?: string
           transport_access?: string | null
           updated_at?: string
@@ -249,6 +264,13 @@ export type Database = {
     }
     Enums: {
       app_role: "USER" | "ADMIN"
+      listing_status:
+        | "DRAFT"
+        | "PENDING_APPROVAL"
+        | "ACTIVE"
+        | "INACTIVE"
+        | "SOLD_RENTED"
+      price_unit: "TOTAL" | "PER_SQM" | "PER_MONTH"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -377,6 +399,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["USER", "ADMIN"],
+      listing_status: [
+        "DRAFT",
+        "PENDING_APPROVAL",
+        "ACTIVE",
+        "INACTIVE",
+        "SOLD_RENTED",
+      ],
+      price_unit: ["TOTAL", "PER_SQM", "PER_MONTH"],
     },
   },
 } as const
