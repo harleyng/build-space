@@ -14,6 +14,38 @@ export type Database = {
   }
   public: {
     Tables: {
+      listing_contacts: {
+        Row: {
+          contact_info: Json
+          created_at: string
+          id: string
+          listing_id: string
+          updated_at: string
+        }
+        Insert: {
+          contact_info: Json
+          created_at?: string
+          id?: string
+          listing_id: string
+          updated_at?: string
+        }
+        Update: {
+          contact_info?: Json
+          created_at?: string
+          id?: string
+          listing_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "listing_contacts_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: true
+            referencedRelation: "listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listings: {
         Row: {
           access_road_width: number | null

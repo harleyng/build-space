@@ -12,7 +12,8 @@ export interface Listing {
   status: string;
   address: any; // JSON
   coordinates: any; // JSON
-  contact_info: any; // JSON
+  // Note: contact_info moved to listing_contacts table for security
+  // Use useListingContact hook to fetch contact information
   area: number;
   num_bedrooms: number | null;
   num_bathrooms: number | null;

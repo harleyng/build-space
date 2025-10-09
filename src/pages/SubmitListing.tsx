@@ -197,7 +197,7 @@ const SubmitListing = () => {
       }
 
       // Create listing with new schema
-      const { error } = await supabase.from("listings").insert({
+      const { data: newListing, error: listingError } = await supabase.from("listings").insert({
         user_id: session.user.id,
         title: title.trim(),
         description: description.trim(),
@@ -209,11 +209,6 @@ const SubmitListing = () => {
           district: district.trim(),
           ward: ward.trim() || null,
           street: street.trim() || null,
-        },
-        contact_info: {
-          name: contactName.trim(),
-          phone: contactPhone.trim(),
-          email: contactEmail.trim(),
         },
         prominent_features: prominentFeatures ? prominentFeatures.split(',').map(f => f.trim()) : null,
         purpose,
@@ -249,9 +244,21 @@ const SubmitListing = () => {
         legal_status: legalStatus || null,
         interior_status: interiorStatus || null,
         land_type: landType || null,
+      }).select().single();
+
+      if (listingError) throw listingError;
+
+      // Store contact info in the secure listing_contacts table
+      const { error: contactError } = await supabase.from("listing_contacts").insert({
+        listing_id: newListing.id,
+        contact_info: {
+          name: contactName.trim(),
+          phone: contactPhone.trim(),
+          email: contactEmail.trim(),
+        },
       });
 
-      if (error) throw error;
+      if (contactError) throw contactError;
 
       toast({
         title: "Đăng tin thành công",
