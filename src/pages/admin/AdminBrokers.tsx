@@ -1,4 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminBrokers() {
   return (
@@ -10,23 +11,31 @@ export default function AdminBrokers() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Pending Verifications</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Pending Verifications
+            <Badge variant="secondary">Coming Soon</Badge>
+          </CardTitle>
           <CardDescription>Brokers awaiting KYC approval</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            List of brokers pending verification will be displayed here
+            Feature coming soon - Broker verification workflow
           </p>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>All Brokers</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            All Brokers
+            <Badge variant="secondary">Coming Soon</Badge>
+          </CardTitle>
           <CardDescription>View and manage all broker accounts</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">Broker list will be displayed here</p>
+          <p className="text-sm text-muted-foreground">
+            Feature coming soon - Complete broker management interface
+          </p>
         </CardContent>
       </Card>
     </div>

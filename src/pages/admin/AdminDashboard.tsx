@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Building, Users, Shield, Building2, Activity } from "lucide-react";
+import { Building, Shield, Building2, Activity } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminDashboard() {
   const stats = [
@@ -8,12 +9,6 @@ export default function AdminDashboard() {
       value: "1,234",
       change: "+18 pending approval",
       icon: Building,
-    },
-    {
-      title: "Total Users",
-      value: "5,678",
-      change: "+42 this week",
-      icon: Users,
     },
     {
       title: "Brokers",
@@ -36,7 +31,7 @@ export default function AdminDashboard() {
         <p className="text-muted-foreground">Platform overview and management</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-3">
         {stats.map((stat) => {
           const Icon = stat.icon;
           return (
@@ -60,21 +55,29 @@ export default function AdminDashboard() {
             <CardTitle className="flex items-center gap-2">
               <Activity className="h-5 w-5" />
               Recent Activity
+              <Badge variant="secondary" className="ml-auto">Coming Soon</Badge>
             </CardTitle>
             <CardDescription>Latest platform activities</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Activity feed coming soon</p>
+            <p className="text-sm text-muted-foreground">
+              Feature coming soon - Real-time activity tracking
+            </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Pending Actions</CardTitle>
+            <CardTitle className="flex items-center gap-2">
+              Pending Actions
+              <Badge variant="secondary" className="ml-auto">Coming Soon</Badge>
+            </CardTitle>
             <CardDescription>Items requiring your attention</CardDescription>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground">Pending items will be displayed here</p>
+            <p className="text-sm text-muted-foreground">
+              Feature coming soon - Action items dashboard
+            </p>
           </CardContent>
         </Card>
       </div>
