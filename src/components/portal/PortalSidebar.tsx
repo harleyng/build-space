@@ -13,12 +13,12 @@ import {
 import { NavLink } from "react-router-dom";
 
 const menuItems = [
-  { title: "Dashboard", path: "/portal/dashboard", icon: Home },
-  { title: "Property Management", path: "/portal/properties", icon: Building },
-  { title: "Customer Management", path: "/portal/customers", icon: Users },
-  { title: "Marketing", path: "/portal/marketing", icon: Megaphone },
-  { title: "Organization", path: "/portal/organization", icon: Building2 },
-  { title: "Profile", path: "/portal/profile", icon: User },
+  { title: "Dashboard", path: "/portal/dashboard", icon: Home, description: "Tổng quan" },
+  { title: "Hồ sơ cá nhân", path: "/portal/profile", icon: User, description: "Xác thực và quản lý" },
+  { title: "Quản lý tin đăng", path: "/portal/properties", icon: Building, description: "CRUD và kiểm soát" },
+  { title: "Quản lý khách hàng", path: "/portal/customers", icon: Users, description: "CRM" },
+  { title: "Marketing", path: "/portal/marketing", icon: Megaphone, description: "Chiến dịch" },
+  { title: "Tổ chức", path: "/portal/organization", icon: Building2, description: "Quản lý văn phòng" },
 ];
 
 export const PortalSidebar = () => {

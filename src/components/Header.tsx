@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell, ChevronDown, Home, Building, Users, Megaphone } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -109,15 +109,58 @@ export const Header = () => {
                     <span className="text-sm font-medium">{session.user.email?.split('@')[0] || 'user'}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {isBroker && <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
-                      <Building2 className="mr-2 h-4 w-4" />
-                      Broker Portal
-                    </DropdownMenuItem>}
-                  {!isBroker && !isAdmin && <DropdownMenuItem onClick={() => navigate("/register-agent")}>
+                <DropdownMenuContent align="end" className="w-64">
+                  {isBroker ? (
+                    <>
+                      <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
+                        <Home className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Dashboard</div>
+                          <div className="text-xs text-muted-foreground">Tổng quan và truy cập nhanh</div>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/portal/profile")}>
+                        <User className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Hồ sơ cá nhân</div>
+                          <div className="text-xs text-muted-foreground">Xác thực và quản lý hồ sơ</div>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/portal/properties")}>
+                        <Building className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Quản lý tin đăng</div>
+                          <div className="text-xs text-muted-foreground">CRUD và kiểm soát truy cập</div>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/portal/customers")}>
+                        <Users className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Quản lý khách hàng</div>
+                          <div className="text-xs text-muted-foreground">CRM với chia sẻ dữ liệu</div>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/portal/marketing")}>
+                        <Megaphone className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Marketing</div>
+                          <div className="text-xs text-muted-foreground">Công cụ và quản lý chiến dịch</div>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate("/portal/organization")}>
+                        <Building2 className="mr-2 h-4 w-4" />
+                        <div>
+                          <div className="font-medium">Tổ chức</div>
+                          <div className="text-xs text-muted-foreground">Quản lý văn phòng</div>
+                        </div>
+                      </DropdownMenuItem>
+                    </>
+                  ) : !isAdmin ? (
+                    <DropdownMenuItem onClick={() => navigate("/register-agent")}>
                       <User className="mr-2 h-4 w-4" />
                       Đăng ký môi giới
-                    </DropdownMenuItem>}
+                    </DropdownMenuItem>
+                  ) : null}
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Đăng xuất
