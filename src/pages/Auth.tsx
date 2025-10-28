@@ -23,7 +23,6 @@ const Auth = () => {
   // Signup form state
   const [signupEmail, setSignupEmail] = useState("");
   const [signupPassword, setSignupPassword] = useState("");
-  const [signupName, setSignupName] = useState("");
 
   useEffect(() => {
     // Check for existing session
@@ -104,9 +103,6 @@ const Auth = () => {
         password: signupPassword,
         options: {
           emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            name: signupName,
-          },
         },
       });
 
@@ -120,7 +116,6 @@ const Auth = () => {
       // Clear form
       setSignupEmail("");
       setSignupPassword("");
-      setSignupName("");
     } catch (error: any) {
       toast({
         title: "Lỗi đăng ký",
@@ -187,17 +182,6 @@ const Auth = () => {
 
             <TabsContent value="signup">
               <form onSubmit={handleSignup} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Tên người dùng</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    placeholder="Nguyễn Văn A"
-                    value={signupName}
-                    onChange={(e) => setSignupName(e.target.value)}
-                    disabled={loading}
-                  />
-                </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
                   <Input
