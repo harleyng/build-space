@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell, ChevronDown, LayoutDashboard, ClipboardList, Crown, Users, Briefcase, UserCircle, Lock, Star, CreditCard } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -72,17 +72,17 @@ export const Header = () => {
             
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8 h-16">
-            <Link to="/listings?type=ban" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('ban') ? 'border-b-2 border-primary' : ''}`}>
+          <nav className="hidden md:flex items-center gap-8">
+            <Link to="/listings?type=ban" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('ban') ? 'border-b-2 border-primary' : ''}`}>
               Nhà đất bán
             </Link>
-            <Link to="/listings?type=thue" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('thue') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/listings?type=thue" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('thue') ? 'border-b-2 border-primary' : ''}`}>
               Nhà đất cho thuê
             </Link>
-            <Link to="/listings?type=duan" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('duan') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/listings?type=duan" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('duan') ? 'border-b-2 border-primary' : ''}`}>
               Dự án
             </Link>
-            <Link to="/directory" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/directory') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/directory" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/directory') ? 'border-b-2 border-primary' : ''}`}>
               Danh bạ
             </Link>
           </nav>
@@ -90,9 +90,7 @@ export const Header = () => {
 
         <div className="flex items-center gap-4">
           {session ? <>
-              <Link to="#" className="hidden lg:inline-flex text-sm font-medium text-foreground hover:text-primary transition-colors">
-                Tải ứng dụng
-              </Link>
+              
               <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
                 <Heart className="h-5 w-5" />
               </Button>
@@ -106,71 +104,24 @@ export const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="hidden sm:inline-flex gap-2">
                     <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
-                      {session.user.email?.charAt(0).toUpperCase() || 'U'}
+                      U
                     </div>
                     <span className="text-sm font-medium">{session.user.email?.split('@')[0] || 'user'}</span>
-                    <ChevronDown className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  {isBroker ? (
-                    <>
-                      <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
-                        <LayoutDashboard className="mr-2 h-4 w-4" />
-                        Tổng quan
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/properties")}>
-                        <ClipboardList className="mr-2 h-4 w-4" />
-                        Quản lý tin đăng
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Crown className="mr-2 h-4 w-4" />
-                        Gói hội viên
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/customers")}>
-                        <Users className="mr-2 h-4 w-4" />
-                        Quản lý khách hàng
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/marketing")}>
-                        <Briefcase className="mr-2 h-4 w-4" />
-                        Quản lý tài trợ
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/profile")}>
-                        <UserCircle className="mr-2 h-4 w-4" />
-                        Thay đổi thông tin cá nhân
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Lock className="mr-2 h-4 w-4" />
-                        Thay đổi mật khẩu
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Star className="mr-2 h-4 w-4" />
-                        <span>Mời giới chuyên nghiệp</span>
-                        <Badge className="ml-auto bg-destructive text-destructive-foreground text-xs">Mới</Badge>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <CreditCard className="mr-2 h-4 w-4" />
-                        Nạp tiền
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Đăng xuất
-                      </DropdownMenuItem>
-                    </>
-                  ) : (
-                    <>
-                      {!isAdmin && (
-                        <DropdownMenuItem onClick={() => navigate("/register-agent")}>
-                          <User className="mr-2 h-4 w-4" />
-                          Đăng ký môi giới
-                        </DropdownMenuItem>
-                      )}
-                      <DropdownMenuItem onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Đăng xuất
-                      </DropdownMenuItem>
-                    </>
-                  )}
+                <DropdownMenuContent align="end">
+                  {isBroker && <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Broker Portal
+                    </DropdownMenuItem>}
+                  {!isBroker && !isAdmin && <DropdownMenuItem onClick={() => navigate("/register-agent")}>
+                      <User className="mr-2 h-4 w-4" />
+                      Đăng ký môi giới
+                    </DropdownMenuItem>}
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Đăng xuất
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
               <Button onClick={() => navigate("/submit-listing")} className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground">
