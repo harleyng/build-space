@@ -44,6 +44,11 @@ const SubmitListing = () => {
   const [projectName, setProjectName] = useState("");
   const [prominentFeatures, setProminentFeatures] = useState("");
   
+  // Organization ownership
+  const [ownershipType, setOwnershipType] = useState<"personal" | "organization">("personal");
+  const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
+  const [userOrganizations, setUserOrganizations] = useState<any[]>([]);
+  
   // Dynamic attributes
   const [numBedrooms, setNumBedrooms] = useState("");
   const [numBathrooms, setNumBathrooms] = useState("");

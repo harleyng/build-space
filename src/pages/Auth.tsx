@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,8 @@ import { Session } from "@supabase/supabase-js";
 
 const Auth = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get("invite");
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [session, setSession] = useState<Session | null>(null);
@@ -98,7 +100,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data: authData, error } = await supabase.auth.signUp({
         email: signupEmail,
         password: signupPassword,
         options: {
@@ -107,6 +109,31 @@ const Auth = () => {
       });
 
       if (error) throw error;
+
+      // If there's an invite token, link the user to the organization
+      if (inviteToken && authData.user) {
+        const { error: inviteError } = await supabase
+          .from("organization_memberships")
+          .update({ 
+            user_id: authData.user.id,
+            invite_email: null 
+          })
+          .eq("invite_token", inviteToken)
+          .is("user_id", null);
+
+        if (inviteError) {
+          console.error("Error linking invite:", inviteError);
+        } else {
+          toast({
+            title: "Đăng ký thành công",
+            description: "Bạn đã được thêm vào tổ chức! Vui lòng kiểm tra lời mời trong portal.",
+          });
+          // Redirect to invites page
+          setTimeout(() => navigate("/portal/organization/invites"), 2000);
+          setLoading(false);
+          return;
+        }
+      }
 
       toast({
         title: "Đăng ký thành công",
