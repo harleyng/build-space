@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { Session } from "@supabase/supabase-js";
 
 export const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -68,23 +69,54 @@ export const Header = () => {
     navigate("/");
   };
 
+  const isActive = (path: string) => location.pathname === path;
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <nav className="hidden md:flex items-center gap-8">
-          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Nhà đất bán
+        <div className="flex items-center gap-8">
+          <Link to="/" className="flex items-center gap-2 font-bold text-xl text-foreground">
+            <div className="p-2 rounded-lg bg-primary">
+              <Building2 className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <span className="hidden sm:inline">BĐS Marketplace</span>
           </Link>
-          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Nhà đất cho thuê
-          </Link>
-          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Dự án
-          </Link>
-          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors border-b-2 border-primary pb-5">
-            Danh bạ
-          </Link>
-        </nav>
+
+          <nav className="hidden md:flex items-center gap-8">
+            <Link 
+              to="/listings?type=ban" 
+              className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${
+                isActive('/listings') && location.search.includes('ban') ? 'border-b-2 border-primary' : ''
+              }`}
+            >
+              Nhà đất bán
+            </Link>
+            <Link 
+              to="/listings?type=thue" 
+              className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${
+                isActive('/listings') && location.search.includes('thue') ? 'border-b-2 border-primary' : ''
+              }`}
+            >
+              Nhà đất cho thuê
+            </Link>
+            <Link 
+              to="/listings?type=duan" 
+              className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${
+                isActive('/listings') && location.search.includes('duan') ? 'border-b-2 border-primary' : ''
+              }`}
+            >
+              Dự án
+            </Link>
+            <Link 
+              to="/directory" 
+              className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${
+                isActive('/directory') ? 'border-b-2 border-primary' : ''
+              }`}
+            >
+              Danh bạ
+            </Link>
+          </nav>
+        </div>
 
         <div className="flex items-center gap-4">
           {session ? (
