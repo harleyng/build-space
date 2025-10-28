@@ -109,50 +109,32 @@ export const Header = () => {
                     <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-64">
+                <DropdownMenuContent align="end" className="w-56">
                   {!isAdmin ? (
                     <>
                       <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
                         <Home className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Dashboard</div>
-                          <div className="text-xs text-muted-foreground">Tổng quan và truy cập nhanh</div>
-                        </div>
+                        Dashboard
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/portal/profile")}>
                         <User className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Hồ sơ cá nhân</div>
-                          <div className="text-xs text-muted-foreground">Xác thực và quản lý hồ sơ</div>
-                        </div>
+                        Hồ sơ cá nhân
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/portal/properties")}>
                         <Building className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Quản lý tin đăng</div>
-                          <div className="text-xs text-muted-foreground">CRUD và kiểm soát truy cập</div>
-                        </div>
+                        Quản lý tin đăng
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/portal/customers")}>
                         <Users className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Quản lý khách hàng</div>
-                          <div className="text-xs text-muted-foreground">CRM với chia sẻ dữ liệu</div>
-                        </div>
+                        Quản lý khách hàng
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/portal/marketing")}>
                         <Megaphone className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Marketing</div>
-                          <div className="text-xs text-muted-foreground">Công cụ và quản lý chiến dịch</div>
-                        </div>
+                        Marketing
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/portal/organization")}>
                         <Building2 className="mr-2 h-4 w-4" />
-                        <div>
-                          <div className="font-medium">Tổ chức</div>
-                          <div className="text-xs text-muted-foreground">Quản lý văn phòng</div>
-                        </div>
+                        Tổ chức
                       </DropdownMenuItem>
                     </>
                   ) : null}
