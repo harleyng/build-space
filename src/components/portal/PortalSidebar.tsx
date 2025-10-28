@@ -1,4 +1,4 @@
-import { Home, Building, Users, Megaphone, Building2, User } from "lucide-react";
+import { Home, Building, Users, Megaphone, Building2, User, ArrowLeft } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,6 +11,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { NavLink } from "react-router-dom";
+import { Separator } from "@/components/ui/separator";
 
 const menuItems = [
   { title: "Dashboard", path: "/portal/dashboard", icon: Home, description: "Tổng quan" },
@@ -50,6 +51,23 @@ export const PortalSidebar = () => {
                   </SidebarMenuItem>
                 );
               })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="my-2" />
+
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild>
+                  <NavLink to="/" className="text-muted-foreground hover:text-foreground">
+                    <ArrowLeft className="h-4 w-4" />
+                    {!collapsed && <span>Quay về Marketplace</span>}
+                  </NavLink>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
