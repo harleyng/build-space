@@ -72,17 +72,17 @@ export const Header = () => {
             
           </Link>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <Link to="/listings?type=ban" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('ban') ? 'border-b-2 border-primary' : ''}`}>
+          <nav className="hidden md:flex items-center gap-8 h-16">
+            <Link to="/listings?type=ban" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('ban') ? 'border-b-2 border-primary' : ''}`}>
               Nhà đất bán
             </Link>
-            <Link to="/listings?type=thue" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('thue') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/listings?type=thue" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('thue') ? 'border-b-2 border-primary' : ''}`}>
               Nhà đất cho thuê
             </Link>
-            <Link to="/listings?type=duan" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/listings') && location.search.includes('duan') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/listings?type=duan" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/listings') && location.search.includes('duan') ? 'border-b-2 border-primary' : ''}`}>
               Dự án
             </Link>
-            <Link to="/directory" className={`text-sm font-medium text-foreground hover:text-primary transition-colors pb-5 ${isActive('/directory') ? 'border-b-2 border-primary' : ''}`}>
+            <Link to="/directory" className={`text-sm font-medium text-foreground hover:text-primary transition-colors h-full flex items-center ${isActive('/directory') ? 'border-b-2 border-primary' : ''}`}>
               Danh bạ
             </Link>
           </nav>
