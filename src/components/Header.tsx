@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield, Users } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -22,36 +22,40 @@ export const Header = () => {
   const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isBroker, setIsBroker] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       if (session) {
-        checkAdminStatus(session.user.id);
+        checkUserRoles(session.user.id);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setSession(session);
       if (session) {
-        checkAdminStatus(session.user.id);
+        checkUserRoles(session.user.id);
       } else {
         setIsAdmin(false);
+        setIsBroker(false);
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const checkAdminStatus = async (userId: string) => {
+  const checkUserRoles = async (userId: string) => {
     const { data } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", userId)
-      .eq("role", "ADMIN")
-      .maybeSingle();
+      .eq("user_id", userId);
     
-    setIsAdmin(!!data);
+    if (data) {
+      const roles = data.map(r => r.role as string);
+      setIsAdmin(roles.includes("ADMIN"));
+      setIsBroker(roles.includes("BROKER") || roles.includes("ORGANIZATION"));
+    }
   };
 
   const handleLogout = async () => {
@@ -101,33 +105,23 @@ export const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
-                    <Building2 className="mr-2 h-4 w-4" />
-                    Broker Portal
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/my-listings")}>
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Tin đăng của tôi
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/register-agent")}>
-                    <User className="mr-2 h-4 w-4" />
-                    Đăng ký môi giới
-                  </DropdownMenuItem>
+                  {isBroker && (
+                    <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
+                      <Building2 className="mr-2 h-4 w-4" />
+                      Broker Portal
+                    </DropdownMenuItem>
+                  )}
                   {isAdmin && (
-                    <>
-                      <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
-                        <Shield className="mr-2 h-4 w-4" />
-                        Admin Portal
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/admin/listings")}>
-                        <Shield className="mr-2 h-4 w-4" />
-                        Quản trị tin đăng
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/admin/users")}>
-                        <Users className="mr-2 h-4 w-4" />
-                        Quản trị người dùng
-                      </DropdownMenuItem>
-                    </>
+                    <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
+                      <Shield className="mr-2 h-4 w-4" />
+                      Admin Portal
+                    </DropdownMenuItem>
+                  )}
+                  {!isBroker && !isAdmin && (
+                    <DropdownMenuItem onClick={() => navigate("/register-agent")}>
+                      <User className="mr-2 h-4 w-4" />
+                      Đăng ký môi giới
+                    </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
