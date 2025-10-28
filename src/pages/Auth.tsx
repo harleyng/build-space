@@ -50,12 +50,34 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: authData, error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password: loginPassword,
       });
 
       if (error) throw error;
+
+      // Check if user has ADMIN role - block admin from marketplace
+      if (authData.user) {
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", authData.user.id)
+          .eq("role", "ADMIN")
+          .maybeSingle();
+
+        if (roleData) {
+          // User is ADMIN - logout and show error
+          await supabase.auth.signOut();
+          toast({
+            title: "Truy cập bị từ chối",
+            description: "Tài khoản admin không thể đăng nhập vào marketplace. Vui lòng sử dụng trang admin riêng.",
+            variant: "destructive",
+          });
+          setLoading(false);
+          return;
+        }
+      }
 
       toast({
         title: "Đăng nhập thành công",

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,6 +21,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [isBroker, setIsBroker] = useState(false);
 
   useEffect(() => {
@@ -36,6 +37,7 @@ export const Header = () => {
       if (session) {
         checkUserRoles(session.user.id);
       } else {
+        setIsAdmin(false);
         setIsBroker(false);
       }
     });
@@ -51,6 +53,7 @@ export const Header = () => {
     
     if (data) {
       const roles = data.map(r => r.role as string);
+      setIsAdmin(roles.includes("ADMIN"));
       setIsBroker(roles.includes("BROKER") || roles.includes("ORGANIZATION"));
     }
   };
@@ -108,7 +111,7 @@ export const Header = () => {
                       Broker Portal
                     </DropdownMenuItem>
                   )}
-                  {!isBroker && (
+                  {!isBroker && !isAdmin && (
                     <DropdownMenuItem onClick={() => navigate("/register-agent")}>
                       <User className="mr-2 h-4 w-4" />
                       Đăng ký môi giới

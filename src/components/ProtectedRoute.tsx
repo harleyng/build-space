@@ -67,6 +67,13 @@ export const ProtectedRoute = ({ roles, adminOnly }: ProtectedRouteProps) => {
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
+  // Block ADMIN users from accessing non-admin routes
+  const isAdmin = userRoles.includes("ADMIN");
+  if (!adminOnly && isAdmin) {
+    // ADMIN trying to access marketplace/broker portal - redirect to admin login
+    return <Navigate to="/admin/login" replace />;
+  }
+
   if (roles && roles.length > 0) {
     const hasRequiredRole = roles.some((role) => userRoles.includes(role));
     if (!hasRequiredRole) {
