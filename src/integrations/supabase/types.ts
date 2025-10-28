@@ -207,7 +207,6 @@ export type Database = {
           created_at: string
           email: string
           id: string
-          is_agent: boolean | null
           kyc_status: Database["public"]["Enums"]["kyc_status"]
           name: string | null
           rejection_reason: string | null
@@ -218,7 +217,6 @@ export type Database = {
           created_at?: string
           email: string
           id: string
-          is_agent?: boolean | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           name?: string | null
           rejection_reason?: string | null
@@ -229,7 +227,6 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
-          is_agent?: boolean | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           name?: string | null
           rejection_reason?: string | null

@@ -22,7 +22,6 @@ interface AgentInfo {
 }
 
 interface Profile {
-  is_agent: boolean | null;
   kyc_status: "NOT_APPLIED" | "PENDING_KYC" | "APPROVED" | "REJECTED";
   agent_info: any;
   rejection_reason: string | null;
@@ -69,7 +68,7 @@ export default function AgentRegistration() {
     try {
       const { data, error } = await supabase
         .from("profiles")
-        .select("is_agent, kyc_status, agent_info, rejection_reason")
+        .select("kyc_status, agent_info, rejection_reason")
         .eq("id", userId)
         .single();
 
@@ -164,7 +163,6 @@ export default function AgentRegistration() {
       const { error } = await supabase
         .from("profiles")
         .update({
-          is_agent: true,
           kyc_status: "PENDING_KYC" as const,
           agent_info: updatedAgentInfo as any,
           rejection_reason: null,

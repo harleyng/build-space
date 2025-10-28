@@ -16,7 +16,7 @@ export const Header = () => {
   } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [isBroker, setIsBroker] = useState(false);
+  
   useEffect(() => {
     supabase.auth.getSession().then(({
       data: {
@@ -38,11 +38,11 @@ export const Header = () => {
         checkUserRoles(session.user.id);
       } else {
         setIsAdmin(false);
-        setIsBroker(false);
       }
     });
     return () => subscription.unsubscribe();
   }, []);
+  
   const checkUserRoles = async (userId: string) => {
     const {
       data
@@ -50,7 +50,6 @@ export const Header = () => {
     if (data) {
       const roles = data.map(r => r.role as string);
       setIsAdmin(roles.includes("ADMIN"));
-      setIsBroker(roles.includes("BROKER") || roles.includes("ORGANIZATION"));
     }
   };
   const handleLogout = async () => {
@@ -107,10 +106,11 @@ export const Header = () => {
                       U
                     </div>
                     <span className="text-sm font-medium">{session.user.email?.split('@')[0] || 'user'}</span>
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64">
-                  {isBroker ? (
+                  {!isAdmin ? (
                     <>
                       <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
                         <Home className="mr-2 h-4 w-4" />
@@ -155,11 +155,6 @@ export const Header = () => {
                         </div>
                       </DropdownMenuItem>
                     </>
-                  ) : !isAdmin ? (
-                    <DropdownMenuItem onClick={() => navigate("/register-agent")}>
-                      <User className="mr-2 h-4 w-4" />
-                      Đăng ký môi giới
-                    </DropdownMenuItem>
                   ) : null}
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />

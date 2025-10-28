@@ -49,8 +49,8 @@ const App = () => (
           <Route path="/my-listings" element={<MyListings />} />
           <Route path="/register-agent" element={<AgentRegistration />} />
           
-          {/* Broker/Organization Portal */}
-          <Route element={<ProtectedRoute roles={['BROKER', 'ORGANIZATION']} />}>
+          {/* Broker Portal - All authenticated users can access */}
+          <Route element={<ProtectedRoute />}>
             <Route path="/portal" element={<PortalLayout />}>
               <Route index element={<Navigate to="/portal/dashboard" replace />} />
               <Route path="dashboard" element={<PortalDashboard />} />

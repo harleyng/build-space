@@ -22,7 +22,6 @@ interface UserProfile {
   id: string;
   email: string;
   name: string | null;
-  is_agent: boolean | null;
   kyc_status: "NOT_APPLIED" | "PENDING_KYC" | "APPROVED" | "REJECTED";
   agent_info: any;
   rejection_reason: string | null;
@@ -100,32 +99,19 @@ export default function AdminBrokers() {
       setSubmitting(true);
       
       // Update profile
-      const { error: profileError } = await supabase
+      const { error } = await supabase
         .from("profiles")
         .update({
           kyc_status: "APPROVED",
-          is_agent: true,
           rejection_reason: null,
         })
         .eq("id", userId);
 
-      if (profileError) throw profileError;
-
-      // Assign BROKER role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: userId, role: "BROKER" as any })
-        .select()
-        .maybeSingle();
-
-      // Ignore unique constraint error (role already exists)
-      if (roleError && !roleError.message.includes("duplicate key")) {
-        throw roleError;
-      }
+      if (error) throw error;
 
       toast({
         title: "Thành công",
-        description: "Đã duyệt hồ sơ môi giới và cấp quyền BROKER",
+        description: "Đã duyệt hồ sơ môi giới",
       });
 
       loadUsers();
@@ -157,7 +143,6 @@ export default function AdminBrokers() {
         .from("profiles")
         .update({
           kyc_status: "REJECTED",
-          is_agent: false,
           rejection_reason: rejectionReason,
         })
         .eq("id", selectedUserId);
@@ -190,29 +175,19 @@ export default function AdminBrokers() {
       setSubmitting(true);
       
       // Update profile
-      const { error: profileError } = await supabase
+      const { error } = await supabase
         .from("profiles")
         .update({
           kyc_status: "NOT_APPLIED",
-          is_agent: false,
           rejection_reason: null,
         })
         .eq("id", userId);
 
-      if (profileError) throw profileError;
-
-      // Remove BROKER role
-      const { error: roleError } = await supabase
-        .from("user_roles")
-        .delete()
-        .eq("user_id", userId)
-        .eq("role", "BROKER" as any);
-
-      if (roleError) throw roleError;
+      if (error) throw error;
 
       toast({
         title: "Thành công",
-        description: "Đã hủy duyệt hồ sơ môi giới và thu hồi quyền BROKER",
+        description: "Đã hủy duyệt hồ sơ môi giới",
       });
 
       loadUsers();
@@ -251,12 +226,6 @@ export default function AdminBrokers() {
     const roleNames = roles.map(r => r.role);
     if (roleNames.includes("ADMIN")) {
       return <Badge variant="destructive">ADMIN</Badge>;
-    }
-    if (roleNames.includes("BROKER")) {
-      return <Badge className="bg-blue-100 text-blue-800 border-blue-200">BROKER</Badge>;
-    }
-    if (roleNames.includes("ORGANIZATION")) {
-      return <Badge className="bg-purple-100 text-purple-800 border-purple-200">ORGANIZATION</Badge>;
     }
     return <Badge variant="secondary">USER</Badge>;
   };
@@ -345,17 +314,13 @@ export default function AdminBrokers() {
                 <div className="space-y-3">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="font-medium">Là môi giới:</span>{" "}
-                      {user.is_agent ? "Có" : "Không"}
-                    </div>
-                    <div>
                       <span className="font-medium">Ngày tạo:</span>{" "}
                       {new Date(user.created_at).toLocaleDateString("vi-VN")}
                     </div>
                   </div>
 
                   {/* Agent Info */}
-                  {user.is_agent && user.agent_info && typeof user.agent_info === 'object' && (
+                  {user.agent_info && typeof user.agent_info === 'object' && (
                     <div className="border-t pt-3 mt-3">
                       <h4 className="font-medium mb-2">Thông tin môi giới:</h4>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">

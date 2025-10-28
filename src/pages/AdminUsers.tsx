@@ -26,7 +26,6 @@ interface UserProfile {
   id: string;
   email: string;
   name: string | null;
-  is_agent: boolean | null;
   kyc_status: "NOT_APPLIED" | "PENDING_KYC" | "APPROVED" | "REJECTED";
   agent_info: any;
   rejection_reason: string | null;
@@ -110,7 +109,6 @@ export default function AdminUsers() {
         .from("profiles")
         .update({
           kyc_status: "APPROVED",
-          is_agent: true,
           rejection_reason: null,
         })
         .eq("id", userId);
@@ -151,7 +149,6 @@ export default function AdminUsers() {
         .from("profiles")
         .update({
           kyc_status: "REJECTED",
-          is_agent: false,
           rejection_reason: rejectionReason,
         })
         .eq("id", selectedUserId);
@@ -186,7 +183,6 @@ export default function AdminUsers() {
         .from("profiles")
         .update({
           kyc_status: "NOT_APPLIED",
-          is_agent: false,
           rejection_reason: null,
         })
         .eq("id", userId);
@@ -334,17 +330,13 @@ export default function AdminUsers() {
                     <div className="space-y-3">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                         <div>
-                          <span className="font-medium">Là môi giới:</span>{" "}
-                          {user.is_agent ? "Có" : "Không"}
-                        </div>
-                        <div>
                           <span className="font-medium">Ngày tạo:</span>{" "}
                           {new Date(user.created_at).toLocaleDateString("vi-VN")}
                         </div>
                       </div>
 
                       {/* Agent Info */}
-                      {user.is_agent && user.agent_info && typeof user.agent_info === 'object' && (
+                      {user.agent_info && typeof user.agent_info === 'object' && (
                         <div className="border-t pt-3 mt-3">
                           <h4 className="font-medium mb-2">Thông tin môi giới:</h4>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
