@@ -6,9 +6,10 @@ import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
   roles?: string[];
+  adminOnly?: boolean;
 }
 
-export const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ roles, adminOnly }: ProtectedRouteProps) => {
   const [session, setSession] = useState<Session | null>(null);
   const [userRoles, setUserRoles] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -58,12 +59,22 @@ export const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
   }
 
   if (!session) {
+    // Admin routes redirect to admin login
+    if (adminOnly) {
+      return <Navigate to="/admin/login" replace />;
+    }
+    // Regular routes redirect to marketplace auth
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   if (roles && roles.length > 0) {
     const hasRequiredRole = roles.some((role) => userRoles.includes(role));
     if (!hasRequiredRole) {
+      // Admin routes redirect to admin login if no admin role
+      if (adminOnly) {
+        return <Navigate to="/admin/login" replace />;
+      }
+      // Regular routes redirect to home
       return <Navigate to="/" replace />;
     }
   }

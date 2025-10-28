@@ -111,12 +111,6 @@ export const Header = () => {
                       Broker Portal
                     </DropdownMenuItem>
                   )}
-                  {isAdmin && (
-                    <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
-                      <Shield className="mr-2 h-4 w-4" />
-                      Admin Portal
-                    </DropdownMenuItem>
-                  )}
                   {!isBroker && !isAdmin && (
                     <DropdownMenuItem onClick={() => navigate("/register-agent")}>
                       <User className="mr-2 h-4 w-4" />

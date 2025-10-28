@@ -25,6 +25,7 @@ import PortalProfile from "./pages/portal/PortalProfile";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBrokers from "./pages/admin/AdminBrokers";
 import AdminOrganizations from "./pages/admin/AdminOrganizations";
+import AdminLogin from "./pages/admin/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -63,8 +64,9 @@ const App = () => (
             </Route>
           </Route>
           
-          {/* Admin Portal */}
-          <Route element={<ProtectedRoute roles={['ADMIN']} />}>
+          {/* Admin Portal - Separate Authentication System */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route element={<ProtectedRoute roles={['ADMIN']} adminOnly />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
