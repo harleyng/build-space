@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Building2, Menu, User, Heart, PlusCircle, LogOut, Shield } from "lucide-react";
+import { Building2, Menu, User, Heart, PlusCircle, LogOut, Bell } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -70,38 +71,43 @@ export const Header = () => {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 font-bold text-xl text-foreground">
-          <div className="p-2 rounded-lg bg-primary">
-            <Building2 className="h-6 w-6 text-primary-foreground" />
-          </div>
-          <span className="hidden sm:inline">BĐS Marketplace</span>
-        </Link>
-
-        <nav className="hidden md:flex items-center gap-6">
-          <Link to="/" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Trang chủ
+        <nav className="hidden md:flex items-center gap-8">
+          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
+            Nhà đất bán
           </Link>
           <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Mua bán
-          </Link>
-          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
-            Cho thuê
+            Nhà đất cho thuê
           </Link>
           <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors">
             Dự án
           </Link>
+          <Link to="/listings" className="text-sm font-medium text-foreground hover:text-primary transition-colors border-b-2 border-primary pb-5">
+            Danh bạ
+          </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {session ? (
             <>
+              <Link to="#" className="hidden lg:inline-flex text-sm font-medium text-foreground hover:text-primary transition-colors">
+                Tải ứng dụng
+              </Link>
               <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
                 <Heart className="h-5 w-5" />
               </Button>
+              <Button variant="ghost" size="icon" className="hidden sm:inline-flex relative">
+                <Bell className="h-5 w-5" />
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-destructive text-destructive-foreground text-xs">
+                  2
+                </Badge>
+              </Button>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
-                    <User className="h-5 w-5" />
+                  <Button variant="ghost" className="hidden sm:inline-flex gap-2">
+                    <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold">
+                      U
+                    </div>
+                    <span className="text-sm font-medium">{session.user.email?.split('@')[0] || 'user'}</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -132,13 +138,18 @@ export const Header = () => {
               </Button>
             </>
           ) : (
-            <Button 
-              onClick={() => navigate("/auth")}
-              className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground"
-            >
-              <User className="mr-2 h-4 w-4" />
-              Đăng nhập
-            </Button>
+            <>
+              <Link to="#" className="hidden lg:inline-flex text-sm font-medium text-foreground hover:text-primary transition-colors">
+                Tải ứng dụng
+              </Link>
+              <Button 
+                onClick={() => navigate("/auth")}
+                className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground"
+              >
+                <User className="mr-2 h-4 w-4" />
+                Đăng nhập
+              </Button>
+            </>
           )}
 
           <Sheet>
