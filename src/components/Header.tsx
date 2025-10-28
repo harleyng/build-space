@@ -101,6 +101,10 @@ export const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
+                    <Building2 className="mr-2 h-4 w-4" />
+                    Broker Portal
+                  </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate("/my-listings")}>
                     <PlusCircle className="mr-2 h-4 w-4" />
                     Tin đăng của tôi
@@ -111,6 +115,10 @@ export const Header = () => {
                   </DropdownMenuItem>
                   {isAdmin && (
                     <>
+                      <DropdownMenuItem onClick={() => navigate("/admin/dashboard")}>
+                        <Shield className="mr-2 h-4 w-4" />
+                        Admin Portal
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate("/admin/listings")}>
                         <Shield className="mr-2 h-4 w-4" />
                         Quản trị tin đăng
