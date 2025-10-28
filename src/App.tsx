@@ -42,11 +42,6 @@ const App = () => (
           {/* Auth */}
           <Route path="/auth" element={<Auth />} />
           
-          {/* Legacy Routes - Redirects to Portal */}
-          <Route path="/submit-listing" element={<Navigate to="/portal/properties/new" replace />} />
-          <Route path="/my-listings" element={<Navigate to="/portal/properties" replace />} />
-          <Route path="/register-agent" element={<Navigate to="/portal/profile" replace />} />
-          
           {/* Broker Portal - All authenticated users can access */}
           <Route element={<ProtectedRoute />}>
             <Route path="/portal" element={<PortalLayout />}>
