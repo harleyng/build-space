@@ -20,6 +20,9 @@ import PortalCustomers from "./pages/portal/PortalCustomers";
 import PortalMarketing from "./pages/portal/PortalMarketing";
 import PortalOrganization from "./pages/portal/PortalOrganization";
 import PortalProfile from "./pages/portal/PortalProfile";
+import CreateOrganization from "./pages/portal/CreateOrganization";
+import InviteMember from "./pages/portal/InviteMember";
+import OrganizationInvites from "./pages/portal/OrganizationInvites";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminBrokers from "./pages/admin/AdminBrokers";
 import AdminOrganizations from "./pages/admin/AdminOrganizations";
@@ -53,6 +56,9 @@ const App = () => (
               <Route path="customers" element={<PortalCustomers />} />
               <Route path="marketing" element={<PortalMarketing />} />
               <Route path="organization" element={<PortalOrganization />} />
+              <Route path="organization/create" element={<CreateOrganization />} />
+              <Route path="organization/invite" element={<InviteMember />} />
+              <Route path="organization/invites" element={<OrganizationInvites />} />
               <Route path="profile" element={<PortalProfile />} />
             </Route>
           </Route>
