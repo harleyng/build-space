@@ -43,8 +43,8 @@ export default function AdminOrganizations() {
 
       if (error) throw error;
 
-      setOrganizations(data || []);
-      setPendingOrgs(data?.filter((org) => org.kyc_status === "PENDING_KYC") || []);
+      setOrganizations(data as any || []);
+      setPendingOrgs(data?.filter((org: any) => org.kyc_status === "PENDING_KYC") as any || []);
     } catch (error) {
       console.error("Error fetching organizations:", error);
       toast.error("Không thể tải danh sách tổ chức");

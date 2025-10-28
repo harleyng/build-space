@@ -79,6 +79,7 @@ export type Database = {
           num_bathrooms: number | null
           num_bedrooms: number | null
           num_floors: number | null
+          organization_id: string | null
           planning_info: string | null
           price: number
           price_unit: Database["public"]["Enums"]["price_unit"]
@@ -127,6 +128,7 @@ export type Database = {
           num_bathrooms?: number | null
           num_bedrooms?: number | null
           num_floors?: number | null
+          organization_id?: string | null
           planning_info?: string | null
           price: number
           price_unit?: Database["public"]["Enums"]["price_unit"]
@@ -175,6 +177,7 @@ export type Database = {
           num_bathrooms?: number | null
           num_bedrooms?: number | null
           num_floors?: number | null
+          organization_id?: string | null
           planning_info?: string | null
           price?: number
           price_unit?: Database["public"]["Enums"]["price_unit"]
@@ -193,6 +196,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "listings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "listings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -200,6 +210,120 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      organization_memberships: {
+        Row: {
+          created_at: string
+          id: string
+          invite_email: string | null
+          invite_token: string | null
+          invited_by: string | null
+          joined_at: string | null
+          organization_id: string
+          role_id: string
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invite_email?: string | null
+          invite_token?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          organization_id: string
+          role_id: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invite_email?: string | null
+          invite_token?: string | null
+          invited_by?: string | null
+          joined_at?: string | null
+          organization_id?: string
+          role_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_memberships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_memberships_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "organization_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_roles: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          permissions: Json
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          permissions?: Json
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          permissions?: Json
+        }
+        Relationships: []
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          kyc_status: Database["public"]["Enums"]["kyc_status"]
+          license_info: Json | null
+          name: string
+          owner_id: string
+          rejection_reason: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
+          license_info?: Json | null
+          name: string
+          owner_id: string
+          rejection_reason?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
+          license_info?: Json | null
+          name?: string
+          owner_id?: string
+          rejection_reason?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {

@@ -18,7 +18,7 @@ export interface Organization {
   name: string;
   owner_id: string;
   kyc_status: OrganizationKycStatus;
-  license_info: LicenseInfo | null;
+  license_info: any; // Json type from Supabase
   rejection_reason: string | null;
   created_at: string;
   updated_at: string;
@@ -26,8 +26,8 @@ export interface Organization {
 
 export interface OrganizationRole {
   id: string;
-  name: OrganizationRoleName;
-  permissions: string[];
+  name: string; // Can be 'Owner' | 'Manager' | 'Agent'
+  permissions: any; // Json type from Supabase
   description: string | null;
   created_at: string;
 }

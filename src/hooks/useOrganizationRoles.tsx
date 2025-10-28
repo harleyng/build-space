@@ -15,7 +15,7 @@ export const useOrganizationRoles = () => {
           .order("name");
 
         if (error) throw error;
-        setRoles(data);
+        setRoles(data as any);
       } catch (error) {
         console.error("Error fetching roles:", error);
       } finally {
@@ -58,7 +58,7 @@ export const useUserRoleInOrg = (orgId: string | null) => {
           .maybeSingle();
 
         if (error) throw error;
-        setRole(data?.role || null);
+        setRole(data?.role as any || null);
       } catch (error) {
         console.error("Error fetching user role:", error);
       } finally {

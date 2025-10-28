@@ -106,7 +106,7 @@ export const useCreateOrganization = () => {
         .insert({
           name,
           owner_id: session.user.id,
-          license_info: licenseInfo,
+          license_info: licenseInfo as any,
           kyc_status: "PENDING_KYC",
         })
         .select()
@@ -115,7 +115,7 @@ export const useCreateOrganization = () => {
       if (error) throw error;
 
       toast.success("Tạo tổ chức thành công! Đang chờ admin duyệt.");
-      return data;
+      return data as any;
     } catch (error) {
       console.error("Error creating organization:", error);
       toast.error("Không thể tạo tổ chức");
@@ -139,7 +139,7 @@ export const useUpdateOrganization = () => {
     try {
       const { error } = await supabase
         .from("organizations")
-        .update(updates)
+        .update(updates as any)
         .eq("id", orgId);
 
       if (error) throw error;
