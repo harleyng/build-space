@@ -442,11 +442,7 @@ export type Database = {
     }
     Functions: {
       has_org_role: {
-        Args: {
-          _organization_id: string
-          _role_names: string[]
-          _user_id: string
-        }
+        Args: { _org_id: string; _role_names: string[]; _user_id: string }
         Returns: boolean
       }
       has_role: {
@@ -457,7 +453,7 @@ export type Database = {
         Returns: boolean
       }
       is_org_member: {
-        Args: { _organization_id: string; _user_id: string }
+        Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
     }
