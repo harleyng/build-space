@@ -98,28 +98,36 @@ export default function AdminBrokers() {
     try {
       setSubmitting(true);
       
+      console.log("Approving KYC for user:", userId);
+      
       // Update profile
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("profiles")
         .update({
           kyc_status: "APPROVED",
           rejection_reason: null,
         })
-        .eq("id", userId);
+        .eq("id", userId)
+        .select();
 
-      if (error) throw error;
+      console.log("Update result:", { data, error });
+
+      if (error) {
+        console.error("Update error details:", error);
+        throw error;
+      }
 
       toast({
         title: "Thành công",
         description: "Đã duyệt hồ sơ môi giới",
       });
 
-      loadUsers();
+      await loadUsers();
     } catch (error) {
       console.error("Error approving KYC:", error);
       toast({
         title: "Lỗi",
-        description: "Không thể duyệt hồ sơ",
+        description: error instanceof Error ? error.message : "Không thể duyệt hồ sơ",
         variant: "destructive",
       });
     } finally {
