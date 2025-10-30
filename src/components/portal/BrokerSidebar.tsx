@@ -14,15 +14,15 @@ import { NavLink } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
 const menuItems = [
-  { title: "Dashboard", path: "/portal/dashboard", icon: Home, description: "Tổng quan" },
-  { title: "Hồ sơ cá nhân", path: "/portal/profile", icon: User, description: "Xác thực và quản lý" },
-  { title: "Quản lý tin đăng", path: "/portal/properties", icon: Building, description: "CRUD và kiểm soát" },
-  { title: "Quản lý khách hàng", path: "/portal/customers", icon: Users, description: "CRM" },
-  { title: "Marketing", path: "/portal/marketing", icon: Megaphone, description: "Chiến dịch" },
-  { title: "Tổ chức", path: "/portal/organization", icon: Building2, description: "Quản lý văn phòng" },
+  { title: "Dashboard", path: "/broker/dashboard", icon: Home, description: "Tổng quan" },
+  { title: "Hồ sơ cá nhân", path: "/broker/profile", icon: User, description: "Xác thực và quản lý" },
+  { title: "Quản lý tin đăng", path: "/broker/properties", icon: Building, description: "CRUD và kiểm soát" },
+  { title: "Quản lý khách hàng", path: "/broker/customers", icon: Users, description: "CRM" },
+  { title: "Marketing", path: "/broker/marketing", icon: Megaphone, description: "Chiến dịch" },
+  { title: "Tổ chức", path: "/broker/organization", icon: Building2, description: "Quản lý văn phòng" },
 ];
 
-export const PortalSidebar = () => {
+export const BrokerSidebar = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
 
@@ -30,7 +30,7 @@ export const PortalSidebar = () => {
     <Sidebar collapsible="icon">
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Broker Portal</SidebarGroupLabel>
+          <SidebarGroupLabel>Broker Dashboard</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => {

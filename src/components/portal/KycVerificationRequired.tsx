@@ -39,10 +39,10 @@ export const KycVerificationRequired = () => {
         </Alert>
         
         <p className="text-muted-foreground mb-6">
-          Vui lòng hoàn thành form đăng ký môi giới trong phần "Hồ sơ cá nhân" để được sử dụng các tính năng của portal.
+          Vui lòng hoàn thành form đăng ký môi giới trong phần "Hồ sơ cá nhân" để được sử dụng các tính năng của broker.
         </p>
         
-        <Button onClick={() => navigate("/portal/profile")}>
+        <Button onClick={() => navigate("/broker/profile")}>
           Đi đến Hồ sơ cá nhân
         </Button>
       </div>

@@ -4,29 +4,28 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { PortalLayout } from "@/components/layouts/PortalLayout";
+import { BrokerLayout } from "@/components/layouts/BrokerLayout";
 import { AdminLayout } from "@/components/layouts/AdminLayout";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import Listings from "./pages/Listings";
 import ListingDetail from "./pages/ListingDetail";
-import NotFound from "./pages/NotFound";
-import Auth from "./pages/Auth";
 import SubmitListing from "./pages/SubmitListing";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminListings from "./pages/AdminListings";
-import AdminUsers from "./pages/AdminUsers";
-import PortalDashboard from "./pages/portal/PortalDashboard";
-import PortalProperties from "./pages/portal/PortalProperties";
-import PortalCustomers from "./pages/portal/PortalCustomers";
-import PortalMarketing from "./pages/portal/PortalMarketing";
-import PortalOrganization from "./pages/portal/PortalOrganization";
-import PortalProfile from "./pages/portal/PortalProfile";
+import AdminBrokers from "./pages/admin/AdminBrokers";
+import AdminOrganizations from "./pages/admin/AdminOrganizations";
+import NotFound from "./pages/NotFound";
+import BrokerDashboard from "./pages/portal/BrokerDashboard";
+import BrokerProperties from "./pages/portal/BrokerProperties";
+import BrokerCustomers from "./pages/portal/BrokerCustomers";
+import BrokerMarketing from "./pages/portal/BrokerMarketing";
+import BrokerOrganization from "./pages/portal/BrokerOrganization";
+import BrokerProfile from "./pages/portal/BrokerProfile";
 import CreateOrganization from "./pages/portal/CreateOrganization";
 import InviteMember from "./pages/portal/InviteMember";
 import OrganizationInvites from "./pages/portal/OrganizationInvites";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminBrokers from "./pages/admin/AdminBrokers";
-import AdminOrganizations from "./pages/admin/AdminOrganizations";
-import AdminLogin from "./pages/admin/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -47,19 +46,19 @@ const App = () => (
           
           {/* Broker Portal - All authenticated users can access */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/portal" element={<PortalLayout />}>
-              <Route index element={<Navigate to="/portal/dashboard" replace />} />
-              <Route path="dashboard" element={<PortalDashboard />} />
-              <Route path="properties" element={<PortalProperties />} />
+            <Route path="/broker" element={<BrokerLayout />}>
+              <Route index element={<Navigate to="/broker/dashboard" replace />} />
+              <Route path="dashboard" element={<BrokerDashboard />} />
+              <Route path="properties" element={<BrokerProperties />} />
               <Route path="properties/new" element={<SubmitListing />} />
               <Route path="properties/:id/edit" element={<SubmitListing />} />
-              <Route path="customers" element={<PortalCustomers />} />
-              <Route path="marketing" element={<PortalMarketing />} />
-              <Route path="organization" element={<PortalOrganization />} />
+              <Route path="customers" element={<BrokerCustomers />} />
+              <Route path="marketing" element={<BrokerMarketing />} />
+              <Route path="organization" element={<BrokerOrganization />} />
               <Route path="organization/create" element={<CreateOrganization />} />
               <Route path="organization/invite" element={<InviteMember />} />
               <Route path="organization/invites" element={<OrganizationInvites />} />
-              <Route path="profile" element={<PortalProfile />} />
+              <Route path="profile" element={<BrokerProfile />} />
             </Route>
           </Route>
           
@@ -72,7 +71,6 @@ const App = () => (
               <Route path="properties" element={<AdminListings />} />
               <Route path="brokers" element={<AdminBrokers />} />
               <Route path="organizations" element={<AdminOrganizations />} />
-              <Route path="users" element={<AdminUsers />} />
               <Route path="listings" element={<AdminListings />} />
             </Route>
           </Route>

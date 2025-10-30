@@ -59,7 +59,7 @@ export default function CreateOrganization() {
     setSubmitting(false);
 
     if (result) {
-      navigate("/portal/organization");
+      navigate("/broker/organization");
     }
   };
 
@@ -73,7 +73,7 @@ export default function CreateOrganization() {
             <Button
               variant="link"
               className="ml-2 p-0 h-auto"
-              onClick={() => navigate("/portal/profile")}
+              onClick={() => navigate("/broker/profile")}
             >
               Đến trang KYC
             </Button>
@@ -194,7 +194,7 @@ export default function CreateOrganization() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate("/portal/organization")}
+                onClick={() => navigate("/broker/organization")}
                 disabled={submitting || creating}
               >
                 Hủy

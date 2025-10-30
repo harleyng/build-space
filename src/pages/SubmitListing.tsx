@@ -123,7 +123,7 @@ const SubmitListing = () => {
         description: "Không thể tải thông tin tin đăng",
         variant: "destructive",
       });
-      navigate("/portal/properties");
+      navigate("/broker/properties");
       return;
     }
 
@@ -306,7 +306,7 @@ const SubmitListing = () => {
         });
       }
 
-      navigate("/portal/properties");
+      navigate("/broker/properties");
     } catch (error: any) {
       toast({
         title: "Lỗi",

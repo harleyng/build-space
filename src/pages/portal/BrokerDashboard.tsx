@@ -6,7 +6,7 @@ import { AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useKycStatus } from "@/hooks/useKycStatus";
 
-export default function PortalDashboard() {
+export default function BrokerDashboard() {
   const navigate = useNavigate();
   const { kycStatus, loading } = useKycStatus();
 
@@ -41,7 +41,7 @@ export default function PortalDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-foreground">Tổng quan</h1>
-        <p className="text-muted-foreground">Chào mừng đến với portal môi giới</p>
+        <p className="text-muted-foreground">Chào mừng đến với broker dashboard</p>
       </div>
 
       {/* KYC Status Alert */}
@@ -62,7 +62,7 @@ export default function PortalDashboard() {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => navigate("/portal/profile")}
+              onClick={() => navigate("/broker/profile")}
               className="ml-4"
             >
               {kycStatus === "NOT_APPLIED" ? "Đăng ký ngay" : "Xem hồ sơ"}

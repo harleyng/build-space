@@ -13,7 +13,7 @@ import { ListingStatus } from "@/types/listing.types";
 import { formatPrice, formatAddress } from "@/utils/formatters";
 import { LISTING_STATUSES, PURPOSES } from "@/constants/listing.constants";
 
-export default function PortalProperties() {
+export default function BrokerProperties() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [listings, setListings] = useState<any[]>([]);
@@ -93,7 +93,7 @@ export default function PortalProperties() {
             <h1 className="text-3xl font-bold text-foreground">Quản lý tin đăng</h1>
             <p className="text-muted-foreground">Quản lý các tin đăng bất động sản của bạn</p>
           </div>
-          <Button onClick={() => navigate("/portal/properties/new")}>
+          <Button onClick={() => navigate("/broker/properties/new")}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Đăng tin mới
           </Button>
@@ -133,7 +133,7 @@ export default function PortalProperties() {
           <Card>
             <CardContent className="py-12 text-center">
               <p className="text-muted-foreground">Chưa có tin đăng nào</p>
-              <Button onClick={() => navigate("/portal/properties/new")} className="mt-4">
+              <Button onClick={() => navigate("/broker/properties/new")} className="mt-4">
                 Tạo tin đăng đầu tiên
               </Button>
             </CardContent>
@@ -179,7 +179,7 @@ export default function PortalProperties() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => navigate(`/portal/properties/${listing.id}/edit`)}
+                          onClick={() => navigate(`/broker/properties/${listing.id}/edit`)}
                         >
                           <Edit className="mr-2 h-4 w-4" />
                           Sửa

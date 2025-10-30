@@ -112,27 +112,27 @@ export const Header = () => {
                 <DropdownMenuContent align="end" className="w-56">
                   {!isAdmin ? (
                     <>
-                      <DropdownMenuItem onClick={() => navigate("/portal/dashboard")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/dashboard")}>
                         <Home className="mr-2 h-4 w-4" />
                         Dashboard
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/profile")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/profile")}>
                         <User className="mr-2 h-4 w-4" />
                         Hồ sơ cá nhân
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/properties")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/properties")}>
                         <Building className="mr-2 h-4 w-4" />
                         Quản lý tin đăng
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/customers")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/customers")}>
                         <Users className="mr-2 h-4 w-4" />
                         Quản lý khách hàng
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/marketing")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/marketing")}>
                         <Megaphone className="mr-2 h-4 w-4" />
                         Marketing
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate("/portal/organization")}>
+                      <DropdownMenuItem onClick={() => navigate("/broker/organization")}>
                         <Building2 className="mr-2 h-4 w-4" />
                         Tổ chức
                       </DropdownMenuItem>

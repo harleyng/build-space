@@ -126,10 +126,10 @@ const Auth = () => {
         } else {
           toast({
             title: "Đăng ký thành công",
-            description: "Bạn đã được thêm vào tổ chức! Vui lòng kiểm tra lời mời trong portal.",
+            description: "Bạn đã được thêm vào tổ chức! Vui lòng kiểm tra lời mời trong broker.",
           });
           // Redirect to invites page
-          setTimeout(() => navigate("/portal/organization/invites"), 2000);
+          setTimeout(() => navigate("/broker/organization/invites"), 2000);
           setLoading(false);
           return;
         }

@@ -30,7 +30,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 
-export default function PortalOrganization() {
+export default function BrokerOrganization() {
   const navigate = useNavigate();
   const { organizations, loading: orgsLoading } = useUserOrganizations();
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export default function PortalOrganization() {
             <p className="text-sm text-muted-foreground mb-4">
               Tạo tổ chức mới để quản lý môi giới và tin đăng theo nhóm
             </p>
-            <Button onClick={() => navigate("/portal/organization/create")}>
+            <Button onClick={() => navigate("/broker/organization/create")}>
               <Plus className="h-4 w-4 mr-2" />
               Tạo tổ chức mới
             </Button>
@@ -102,7 +102,7 @@ export default function PortalOrganization() {
           <p className="text-muted-foreground">Quản lý thông tin và thành viên tổ chức</p>
         </div>
         {(isOwner || isManager) && (
-          <Button onClick={() => navigate("/portal/organization/invite")}>
+          <Button onClick={() => navigate("/broker/organization/invite")}>
             <UserPlus className="h-4 w-4 mr-2" />
             Mời thành viên
           </Button>

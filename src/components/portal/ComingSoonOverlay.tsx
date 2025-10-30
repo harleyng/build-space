@@ -57,7 +57,7 @@ export const ComingSoonOverlay = ({ children }: ComingSoonOverlayProps) => {
             </p>
           )}
           
-          <Button onClick={() => navigate("/portal/profile")} className="w-full">
+          <Button onClick={() => navigate("/broker/profile")} className="w-full">
             <AlertCircle className="mr-2 h-4 w-4" />
             Đi đến Hồ sơ cá nhân
           </Button>

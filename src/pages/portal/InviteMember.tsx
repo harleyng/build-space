@@ -71,7 +71,7 @@ export default function InviteMember() {
         <Card>
           <CardContent className="pt-6">
             <p className="text-muted-foreground">Bạn chưa thuộc tổ chức nào</p>
-            <Button className="mt-4" onClick={() => navigate("/portal/organization")}>
+            <Button className="mt-4" onClick={() => navigate("/broker/organization")}>
               Quay lại
             </Button>
           </CardContent>
@@ -105,7 +105,7 @@ export default function InviteMember() {
                 </Button>
               </div>
             </div>
-            <Button onClick={() => navigate("/portal/organization")}>
+            <Button onClick={() => navigate("/broker/organization")}>
               Quay về trang tổ chức
             </Button>
           </CardContent>
@@ -169,7 +169,7 @@ export default function InviteMember() {
               <Button
                 type="button"
                 variant="outline"
-                onClick={() => navigate("/portal/organization")}
+                onClick={() => navigate("/broker/organization")}
                 disabled={inviting}
               >
                 Hủy

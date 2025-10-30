@@ -25,7 +25,7 @@ interface Profile {
   rejection_reason: string | null;
 }
 
-export default function PortalProfile() {
+export default function BrokerProfile() {
   const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -222,7 +222,7 @@ export default function PortalProfile() {
           <CheckCircle className="h-4 w-4 text-green-600" />
           <AlertTitle className="text-green-800">Xác thực thành công</AlertTitle>
           <AlertDescription className="text-green-700">
-            Hồ sơ môi giới của bạn đã được duyệt. Bạn có thể sử dụng đầy đủ các tính năng của portal.
+            Hồ sơ môi giới của bạn đã được duyệt. Bạn có thể sử dụng đầy đủ các tính năng của broker.
           </AlertDescription>
         </Alert>
       )}

@@ -1,21 +1,21 @@
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { PortalSidebar } from "@/components/portal/PortalSidebar";
+import { BrokerSidebar } from "@/components/portal/BrokerSidebar";
 import { Outlet } from "react-router-dom";
 import { Building2, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export const PortalLayout = () => {
+export const BrokerLayout = () => {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <PortalSidebar />
+        <BrokerSidebar />
         
         <div className="flex flex-1 flex-col">
           <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
             <SidebarTrigger />
             <div className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-primary" />
-              <span className="font-semibold text-foreground">Broker Portal</span>
+              <span className="font-semibold text-foreground">Broker Dashboard</span>
             </div>
             <div className="ml-auto flex items-center gap-2">
               <Button variant="ghost" size="icon">
