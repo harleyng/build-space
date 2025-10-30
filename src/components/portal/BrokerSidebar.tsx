@@ -19,7 +19,7 @@ const menuItems = [
   { title: "Quản lý tin đăng", path: "/broker/properties", icon: Building, description: "CRUD và kiểm soát" },
   { title: "Quản lý khách hàng", path: "/broker/customers", icon: Users, description: "CRM" },
   { title: "Marketing", path: "/broker/marketing", icon: Megaphone, description: "Chiến dịch" },
-  { title: "Tổ chức", path: "/broker/organization", icon: Building2, description: "Quản lý văn phòng" },
+  { title: "Tổ chức", path: "/broker/organizations", icon: Building2, description: "Quản lý văn phòng" },
 ];
 
 export const BrokerSidebar = () => {

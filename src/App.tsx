@@ -22,6 +22,7 @@ import BrokerProperties from "./pages/portal/BrokerProperties";
 import BrokerCustomers from "./pages/portal/BrokerCustomers";
 import BrokerMarketing from "./pages/portal/BrokerMarketing";
 import BrokerOrganization from "./pages/portal/BrokerOrganization";
+import BrokerOrganizations from "./pages/portal/BrokerOrganizations";
 import BrokerProfile from "./pages/portal/BrokerProfile";
 import CreateOrganization from "./pages/portal/CreateOrganization";
 import InviteMember from "./pages/portal/InviteMember";
@@ -54,6 +55,7 @@ const App = () => (
               <Route path="properties/:id/edit" element={<SubmitListing />} />
               <Route path="customers" element={<BrokerCustomers />} />
               <Route path="marketing" element={<BrokerMarketing />} />
+              <Route path="organizations" element={<BrokerOrganizations />} />
               <Route path="organization" element={<BrokerOrganization />} />
               <Route path="organization/create" element={<CreateOrganization />} />
               <Route path="organization/invite" element={<InviteMember />} />

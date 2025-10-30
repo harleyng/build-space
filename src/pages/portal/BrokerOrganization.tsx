@@ -17,7 +17,7 @@ import { useUserPermissions } from "@/hooks/useOrganizationRoles";
 import { OrganizationStatusBadge } from "@/components/admin/OrganizationStatusBadge";
 import { OrganizationSwitcher } from "@/components/organization/OrganizationSwitcher";
 import { ORG_ROLE_NAMES, MEMBERSHIP_STATUSES } from "@/constants/organization.constants";
-import { Building2, Plus, MoreVertical, UserPlus, Trash2 } from "lucide-react";
+import { Building2, Plus, MoreVertical, UserPlus, Trash2, ArrowLeft } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
 import {
@@ -116,17 +116,28 @@ export default function BrokerOrganization() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Quản lý tổ chức</h1>
-          <p className="text-muted-foreground">Quản lý thông tin và thành viên tổ chức</p>
+      <div>
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/broker/organizations")}
+          className="mb-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Quay lại danh sách
+        </Button>
+        
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Chi tiết tổ chức</h1>
+            <p className="text-muted-foreground">Quản lý thông tin và thành viên tổ chức</p>
+          </div>
+          {(isOwner || isManager) && (
+            <Button onClick={() => navigate("/broker/organization/invite")}>
+              <UserPlus className="h-4 w-4 mr-2" />
+              Mời thành viên
+            </Button>
+          )}
         </div>
-        {(isOwner || isManager) && (
-          <Button onClick={() => navigate("/broker/organization/invite")}>
-            <UserPlus className="h-4 w-4 mr-2" />
-            Mời thành viên
-          </Button>
-        )}
       </div>
 
       {organizations.length > 1 && (
