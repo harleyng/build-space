@@ -116,6 +116,8 @@ const Auth = () => {
           .from("organization_memberships")
           .update({ 
             user_id: authData.user.id,
+            status: 'ACTIVE',
+            joined_at: new Date().toISOString(),
             invite_email: null 
           })
           .eq("invite_token", inviteToken)
@@ -123,13 +125,18 @@ const Auth = () => {
 
         if (inviteError) {
           console.error("Error linking invite:", inviteError);
+          toast({
+            title: "Lỗi liên kết tổ chức",
+            description: "Không thể thêm bạn vào tổ chức. Vui lòng thử lại.",
+            variant: "destructive",
+          });
         } else {
           toast({
             title: "Đăng ký thành công",
-            description: "Bạn đã được thêm vào tổ chức! Vui lòng kiểm tra lời mời trong broker.",
+            description: "Bạn đã được thêm vào tổ chức!",
           });
-          // Redirect to invites page
-          setTimeout(() => navigate("/broker/organization/invites"), 2000);
+          // Redirect to broker dashboard
+          setTimeout(() => navigate("/broker/dashboard"), 2000);
           setLoading(false);
           return;
         }
