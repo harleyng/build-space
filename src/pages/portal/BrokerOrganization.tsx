@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -15,6 +15,7 @@ import { useUserOrganizations, useOrganizationDetails } from "@/hooks/useOrganiz
 import { useOrganizationMembers, useRemoveMember } from "@/hooks/useOrganizationMembership";
 import { useUserPermissions } from "@/hooks/useOrganizationRoles";
 import { OrganizationStatusBadge } from "@/components/admin/OrganizationStatusBadge";
+import { OrganizationSwitcher } from "@/components/organization/OrganizationSwitcher";
 import { ORG_ROLE_NAMES, MEMBERSHIP_STATUSES } from "@/constants/organization.constants";
 import { Building2, Plus, MoreVertical, UserPlus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
@@ -32,21 +33,40 @@ import {
 
 export default function BrokerOrganization() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { organizations, loading: orgsLoading } = useUserOrganizations();
   const [selectedOrgId, setSelectedOrgId] = useState<string | null>(null);
-  const { organization } = useOrganizationDetails(selectedOrgId || organizations[0]?.id || null);
-  const { members, loading: membersLoading, refetch } = useOrganizationMembers(
-    selectedOrgId || organizations[0]?.id || null
-  );
+
+  // Initialize selected org from URL or default to first org
+  useEffect(() => {
+    if (organizations.length > 0) {
+      const orgIdFromUrl = searchParams.get("org");
+      const validOrgId = orgIdFromUrl && organizations.find(o => o.id === orgIdFromUrl)
+        ? orgIdFromUrl
+        : organizations[0].id;
+      
+      setSelectedOrgId(validOrgId);
+      
+      // Update URL if needed
+      if (!orgIdFromUrl || orgIdFromUrl !== validOrgId) {
+        setSearchParams({ org: validOrgId }, { replace: true });
+      }
+    }
+  }, [organizations, searchParams, setSearchParams]);
+
+  const { organization } = useOrganizationDetails(selectedOrgId);
+  const { members, loading: membersLoading, refetch } = useOrganizationMembers(selectedOrgId);
   const { removeMember } = useRemoveMember();
-  const { isOwner, isManager, canRemoveMember } = useUserPermissions(
-    selectedOrgId || organizations[0]?.id || null
-  );
+  const { isOwner, isManager, canRemoveMember } = useUserPermissions(selectedOrgId);
 
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
 
-  const currentOrgId = selectedOrgId || organizations[0]?.id || null;
-  const currentOrg = organization || organizations[0];
+  const handleSelectOrg = (orgId: string) => {
+    setSelectedOrgId(orgId);
+    setSearchParams({ org: orgId });
+  };
+
+  const currentOrg = organization;
 
   if (orgsLoading) {
     return (
@@ -108,6 +128,16 @@ export default function BrokerOrganization() {
           </Button>
         )}
       </div>
+
+      {organizations.length > 1 && (
+        <div className="max-w-md">
+          <OrganizationSwitcher
+            organizations={organizations}
+            selectedOrgId={selectedOrgId}
+            onSelectOrg={handleSelectOrg}
+          />
+        </div>
+      )}
 
       <Card>
         <CardHeader>
