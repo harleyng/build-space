@@ -20,7 +20,8 @@ export const useOrganizationMembers = (orgId: string | null) => {
           .select(`
             *,
             role:organization_roles(*),
-            user:profiles(id, email, name)
+            user:profiles!organization_memberships_user_id_fkey(id, email, name),
+            inviter:profiles!organization_memberships_invited_by_fkey(id, email, name)
           `)
           .eq("organization_id", orgId)
           .order("created_at", { ascending: false });
