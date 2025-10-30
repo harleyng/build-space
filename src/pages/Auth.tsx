@@ -78,6 +78,63 @@ const Auth = () => {
           setLoading(false);
           return;
         }
+
+        // If there's an invite token, link the user to the organization
+        if (inviteToken) {
+          console.log("Login with invite token:", inviteToken);
+          
+          // First check if invite exists and hasn't been claimed
+          const { data: existingInvite, error: checkError } = await supabase
+            .from("organization_memberships")
+            .select("*")
+            .eq("invite_token", inviteToken)
+            .is("user_id", null)
+            .maybeSingle();
+
+          console.log("Existing invite on login:", existingInvite, "Check error:", checkError);
+
+          if (checkError || !existingInvite) {
+            console.error("Invite not found or already claimed:", checkError);
+            toast({
+              title: "Lỗi liên kết tổ chức",
+              description: "Không tìm thấy lời mời hoặc lời mời đã được sử dụng.",
+              variant: "destructive",
+            });
+          } else {
+            // Update the membership
+            const { data: updateData, error: inviteError } = await supabase
+              .from("organization_memberships")
+              .update({ 
+                user_id: authData.user.id,
+                status: 'ACTIVE',
+                joined_at: new Date().toISOString(),
+                invite_email: null 
+              })
+              .eq("invite_token", inviteToken)
+              .is("user_id", null)
+              .select();
+
+            console.log("Update result on login:", updateData, "Update error:", inviteError);
+
+            if (inviteError || !updateData || updateData.length === 0) {
+              console.error("Error linking invite on login:", inviteError);
+              toast({
+                title: "Lỗi liên kết tổ chức",
+                description: "Không thể thêm bạn vào tổ chức. Vui lòng thử lại.",
+                variant: "destructive",
+              });
+            } else {
+              toast({
+                title: "Đăng nhập thành công",
+                description: "Bạn đã được thêm vào tổ chức!",
+              });
+              // Redirect to broker dashboard
+              setTimeout(() => navigate("/broker/dashboard"), 2000);
+              setLoading(false);
+              return;
+            }
+          }
+        }
       }
 
       toast({
