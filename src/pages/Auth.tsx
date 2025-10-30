@@ -112,33 +112,56 @@ const Auth = () => {
 
       // If there's an invite token, link the user to the organization
       if (inviteToken && authData.user) {
-        const { error: inviteError } = await supabase
+        // First check if invite exists
+        const { data: existingInvite, error: checkError } = await supabase
           .from("organization_memberships")
-          .update({ 
-            user_id: authData.user.id,
-            status: 'ACTIVE',
-            joined_at: new Date().toISOString(),
-            invite_email: null 
-          })
+          .select("*")
           .eq("invite_token", inviteToken)
-          .is("user_id", null);
+          .is("user_id", null)
+          .maybeSingle();
 
-        if (inviteError) {
-          console.error("Error linking invite:", inviteError);
+        console.log("Existing invite:", existingInvite, "Check error:", checkError);
+
+        if (checkError || !existingInvite) {
+          console.error("Invite not found or error:", checkError);
           toast({
             title: "Lỗi liên kết tổ chức",
-            description: "Không thể thêm bạn vào tổ chức. Vui lòng thử lại.",
+            description: "Không tìm thấy lời mời hoặc lời mời đã được sử dụng.",
             variant: "destructive",
           });
         } else {
-          toast({
-            title: "Đăng ký thành công",
-            description: "Bạn đã được thêm vào tổ chức!",
-          });
-          // Redirect to broker dashboard
-          setTimeout(() => navigate("/broker/dashboard"), 2000);
-          setLoading(false);
-          return;
+          // Update the membership
+          const { data: updateData, error: inviteError } = await supabase
+            .from("organization_memberships")
+            .update({ 
+              user_id: authData.user.id,
+              status: 'ACTIVE',
+              joined_at: new Date().toISOString(),
+              invite_email: null 
+            })
+            .eq("invite_token", inviteToken)
+            .is("user_id", null)
+            .select();
+
+          console.log("Update result:", updateData, "Update error:", inviteError);
+
+          if (inviteError || !updateData || updateData.length === 0) {
+            console.error("Error linking invite:", inviteError);
+            toast({
+              title: "Lỗi liên kết tổ chức",
+              description: "Không thể thêm bạn vào tổ chức. Vui lòng thử lại.",
+              variant: "destructive",
+            });
+          } else {
+            toast({
+              title: "Đăng ký thành công",
+              description: "Bạn đã được thêm vào tổ chức!",
+            });
+            // Redirect to broker dashboard
+            setTimeout(() => navigate("/broker/dashboard"), 2000);
+            setLoading(false);
+            return;
+          }
         }
       }
 
