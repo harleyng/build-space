@@ -1,22 +1,21 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
 import { Session } from "@supabase/supabase-js";
 import { usePropertyTypes } from "@/hooks/usePropertyTypes";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card";
 import { useImageUpload } from "@/hooks/useImageUpload";
-import { ListingFormBasic } from "@/components/listings/ListingFormBasic";
-import { ListingFormAddress } from "@/components/listings/ListingFormAddress";
-import { ListingFormAttributes } from "@/components/listings/ListingFormAttributes";
-import { ListingFormContact } from "@/components/listings/ListingFormContact";
-import { ListingFormImages } from "@/components/listings/ListingFormImages";
 import { Purpose, PriceUnit } from "@/types/listing.types";
+import { WizardProgressBar } from "@/components/listings/WizardProgressBar";
+import { WizardNavigation } from "@/components/listings/WizardNavigation";
+import { ListingFormStep1PropertyType } from "@/components/listings/ListingFormStep1PropertyType";
+import { ListingFormStep2Location } from "@/components/listings/ListingFormStep2Location";
+import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep3BasicInfo";
+import { ListingFormAttributes } from "@/components/listings/ListingFormAttributes";
+import { ListingFormStep5Media } from "@/components/listings/ListingFormStep5Media";
+import { ListingFormStep6Contact } from "@/components/listings/ListingFormStep6Contact";
+import { PURPOSES, PRICE_UNITS } from "@/constants/listing.constants";
 
 const SubmitListing = () => {
   const navigate = useNavigate();
@@ -25,6 +24,10 @@ const SubmitListing = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const isEditMode = !!listingId;
+  
+  // Wizard state
+  const [currentStep, setCurrentStep] = useState(1);
+  const totalSteps = 6;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -62,6 +65,10 @@ const SubmitListing = () => {
   const [legalStatus, setLegalStatus] = useState("");
   const [interiorStatus, setInteriorStatus] = useState("");
   const [landType, setLandType] = useState("");
+  
+  // Location coordinates
+  const [latitude, setLatitude] = useState("");
+  const [longitude, setLongitude] = useState("");
 
   const { data: propertyTypes } = usePropertyTypes();
   const {
@@ -178,8 +185,47 @@ const SubmitListing = () => {
   const currentPropertyType = propertyTypes?.find(pt => pt.slug === propertyTypeSlug);
   const currentFilters = currentPropertyType?.filter_metadata?.[purpose]?.filters || [];
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Wizard navigation logic
+  const canProceedFromStep = (step: number): boolean => {
+    switch (step) {
+      case 1:
+        return !!purpose && !!propertyTypeSlug;
+      case 2:
+        return !!district;
+      case 3:
+        return !!area && !!price;
+      case 4:
+        return true;
+      case 5:
+        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+      case 6:
+        return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
+      default:
+        return false;
+    }
+  };
+
+  const handleNext = () => {
+    if (!canProceedFromStep(currentStep)) {
+      toast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng điền đầy đủ các trường bắt buộc",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleFinalSubmit = () => {
+    handleSubmit();
+  };
+
+  const handleSubmit = async () => {
     if (!session) return;
 
     if (!title.trim() || !description.trim() || !price || !area || !district) {
@@ -322,61 +368,42 @@ const SubmitListing = () => {
     return null;
   }
 
+  const getReviewData = () => {
+    const purposeLabel = purpose === "FOR_SALE" ? "Bán" : "Cho thuê";
+    const propertyTypeLabel = currentPropertyType?.name || "Chưa chọn";
+    const addressParts = [street, ward, district, province].filter(Boolean);
+    const addressLabel = addressParts.join(", ") || "Chưa nhập";
+    const priceUnitLabel = PRICE_UNITS[priceUnit] || priceUnit;
+
+    return {
+      purpose: purposeLabel,
+      propertyType: propertyTypeLabel,
+      address: addressLabel,
+      area: area || "0",
+      price: price || "0",
+      priceUnit: priceUnitLabel,
+      title: title || "Chưa nhập",
+    };
+  };
+
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto py-8 px-4">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-3xl">
-            {isEditMode ? "Chỉnh sửa tin đăng" : "Đăng tin bất động sản"}
-          </CardTitle>
-          <CardDescription>Điền thông tin chi tiết về bất động sản của bạn</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-2">
-              <Label>Mục đích <span className="text-destructive">*</span></Label>
-              <Tabs value={purpose} onValueChange={(v) => setPurpose(v as Purpose)}>
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="FOR_SALE">Bán</TabsTrigger>
-                  <TabsTrigger value="FOR_RENT">Cho thuê</TabsTrigger>
-                </TabsList>
-              </Tabs>
-            </div>
+        <CardContent className="pt-6">
+          <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
 
-            <div className="space-y-2">
-              <Label htmlFor="propertyType">Loại hình BĐS <span className="text-destructive">*</span></Label>
-              <Select value={propertyTypeSlug} onValueChange={setPropertyTypeSlug} required>
-                <SelectTrigger>
-                  <SelectValue placeholder="Chọn loại hình" />
-                </SelectTrigger>
-                <SelectContent>
-                  {filteredPropertyTypes.map((type) => (
-                    <SelectItem key={type.slug} value={type.slug}>
-                      {type.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <ListingFormBasic
-              title={title}
-              setTitle={setTitle}
-              description={description}
-              setDescription={setDescription}
-              price={price}
-              setPrice={setPrice}
-              priceUnit={priceUnit}
-              setPriceUnit={setPriceUnit}
-              area={area}
-              setArea={setArea}
-              prominentFeatures={prominentFeatures}
-              setProminentFeatures={setProminentFeatures}
-              projectName={projectName}
-              setProjectName={setProjectName}
+          {currentStep === 1 && (
+            <ListingFormStep1PropertyType
+              purpose={purpose}
+              setPurpose={setPurpose}
+              propertyTypeSlug={propertyTypeSlug}
+              setPropertyTypeSlug={setPropertyTypeSlug}
+              filteredPropertyTypes={filteredPropertyTypes}
             />
+          )}
 
-            <ListingFormAddress
+          {currentStep === 2 && (
+            <ListingFormStep2Location
               province={province}
               setProvince={setProvince}
               district={district}
@@ -385,9 +412,38 @@ const SubmitListing = () => {
               setWard={setWard}
               street={street}
               setStreet={setStreet}
+              projectName={projectName}
+              setProjectName={setProjectName}
+              latitude={latitude}
+              setLatitude={setLatitude}
+              longitude={longitude}
+              setLongitude={setLongitude}
             />
+          )}
 
-            {propertyTypeSlug && (
+          {currentStep === 3 && (
+            <ListingFormStep3BasicInfo
+              area={area}
+              setArea={setArea}
+              price={price}
+              setPrice={setPrice}
+              priceUnit={priceUnit}
+              setPriceUnit={setPriceUnit}
+              numBedrooms={numBedrooms}
+              setNumBedrooms={setNumBedrooms}
+              numBathrooms={numBathrooms}
+              setNumBathrooms={setNumBathrooms}
+            />
+          )}
+
+          {currentStep === 4 && propertyTypeSlug && (
+            <div className="space-y-6">
+              <div className="text-center mb-6">
+                <h2 className="text-2xl font-semibold mb-2">Thuộc tính chi tiết</h2>
+                <p className="text-muted-foreground">
+                  Nhập các thông tin bổ sung dựa trên loại hình bất động sản
+                </p>
+              </div>
               <ListingFormAttributes
                 currentFilters={currentFilters}
                 numBedrooms={numBedrooms}
@@ -415,33 +471,45 @@ const SubmitListing = () => {
                 landType={landType}
                 setLandType={setLandType}
               />
-            )}
+            </div>
+          )}
 
-            <ListingFormContact
+          {currentStep === 5 && (
+            <ListingFormStep5Media
+              title={title}
+              setTitle={setTitle}
+              description={description}
+              setDescription={setDescription}
+              prominentFeatures={prominentFeatures}
+              setProminentFeatures={setProminentFeatures}
+              imagePreviewUrls={imagePreviewUrls}
+              onImageSelect={handleImageSelect}
+              onRemoveImage={removeImage}
+            />
+          )}
+
+          {currentStep === 6 && (
+            <ListingFormStep6Contact
               contactName={contactName}
               setContactName={setContactName}
               contactPhone={contactPhone}
               setContactPhone={setContactPhone}
               contactEmail={contactEmail}
               setContactEmail={setContactEmail}
+              reviewData={getReviewData()}
             />
+          )}
 
-            <ListingFormImages
-              imagePreviewUrls={imagePreviewUrls}
-              onImageSelect={handleImageSelect}
-              onRemoveImage={removeImage}
-            />
-
-            <Button 
-              type="submit" 
-              className="w-full" 
-              disabled={loading || uploadingImages}
-              size="lg"
-            >
-              {(loading || uploadingImages) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {uploadingImages ? "Đang tải ảnh..." : (isEditMode ? "Cập nhật" : "Đăng tin")}
-            </Button>
-          </form>
+          <WizardNavigation
+            currentStep={currentStep}
+            totalSteps={totalSteps}
+            onBack={handleBack}
+            onNext={handleNext}
+            onSubmit={handleFinalSubmit}
+            canProceed={canProceedFromStep(currentStep)}
+            isLoading={loading}
+            isUploading={uploadingImages}
+          />
         </CardContent>
       </Card>
     </div>
