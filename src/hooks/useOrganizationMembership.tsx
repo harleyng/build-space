@@ -6,6 +6,7 @@ import { toast } from "sonner";
 export const useOrganizationMembers = (orgId: string | null) => {
   const [members, setMembers] = useState<MembershipWithDetails[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refetchTrigger, setRefetchTrigger] = useState(0);
 
   useEffect(() => {
     if (!orgId) {
@@ -14,6 +15,7 @@ export const useOrganizationMembers = (orgId: string | null) => {
     }
 
     const fetchMembers = async () => {
+      setLoading(true);
       try {
         const { data, error } = await supabase
           .from("organization_memberships")
@@ -37,9 +39,9 @@ export const useOrganizationMembers = (orgId: string | null) => {
     };
 
     fetchMembers();
-  }, [orgId]);
+  }, [orgId, refetchTrigger]);
 
-  return { members, loading, refetch: () => setLoading(true) };
+  return { members, loading, refetch: () => setRefetchTrigger(prev => prev + 1) };
 };
 
 export const useInviteMember = () => {
@@ -210,12 +212,20 @@ export const useRemoveMember = () => {
   const removeMember = async (membershipId: string) => {
     setRemoving(true);
     try {
-      const { error } = await supabase
+      console.log("Attempting to remove member:", membershipId);
+      
+      const { data, error } = await supabase
         .from("organization_memberships")
         .delete()
-        .eq("id", membershipId);
+        .eq("id", membershipId)
+        .select();
 
-      if (error) throw error;
+      console.log("Delete result:", { data, error });
+
+      if (error) {
+        console.error("Delete error:", error);
+        throw error;
+      }
 
       toast.success("Đã xóa thành viên");
       return true;
