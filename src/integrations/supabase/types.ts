@@ -441,6 +441,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_email: { Args: { _user_id: string }; Returns: string }
       has_org_role: {
         Args: { _org_id: string; _role_names: string[]; _user_id: string }
         Returns: boolean
@@ -454,6 +455,10 @@ export type Database = {
       }
       is_org_member: {
         Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      users_share_org: {
+        Args: { _user1_id: string; _user2_id: string }
         Returns: boolean
       }
     }
