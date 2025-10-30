@@ -1,22 +1,32 @@
 import { Button } from "@/components/ui/button";
 import { HelpCircle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { WizardProgressBar } from "./WizardProgressBar";
 
-export const WizardHeader = () => {
+interface WizardHeaderProps {
+  currentStep: number;
+  totalSteps: number;
+}
+
+export const WizardHeader = ({ currentStep, totalSteps }: WizardHeaderProps) => {
   const navigate = useNavigate();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4 flex-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/broker/properties")}
-            className="rounded-full"
+            className="rounded-full shrink-0"
           >
             <X className="h-5 w-5" />
           </Button>
+          
+          <div className="flex-1 max-w-md">
+            <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+          </div>
         </div>
 
         <div className="flex items-center gap-2">

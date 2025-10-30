@@ -389,15 +389,8 @@ const SubmitListing = () => {
 
   return (
     <div className="w-full min-h-screen bg-background pb-24">
-      {/* Header */}
-      <WizardHeader />
-      
-      {/* Progress Bar */}
-      <div className="w-full px-6 py-6 border-b">
-        <div className="max-w-3xl mx-auto">
-          <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
-        </div>
-      </div>
+      {/* Header with Progress */}
+      <WizardHeader currentStep={currentStep} totalSteps={totalSteps} />
       
       {/* Form Content */}
       <div className="max-w-3xl mx-auto px-6 py-12">
