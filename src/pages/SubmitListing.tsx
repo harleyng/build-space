@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { usePropertyTypes } from "@/hooks/usePropertyTypes";
-import { Card, CardContent } from "@/components/ui/card";
+
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { Purpose, PriceUnit } from "@/types/listing.types";
 import { WizardProgressBar } from "@/components/listings/WizardProgressBar";
@@ -387,131 +387,133 @@ const SubmitListing = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto py-8 px-4">
-      <Card>
-        <CardContent className="pt-6">
+    <div className="w-full min-h-screen bg-background">
+      <div className="w-full border-b bg-card">
+        <div className="max-w-3xl mx-auto px-4 py-6">
           <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+        </div>
+      </div>
+      
+      <div className="max-w-3xl mx-auto px-4 py-8">
+        {currentStep === 1 && (
+          <ListingFormStep1PropertyType
+            purpose={purpose}
+            setPurpose={setPurpose}
+            propertyTypeSlug={propertyTypeSlug}
+            setPropertyTypeSlug={setPropertyTypeSlug}
+            filteredPropertyTypes={filteredPropertyTypes}
+          />
+        )}
 
-          {currentStep === 1 && (
-            <ListingFormStep1PropertyType
-              purpose={purpose}
-              setPurpose={setPurpose}
-              propertyTypeSlug={propertyTypeSlug}
-              setPropertyTypeSlug={setPropertyTypeSlug}
-              filteredPropertyTypes={filteredPropertyTypes}
-            />
-          )}
+        {currentStep === 2 && (
+          <ListingFormStep2Location
+            province={province}
+            setProvince={setProvince}
+            district={district}
+            setDistrict={setDistrict}
+            ward={ward}
+            setWard={setWard}
+            street={street}
+            setStreet={setStreet}
+            projectName={projectName}
+            setProjectName={setProjectName}
+            latitude={latitude}
+            setLatitude={setLatitude}
+            longitude={longitude}
+            setLongitude={setLongitude}
+          />
+        )}
 
-          {currentStep === 2 && (
-            <ListingFormStep2Location
-              province={province}
-              setProvince={setProvince}
-              district={district}
-              setDistrict={setDistrict}
-              ward={ward}
-              setWard={setWard}
-              street={street}
-              setStreet={setStreet}
-              projectName={projectName}
-              setProjectName={setProjectName}
-              latitude={latitude}
-              setLatitude={setLatitude}
-              longitude={longitude}
-              setLongitude={setLongitude}
-            />
-          )}
+        {currentStep === 3 && (
+          <ListingFormStep3BasicInfo
+            area={area}
+            setArea={setArea}
+            price={price}
+            setPrice={setPrice}
+            priceUnit={priceUnit}
+            setPriceUnit={setPriceUnit}
+            numBedrooms={numBedrooms}
+            setNumBedrooms={setNumBedrooms}
+            numBathrooms={numBathrooms}
+            setNumBathrooms={setNumBathrooms}
+          />
+        )}
 
-          {currentStep === 3 && (
-            <ListingFormStep3BasicInfo
-              area={area}
-              setArea={setArea}
-              price={price}
-              setPrice={setPrice}
-              priceUnit={priceUnit}
-              setPriceUnit={setPriceUnit}
+        {currentStep === 4 && propertyTypeSlug && (
+          <div className="space-y-6">
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-semibold mb-2">Thuộc tính chi tiết</h2>
+              <p className="text-muted-foreground">
+                Nhập các thông tin bổ sung dựa trên loại hình bất động sản
+              </p>
+            </div>
+            <ListingFormAttributes
+              currentFilters={currentFilters}
               numBedrooms={numBedrooms}
               setNumBedrooms={setNumBedrooms}
               numBathrooms={numBathrooms}
               setNumBathrooms={setNumBathrooms}
+              numFloors={numFloors}
+              setNumFloors={setNumFloors}
+              floorNumber={floorNumber}
+              setFloorNumber={setFloorNumber}
+              houseDirection={houseDirection}
+              setHouseDirection={setHouseDirection}
+              balconyDirection={balconyDirection}
+              setBalconyDirection={setBalconyDirection}
+              landDirection={landDirection}
+              setLandDirection={setLandDirection}
+              facadeWidth={facadeWidth}
+              setFacadeWidth={setFacadeWidth}
+              alleyWidth={alleyWidth}
+              setAlleyWidth={setAlleyWidth}
+              legalStatus={legalStatus}
+              setLegalStatus={setLegalStatus}
+              interiorStatus={interiorStatus}
+              setInteriorStatus={setInteriorStatus}
+              landType={landType}
+              setLandType={setLandType}
             />
-          )}
+          </div>
+        )}
 
-          {currentStep === 4 && propertyTypeSlug && (
-            <div className="space-y-6">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-semibold mb-2">Thuộc tính chi tiết</h2>
-                <p className="text-muted-foreground">
-                  Nhập các thông tin bổ sung dựa trên loại hình bất động sản
-                </p>
-              </div>
-              <ListingFormAttributes
-                currentFilters={currentFilters}
-                numBedrooms={numBedrooms}
-                setNumBedrooms={setNumBedrooms}
-                numBathrooms={numBathrooms}
-                setNumBathrooms={setNumBathrooms}
-                numFloors={numFloors}
-                setNumFloors={setNumFloors}
-                floorNumber={floorNumber}
-                setFloorNumber={setFloorNumber}
-                houseDirection={houseDirection}
-                setHouseDirection={setHouseDirection}
-                balconyDirection={balconyDirection}
-                setBalconyDirection={setBalconyDirection}
-                landDirection={landDirection}
-                setLandDirection={setLandDirection}
-                facadeWidth={facadeWidth}
-                setFacadeWidth={setFacadeWidth}
-                alleyWidth={alleyWidth}
-                setAlleyWidth={setAlleyWidth}
-                legalStatus={legalStatus}
-                setLegalStatus={setLegalStatus}
-                interiorStatus={interiorStatus}
-                setInteriorStatus={setInteriorStatus}
-                landType={landType}
-                setLandType={setLandType}
-              />
-            </div>
-          )}
-
-          {currentStep === 5 && (
-            <ListingFormStep5Media
-              title={title}
-              setTitle={setTitle}
-              description={description}
-              setDescription={setDescription}
-              prominentFeatures={prominentFeatures}
-              setProminentFeatures={setProminentFeatures}
-              imagePreviewUrls={imagePreviewUrls}
-              onImageSelect={handleImageSelect}
-              onRemoveImage={removeImage}
-            />
-          )}
-
-          {currentStep === 6 && (
-            <ListingFormStep6Contact
-              contactName={contactName}
-              setContactName={setContactName}
-              contactPhone={contactPhone}
-              setContactPhone={setContactPhone}
-              contactEmail={contactEmail}
-              setContactEmail={setContactEmail}
-              reviewData={getReviewData()}
-            />
-          )}
-
-          <WizardNavigation
-            currentStep={currentStep}
-            totalSteps={totalSteps}
-            onBack={handleBack}
-            onNext={handleNext}
-            onSubmit={handleFinalSubmit}
-            canProceed={canProceedFromStep(currentStep)}
-            isLoading={loading}
-            isUploading={uploadingImages}
+        {currentStep === 5 && (
+          <ListingFormStep5Media
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            prominentFeatures={prominentFeatures}
+            setProminentFeatures={setProminentFeatures}
+            imagePreviewUrls={imagePreviewUrls}
+            onImageSelect={handleImageSelect}
+            onRemoveImage={removeImage}
           />
-        </CardContent>
-      </Card>
+        )}
+
+        {currentStep === 6 && (
+          <ListingFormStep6Contact
+            contactName={contactName}
+            setContactName={setContactName}
+            contactPhone={contactPhone}
+            setContactPhone={setContactPhone}
+            contactEmail={contactEmail}
+            setContactEmail={setContactEmail}
+            reviewData={getReviewData()}
+          />
+        )}
+
+        <WizardNavigation
+          currentStep={currentStep}
+          totalSteps={totalSteps}
+          onBack={handleBack}
+          onNext={handleNext}
+          onSubmit={handleFinalSubmit}
+          canProceed={canProceedFromStep(currentStep)}
+          isLoading={loading}
+          isUploading={uploadingImages}
+        />
+      </div>
     </div>
   );
 };
