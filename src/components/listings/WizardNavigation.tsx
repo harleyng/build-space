@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface WizardNavigationProps {
   currentStep: number;
@@ -26,39 +26,41 @@ export const WizardNavigation = ({
   const isFirstStep = currentStep === 1;
 
   return (
-    <div className="flex justify-between items-center pt-6 border-t">
-      <Button
-        type="button"
-        variant="outline"
-        onClick={onBack}
-        disabled={isFirstStep || isLoading || isUploading}
-        className="gap-2"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        Quay lại
-      </Button>
+    <div className="fixed bottom-0 left-0 right-0 z-40 border-t bg-background">
+      <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-4">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={onBack}
+          disabled={isFirstStep || isLoading || isUploading}
+          className="text-base font-semibold underline hover:no-underline"
+        >
+          Quay lại
+        </Button>
 
-      {isLastStep ? (
-        <Button
-          type="button"
-          onClick={onSubmit}
-          disabled={!canProceed || isLoading || isUploading}
-          className="gap-2"
-        >
-          {(isLoading || isUploading) && <Loader2 className="w-4 h-4 animate-spin" />}
-          {isUploading ? "Đang tải ảnh..." : "Gửi tin đăng"}
-        </Button>
-      ) : (
-        <Button
-          type="button"
-          onClick={onNext}
-          disabled={!canProceed}
-          className="gap-2"
-        >
-          Tiếp tục
-          <ArrowRight className="w-4 h-4" />
-        </Button>
-      )}
+        {isLastStep ? (
+          <Button
+            type="button"
+            onClick={onSubmit}
+            disabled={!canProceed || isLoading || isUploading}
+            size="lg"
+            className="min-w-[120px] bg-gradient-to-r from-[#E61E4D] to-[#D70466] hover:from-[#D01346] hover:to-[#C1003B] text-white font-semibold"
+          >
+            {(isLoading || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            {isUploading ? "Đang tải..." : "Gửi tin đăng"}
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={onNext}
+            disabled={!canProceed}
+            size="lg"
+            className="min-w-[120px] bg-foreground hover:bg-foreground/90 text-background font-semibold"
+          >
+            Tiếp theo
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

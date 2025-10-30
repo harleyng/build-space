@@ -9,6 +9,7 @@ import { useImageUpload } from "@/hooks/useImageUpload";
 import { Purpose, PriceUnit } from "@/types/listing.types";
 import { WizardProgressBar } from "@/components/listings/WizardProgressBar";
 import { WizardNavigation } from "@/components/listings/WizardNavigation";
+import { WizardHeader } from "@/components/listings/WizardHeader";
 import { ListingFormStep1PropertyType } from "@/components/listings/ListingFormStep1PropertyType";
 import { ListingFormStep2Location } from "@/components/listings/ListingFormStep2Location";
 import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep3BasicInfo";
@@ -387,16 +388,19 @@ const SubmitListing = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-background">
-      {/* Progress Bar - Full width at top */}
-      <div className="w-full border-b bg-card sticky top-0 z-50 shadow-sm">
-        <div className="max-w-3xl mx-auto px-4 py-6">
+    <div className="w-full min-h-screen bg-background pb-24">
+      {/* Header */}
+      <WizardHeader />
+      
+      {/* Progress Bar */}
+      <div className="w-full px-6 py-6 border-b">
+        <div className="max-w-3xl mx-auto">
           <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
         </div>
       </div>
       
-      {/* Form Content - Centered */}
-      <div className="max-w-3xl mx-auto px-4 py-8">
+      {/* Form Content */}
+      <div className="max-w-3xl mx-auto px-6 py-12">
         {currentStep === 1 && (
           <ListingFormStep1PropertyType
             purpose={purpose}
