@@ -47,12 +47,15 @@ const App = () => (
           
           {/* Broker Portal - All authenticated users can access */}
           <Route element={<ProtectedRoute />}>
+            {/* Standalone pages without layout */}
+            <Route path="/broker/properties/new" element={<SubmitListing />} />
+            <Route path="/broker/properties/:id/edit" element={<SubmitListing />} />
+            
+            {/* Pages with sidebar layout */}
             <Route path="/broker" element={<BrokerLayout />}>
               <Route index element={<Navigate to="/broker/dashboard" replace />} />
               <Route path="dashboard" element={<BrokerDashboard />} />
               <Route path="properties" element={<BrokerProperties />} />
-              <Route path="properties/new" element={<SubmitListing />} />
-              <Route path="properties/:id/edit" element={<SubmitListing />} />
               <Route path="customers" element={<BrokerCustomers />} />
               <Route path="marketing" element={<BrokerMarketing />} />
               <Route path="organizations" element={<BrokerOrganizations />} />

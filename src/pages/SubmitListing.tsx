@@ -388,12 +388,14 @@ const SubmitListing = () => {
 
   return (
     <div className="w-full min-h-screen bg-background">
-      <div className="w-full border-b bg-card">
+      {/* Progress Bar - Full width at top */}
+      <div className="w-full border-b bg-card sticky top-0 z-50 shadow-sm">
         <div className="max-w-3xl mx-auto px-4 py-6">
           <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
         </div>
       </div>
       
+      {/* Form Content - Centered */}
       <div className="max-w-3xl mx-auto px-4 py-8">
         {currentStep === 1 && (
           <ListingFormStep1PropertyType
