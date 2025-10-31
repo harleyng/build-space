@@ -43,9 +43,9 @@ export const ListingFormStep3LegalAndDirections = ({
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
-      <div>
-        <h2 className="text-2xl font-bold mb-2">Thông tin bổ sung</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Thông tin bổ sung</h2>
+        <p className="text-muted-foreground text-lg">
           Cung cấp thêm thông tin về bất động sản của bạn
         </p>
       </div>

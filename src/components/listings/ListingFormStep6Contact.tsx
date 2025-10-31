@@ -33,9 +33,9 @@ export const ListingFormStep6Contact = ({
 }: ListingFormStep6ContactProps) => {
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold mb-2">Thông tin liên hệ và Gửi duyệt</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Thông tin liên hệ và Gửi duyệt</h2>
+        <p className="text-muted-foreground text-lg">
           Kiểm tra lại thông tin và gửi tin đăng để được duyệt
         </p>
       </div>

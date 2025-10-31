@@ -28,9 +28,9 @@ export const ListingFormStep5Media = ({
 }: ListingFormStep5MediaProps) => {
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold mb-2">Hình ảnh và Mô tả</h2>
-        <p className="text-muted-foreground">
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Hình ảnh và Mô tả</h2>
+        <p className="text-muted-foreground text-lg">
           Thêm hình ảnh và mô tả chi tiết để thu hút khách hàng
         </p>
       </div>
