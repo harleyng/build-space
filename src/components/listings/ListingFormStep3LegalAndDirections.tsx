@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { LEGAL_STATUSES, DIRECTIONS } from "@/constants/listing.constants";
+import { DirectionCompass } from "./DirectionCompass";
 
 interface ListingFormStep3LegalAndDirectionsProps {
   propertyTypeSlug: string;
@@ -69,21 +70,11 @@ export const ListingFormStep3LegalAndDirections = ({
         )}
 
         {showHouseDirection && (
-          <div className="space-y-2">
-            <Label htmlFor="house-direction">Hướng nhà</Label>
-            <Select value={houseDirection} onValueChange={setHouseDirection}>
-              <SelectTrigger id="house-direction">
-                <SelectValue placeholder="Chọn hướng nhà" />
-              </SelectTrigger>
-              <SelectContent>
-                {DIRECTIONS.map((direction) => (
-                  <SelectItem key={direction} value={direction}>
-                    {direction}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          <DirectionCompass
+            value={houseDirection}
+            onChange={setHouseDirection}
+            label="Hướng nhà"
+          />
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
