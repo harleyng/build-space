@@ -31,6 +31,7 @@ const SubmitListing = () => {
   const { toast } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const isEditMode = !!listingId;
   const { kycStatus, loading: kycLoading } = useKycStatus();
   
@@ -295,6 +296,132 @@ const SubmitListing = () => {
 
   const handleFinalSubmit = () => {
     handleSubmit();
+  };
+
+  const handleSaveAsDraft = async () => {
+    if (!session) return;
+
+    // Minimal validation - only purpose and property type required
+    if (!purpose || !propertyTypeSlug) {
+      toast({
+        title: "Thiếu thông tin",
+        description: "Vui lòng chọn loại giao dịch và loại BĐS trước khi lưu",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const draftData: any = {
+        user_id: session.user.id,
+        status: 'DRAFT' as any,
+        purpose,
+        property_type_slug: propertyTypeSlug,
+        title: title.trim() || null,
+        description: description.trim() || null,
+        price: price ? parseFloat(price) : null,
+        price_unit: priceUnit,
+        area: area ? parseFloat(area) : null,
+        address: {
+          province: province.trim() || null,
+          district: district.trim() || null,
+          ward: ward.trim() || null,
+          street: street.trim() || null,
+        },
+        prominent_features: prominentFeatures ? prominentFeatures.split(',').map(f => f.trim()) : null,
+        project_name: projectName.trim() || null,
+        attributes: {
+          num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
+          num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
+          num_floors: numFloors ? parseInt(numFloors) : null,
+          floor_number: floorNumber ? parseInt(floorNumber) : null,
+          house_direction: houseDirection || null,
+          balcony_direction: balconyDirection || null,
+          land_direction: landDirection || null,
+          facade_width: facadeWidth ? parseFloat(facadeWidth) : null,
+          alley_width: alleyWidth ? parseFloat(alleyWidth) : null,
+          legal_status: legalStatus || null,
+          interior_status: interiorStatus || null,
+          land_type: landType || null,
+          amenities: amenities.length > 0 ? amenities : null,
+          fees: fees.length > 0 ? fees : null,
+        },
+        num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
+        num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
+        num_floors: numFloors ? parseInt(numFloors) : null,
+        floor_number: floorNumber ? parseInt(floorNumber) : null,
+        house_direction: houseDirection || null,
+        balcony_direction: balconyDirection || null,
+        land_direction: landDirection || null,
+        facade_width: facadeWidth ? parseFloat(facadeWidth) : null,
+        alley_width: alleyWidth ? parseFloat(alleyWidth) : null,
+        legal_status: legalStatus || null,
+        interior_status: interiorStatus || null,
+        land_type: landType || null,
+      };
+
+      if (isEditMode && listingId) {
+        // Update existing draft
+        const { error: listingError } = await supabase
+          .from("listings")
+          .update(draftData)
+          .eq("id", listingId);
+
+        if (listingError) throw listingError;
+
+        // Update contact if exists
+        if (contactName.trim() || contactPhone.trim() || contactEmail.trim()) {
+          await supabase
+            .from("listing_contacts")
+            .upsert({
+              listing_id: listingId,
+              contact_info: {
+                name: contactName.trim() || null,
+                phone: contactPhone.trim() || null,
+                email: contactEmail.trim() || null,
+              },
+            });
+        }
+      } else {
+        // Create new draft
+        const { data: newListing, error: listingError } = await supabase
+          .from("listings")
+          .insert(draftData)
+          .select()
+          .single();
+
+        if (listingError) throw listingError;
+
+        // Save contact if provided
+        if (contactName.trim() || contactPhone.trim() || contactEmail.trim()) {
+          await supabase.from("listing_contacts").insert({
+            listing_id: newListing.id,
+            contact_info: {
+              name: contactName.trim() || null,
+              phone: contactPhone.trim() || null,
+              email: contactEmail.trim() || null,
+            },
+          });
+        }
+      }
+
+      toast({
+        title: "Đã lưu tin tạm thành công",
+        description: "Bạn có thể tiếp tục chỉnh sửa sau",
+      });
+
+      navigate("/broker/properties");
+    } catch (error: any) {
+      toast({
+        title: "Lỗi khi lưu tin tạm",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -624,9 +751,11 @@ const SubmitListing = () => {
           onBack={handleBack}
           onNext={handleNext}
           onSubmit={handleFinalSubmit}
+          onSaveAndExit={handleSaveAsDraft}
           canProceed={canProceedFromStep(currentStep)}
           isLoading={loading}
           isUploading={uploadingImages}
+          isSaving={isSaving}
         />
       </div>
     </div>
