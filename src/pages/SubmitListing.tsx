@@ -15,6 +15,7 @@ import { ListingFormStep2Location } from "@/components/listings/ListingFormStep2
 import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep3BasicInfo";
 import { ListingFormStep4Amenities } from "@/components/listings/ListingFormStep4Amenities";
 import { ListingFormStep5Price } from "@/components/listings/ListingFormStep5Price";
+import { ListingFormStep6CostsAndFees } from "@/components/listings/ListingFormStep6CostsAndFees";
 import { ListingFormStep5Media } from "@/components/listings/ListingFormStep5Media";
 import { ListingFormStep6Contact } from "@/components/listings/ListingFormStep6Contact";
 import { PURPOSES, PRICE_UNITS } from "@/constants/listing.constants";
@@ -29,7 +30,7 @@ const SubmitListing = () => {
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 7;
+  const totalSteps = 8;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -70,6 +71,9 @@ const SubmitListing = () => {
   
   // Amenities
   const [amenities, setAmenities] = useState<string[]>([]);
+  
+  // Fees
+  const [fees, setFees] = useState<any[]>([]);
   
   // Location coordinates
   const [latitude, setLatitude] = useState("");
@@ -176,6 +180,11 @@ const SubmitListing = () => {
     if (attrs.amenities && Array.isArray(attrs.amenities)) {
       setAmenities(attrs.amenities);
     }
+    
+    // Fees
+    if (attrs.fees && Array.isArray(attrs.fees)) {
+      setFees(attrs.fees);
+    }
 
     // Contact info
     const contacts = listing.listing_contacts as any;
@@ -213,8 +222,10 @@ const SubmitListing = () => {
       case 5:
         return !!price;
       case 6:
-        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+        return true; // Costs & fees is optional
       case 7:
+        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+      case 8:
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
       default:
         return false;
@@ -307,6 +318,7 @@ const SubmitListing = () => {
           interior_status: interiorStatus || null,
           land_type: landType || null,
           amenities: amenities.length > 0 ? amenities : null,
+          fees: fees.length > 0 ? fees : null,
         },
         num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
         num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
@@ -466,8 +478,12 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 6 && (
-          <ListingFormStep5Media
+          {currentStep === 6 && (
+            <ListingFormStep6CostsAndFees fees={fees} setFees={setFees} />
+          )}
+
+          {currentStep === 8 && (
+            <ListingFormStep5Media
             title={title}
             setTitle={setTitle}
             description={description}
