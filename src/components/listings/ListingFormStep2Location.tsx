@@ -74,11 +74,8 @@ export const ListingFormStep2Location = ({
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-semibold mb-2">Vị trí và Định vị</h2>
-        <p className="text-muted-foreground">
-          Cung cấp thông tin chi tiết về vị trí bất động sản
-        </p>
+      <div className="space-y-2">
+        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Bất động sản của bạn nằm ở đâu?</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
