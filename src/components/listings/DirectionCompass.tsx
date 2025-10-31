@@ -100,6 +100,5 @@ export const DirectionCompass = ({
             </text>}
         </svg>
       </div>
-      {value}
     </div>;
 };
