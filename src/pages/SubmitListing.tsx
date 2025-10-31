@@ -257,11 +257,8 @@ const SubmitListing = () => {
 
   // Check if step 3 (Legal & Directions) should be shown
   const shouldShowStep3 = () => {
-    const showLegalStatus = ["nha-pho", "biet-thu", "dat-nen", "nha-mat-pho"].includes(propertyTypeSlug);
-    const showHouseDirection = ["nha-pho", "biet-thu", "can-ho", "chung-cu", "nha-mat-pho"].includes(propertyTypeSlug);
-    const showFacadeWidth = ["nha-pho", "biet-thu", "nha-mat-pho", "dat-nen"].includes(propertyTypeSlug);
-    const showAlleyWidth = ["nha-pho", "biet-thu", "nha-mat-pho"].includes(propertyTypeSlug);
-    return showLegalStatus || showHouseDirection || showFacadeWidth || showAlleyWidth;
+    // Hiển thị bước 3 cho tất cả loại BĐS tạm thời
+    return true;
   };
 
   const handleNext = () => {
