@@ -1,10 +1,13 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useListingContact } from "@/hooks/useListingContact";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Carousel,
   CarouselContent,
@@ -13,113 +16,68 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Bed, Bath, Maximize, MapPin, Phone, Mail, User, Eye } from "lucide-react";
-
-// Mock data for listing detail - in a real app, this would come from an API
-const getListingById = (id: string) => {
-  const listings = {
-    "1": {
-      id: "1",
-      title: "Căn hộ cao cấp The Manor 2 phòng ngủ, nội thất đầy đủ",
-      description: "Căn hộ 2 phòng ngủ tại The Manor, tầng 15, view đẹp, đầy đủ nội thất cao cấp. Thiết kế hiện đại, thoáng mát. Khu vực an ninh 24/7, đầy đủ tiện ích: hồ bơi, gym, công viên. Gần trường học, siêu thị, bệnh viện. Rất thuận tiện cho việc đi lại và sinh hoạt.",
-      price: "15 tỷ",
-      priceValue: 15000000000,
-      priceUnit: "TOTAL",
-      area: 85,
-      location: "Quận Bình Thạnh, TP. Hồ Chí Minh",
-      address: {
-        street: "Đường Nguyễn Hữu Cảnh",
-        ward: "Phường 22",
-        district: "Quận Bình Thạnh",
-        province: "TP. Hồ Chí Minh",
-      },
-      coordinates: { lat: 10.8005, lng: 106.7122 },
-      contactInfo: {
-        name: "Nguyễn Văn A",
-        phone: "0912345678",
-        email: "nguyenvana@email.com",
-      },
-      projectName: "The Manor",
-      purpose: "FOR_SALE",
-      type: "Căn hộ chung cư",
-      status: "ACTIVE",
-      bedrooms: 2,
-      bathrooms: 2,
-      attributes: {
-        numBedrooms: 2,
-        numBathrooms: 2,
-        floorNumber: 15,
-        balconyDirection: "Đông Nam",
-        interiorStatus: "Nội thất cao cấp",
-        legalStatus: "Sổ hồng",
-        projectName: "The Manor",
-      } as Record<string, any>,
-      prominentFeatures: ["View đẹp", "Nội thất cao cấp", "An ninh 24/7"],
-      images: [
-        "/src/assets/apartment-sample.jpg",
-        "/src/assets/house-sample.jpg",
-        "/src/assets/penthouse-sample.jpg",
-      ],
-    },
-    "2": {
-      id: "2",
-      title: "Nhà phố hiện đại 3 tầng khu Thảo Điền",
-      description: "Nhà phố 3 tầng thiết kế hiện đại tại khu Thảo Điền cao cấp. Diện tích đất 120m², diện tích sàn 350m². 4 phòng ngủ, 5 phòng vệ sinh. Thiết kế thông minh, đầy đủ ánh sáng tự nhiên. Sân vườn rộng rãi. Khu vực yên tĩnh, an ninh, gần trường quốc tế.",
-      price: "25 tỷ",
-      priceValue: 25000000000,
-      priceUnit: "TOTAL",
-      area: 120,
-      location: "Quận 2, TP. Hồ Chí Minh",
-      address: {
-        street: "Đường Quốc Hương",
-        ward: "Phường Thảo Điền",
-        district: "Quận 2",
-        province: "TP. Hồ Chí Minh",
-      },
-      coordinates: { lat: 10.8034, lng: 106.7399 },
-      contactInfo: {
-        name: "Trần Thị B",
-        phone: "0923456789",
-        email: "tranthib@email.com",
-      },
-      projectName: null,
-      purpose: "FOR_SALE",
-      type: "Nhà riêng",
-      status: "ACTIVE",
-      bedrooms: 4,
-      bathrooms: 5,
-      attributes: {
-        numBedrooms: 4,
-        numBathrooms: 5,
-        numFloors: 3,
-        facadeWidth: 6,
-        alleyWidth: 8,
-        legalStatus: "Sổ hồng",
-        houseDirection: "Đông",
-      } as Record<string, any>,
-      prominentFeatures: ["Sân vườn", "Gần trường quốc tế", "Thiết kế hiện đại"],
-      images: [
-        "/src/assets/house-sample.jpg",
-        "/src/assets/apartment-sample.jpg",
-        "/src/assets/penthouse-sample.jpg",
-      ],
-    },
-  };
-
-  return listings[id as keyof typeof listings] || null;
-};
+import { LISTING_STATUSES, PURPOSES } from "@/constants/listing.constants";
 
 const ListingDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [showPhone, setShowPhone] = useState(false);
+  const [listing, setListing] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  if (!id) {
+  const { data: contactData, isLoading: contactLoading } = useListingContact(id || "");
+  const contactInfo = contactData?.contact_info || null;
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      if (!id) {
+        setError("ID không hợp lệ");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        const { data, error } = await supabase
+          .from("listings")
+          .select(`
+            *,
+            property_types!inner(name, slug)
+          `)
+          .eq("id", id)
+          .single();
+
+        if (error) throw error;
+
+        if (!data) {
+          setError("Không tìm thấy tin đăng");
+          setLoading(false);
+          return;
+        }
+
+        setListing(data);
+        setError(null);
+      } catch (err: any) {
+        console.error("Error fetching listing:", err);
+        setError(err.message || "Đã có lỗi xảy ra");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchListing();
+  }, [id]);
+
+  if (!id || error) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="container mx-auto px-4 py-16 text-center">
-          <h1 className="text-2xl font-bold text-foreground">Không tìm thấy tin đăng</h1>
+          <h1 className="text-2xl font-bold text-foreground">
+            {error || "Không tìm thấy tin đăng"}
+          </h1>
           <Button onClick={() => navigate("/listings")} className="mt-4">
             Quay lại danh sách
           </Button>
@@ -129,7 +87,27 @@ const ListingDetail = () => {
     );
   }
 
-  const listing = getListingById(id);
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="aspect-video w-full" />
+              <Skeleton className="h-12 w-3/4" />
+              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-64 w-full" />
+            </div>
+            <div className="lg:col-span-1">
+              <Skeleton className="h-96 w-full" />
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!listing) {
     return (
@@ -145,6 +123,27 @@ const ListingDetail = () => {
       </div>
     );
   }
+
+  const address = listing.address || {};
+  const addressText = [address.street, address.ward, address.district, address.province]
+    .filter(Boolean)
+    .join(", ");
+  
+  const attributes = listing.attributes || {};
+  const images = listing.image_url ? [listing.image_url] : [];
+  const propertyTypeName = listing.property_types?.name || "BĐS";
+  const purposeLabel = listing.purpose === "FOR_SALE" ? PURPOSES.FOR_SALE : PURPOSES.FOR_RENT;
+  const formatPrice = (price: number, priceUnit: string) => {
+    if (priceUnit === "TOTAL") {
+      if (price >= 1000000000) {
+        return `${(price / 1000000000).toFixed(1)} tỷ`;
+      } else if (price >= 1000000) {
+        return `${(price / 1000000).toFixed(0)} triệu`;
+      }
+      return `${price.toLocaleString()} VND`;
+    }
+    return `${price.toLocaleString()} VND`;
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -163,47 +162,66 @@ const ListingDetail = () => {
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
             {/* Image Carousel */}
-            <Card className="overflow-hidden">
-              <Carousel className="w-full" opts={{ loop: true }}>
-                <CarouselContent>
-                  {listing.images.map((image, index) => (
-                    <CarouselItem key={index}>
-                      <div className="aspect-video relative">
-                        <img
-                          src={image}
-                          alt={`${listing.title} - Hình ${index + 1}`}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    </CarouselItem>
-                  ))}
-                </CarouselContent>
-                <CarouselPrevious className="left-4" />
-                <CarouselNext className="right-4" />
-              </Carousel>
-            </Card>
+            {images.length > 0 ? (
+              <Card className="overflow-hidden">
+                <Carousel className="w-full" opts={{ loop: true }}>
+                  <CarouselContent>
+                    {images.map((image, index) => (
+                      <CarouselItem key={index}>
+                        <div className="aspect-video relative">
+                          <img
+                            src={image}
+                            alt={`${listing.title} - Hình ${index + 1}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.src = "/placeholder.svg";
+                            }}
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  {images.length > 1 && (
+                    <>
+                      <CarouselPrevious className="left-4" />
+                      <CarouselNext className="right-4" />
+                    </>
+                  )}
+                </Carousel>
+              </Card>
+            ) : (
+              <Card className="overflow-hidden">
+                <div className="aspect-video relative bg-muted flex items-center justify-center">
+                  <p className="text-muted-foreground">Chưa có hình ảnh</p>
+                </div>
+              </Card>
+            )}
 
             {/* Title and Price */}
             <div className="space-y-4">
               <h1 className="text-3xl font-bold text-foreground">{listing.title}</h1>
               <div className="flex items-baseline gap-4">
-                <p className="text-4xl font-bold text-primary">{listing.price}</p>
-                {listing.priceUnit === "PER_SQM" && (
+                <p className="text-4xl font-bold text-primary">
+                  {formatPrice(listing.price, listing.price_unit)}
+                </p>
+                {listing.price_unit === "PER_SQM" && (
                   <span className="text-muted-foreground">/m²</span>
                 )}
-                {listing.priceUnit === "PER_MONTH" && (
+                {listing.price_unit === "PER_MONTH" && (
                   <span className="text-muted-foreground">/tháng</span>
                 )}
               </div>
               
               {/* Prominent Features */}
-              <div className="flex flex-wrap gap-2">
-                {listing.prominentFeatures.map((feature, index) => (
-                  <Badge key={index} variant="secondary">
-                    {feature}
-                  </Badge>
-                ))}
-              </div>
+              {listing.prominent_features && listing.prominent_features.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {listing.prominent_features.map((feature: string, index: number) => (
+                    <Badge key={index} variant="secondary">
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Key Information */}
@@ -220,26 +238,26 @@ const ListingDetail = () => {
                   </div>
                 </div>
                 
-                {listing.bedrooms && (
+                {listing.num_bedrooms && (
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-lg">
                       <Bed className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Phòng ngủ</p>
-                      <p className="font-semibold text-foreground">{listing.bedrooms}</p>
+                      <p className="font-semibold text-foreground">{listing.num_bedrooms}</p>
                     </div>
                   </div>
                 )}
                 
-                {listing.bathrooms && (
+                {listing.num_bathrooms && (
                   <div className="flex items-center gap-3">
                     <div className="p-3 bg-primary/10 rounded-lg">
                       <Bath className="w-6 h-6 text-primary" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Phòng vệ sinh</p>
-                      <p className="font-semibold text-foreground">{listing.bathrooms}</p>
+                      <p className="font-semibold text-foreground">{listing.num_bathrooms}</p>
                     </div>
                   </div>
                 )}
@@ -250,7 +268,7 @@ const ListingDetail = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Loại hình</p>
-                    <p className="font-semibold text-foreground">{listing.type}</p>
+                    <p className="font-semibold text-foreground">{propertyTypeName}</p>
                   </div>
                 </div>
               </div>
@@ -260,87 +278,87 @@ const ListingDetail = () => {
             <Card className="p-6">
               <h2 className="text-xl font-semibold text-foreground mb-4">Thông tin chi tiết</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {listing.attributes.numBedrooms && (
+                {listing.num_bedrooms && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Số phòng ngủ</span>
-                    <span className="font-medium text-foreground">{listing.attributes.numBedrooms}</span>
+                    <span className="font-medium text-foreground">{listing.num_bedrooms}</span>
                   </div>
                 )}
-                {listing.attributes.numBathrooms && (
+                {listing.num_bathrooms && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Số phòng vệ sinh</span>
-                    <span className="font-medium text-foreground">{listing.attributes.numBathrooms}</span>
+                    <span className="font-medium text-foreground">{listing.num_bathrooms}</span>
                   </div>
                 )}
-                {listing.attributes.floorNumber && (
+                {listing.floor_number && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Tầng</span>
-                    <span className="font-medium text-foreground">{listing.attributes.floorNumber}</span>
+                    <span className="font-medium text-foreground">{listing.floor_number}</span>
                   </div>
                 )}
-                {listing.attributes.numFloors && (
+                {listing.num_floors && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Số tầng</span>
-                    <span className="font-medium text-foreground">{listing.attributes.numFloors}</span>
+                    <span className="font-medium text-foreground">{listing.num_floors}</span>
                   </div>
                 )}
-                {listing.attributes.balconyDirection && (
+                {listing.balcony_direction && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Hướng ban công</span>
-                    <span className="font-medium text-foreground">{listing.attributes.balconyDirection}</span>
+                    <span className="font-medium text-foreground">{listing.balcony_direction}</span>
                   </div>
                 )}
-                {listing.attributes.houseDirection && (
+                {listing.house_direction && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Hướng nhà</span>
-                    <span className="font-medium text-foreground">{listing.attributes.houseDirection}</span>
+                    <span className="font-medium text-foreground">{listing.house_direction}</span>
                   </div>
                 )}
-                {listing.attributes.interiorStatus && (
+                {listing.interior_status && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Nội thất</span>
-                    <span className="font-medium text-foreground">{listing.attributes.interiorStatus}</span>
+                    <span className="font-medium text-foreground">{listing.interior_status}</span>
                   </div>
                 )}
-                {listing.attributes.legalStatus && (
+                {listing.legal_status && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Pháp lý</span>
-                    <span className="font-medium text-foreground">{listing.attributes.legalStatus}</span>
+                    <span className="font-medium text-foreground">{listing.legal_status}</span>
                   </div>
                 )}
-                {listing.attributes.facadeWidth && (
+                {listing.facade_width && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Mặt tiền</span>
-                    <span className="font-medium text-foreground">{listing.attributes.facadeWidth}m</span>
+                    <span className="font-medium text-foreground">{listing.facade_width}m</span>
                   </div>
                 )}
-                {listing.attributes.alleyWidth && (
+                {listing.alley_width && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Hẻm</span>
-                    <span className="font-medium text-foreground">{listing.attributes.alleyWidth}m</span>
+                    <span className="font-medium text-foreground">{listing.alley_width}m</span>
                   </div>
                 )}
-                {listing.attributes.landDirection && (
+                {listing.land_direction && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Hướng đất</span>
-                    <span className="font-medium text-foreground">{listing.attributes.landDirection}</span>
+                    <span className="font-medium text-foreground">{listing.land_direction}</span>
                   </div>
                 )}
-                {listing.attributes.projectName && (
+                {listing.project_name && (
                   <div className="flex justify-between py-2 border-b border-border">
                     <span className="text-muted-foreground">Tên dự án</span>
-                    <span className="font-medium text-foreground">{listing.attributes.projectName}</span>
+                    <span className="font-medium text-foreground">{listing.project_name}</span>
                   </div>
                 )}
-                {listing.type === "BĐS khác" && listing.attributes.customAttributes && (
-                  <>
-                    {listing.attributes.customAttributes.map((attr: { name: string; value: string }, index: number) => (
-                      <div key={index} className="flex justify-between py-2 border-b border-border">
-                        <span className="text-muted-foreground">{attr.name}</span>
-                        <span className="font-medium text-foreground">{attr.value}</span>
-                      </div>
-                    ))}
-                  </>
+                {attributes.amenities && attributes.amenities.length > 0 && (
+                  <div className="col-span-2 py-2 border-b border-border">
+                    <p className="text-muted-foreground mb-2">Tiện ích</p>
+                    <div className="flex flex-wrap gap-2">
+                      {attributes.amenities.map((amenity: string, index: number) => (
+                        <Badge key={index} variant="outline">{amenity}</Badge>
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             </Card>
@@ -349,7 +367,7 @@ const ListingDetail = () => {
             <Card className="p-6">
               <h2 className="text-xl font-semibold text-foreground mb-4">Mô tả</h2>
               <p className="text-foreground leading-relaxed whitespace-pre-line">
-                {listing.description}
+                {listing.description || "Chưa có mô tả"}
               </p>
             </Card>
 
@@ -359,20 +377,22 @@ const ListingDetail = () => {
               <div className="flex items-start gap-3 mb-4">
                 <MapPin className="w-5 h-5 text-primary mt-1" />
                 <p className="text-foreground">
-                  {listing.address.street}, {listing.address.ward}, {listing.address.district}, {listing.address.province}
+                  {addressText || "Chưa có thông tin địa chỉ"}
                 </p>
               </div>
               
               {/* Map Placeholder */}
-              <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-muted-foreground">Bản đồ vị trí</p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Lat: {listing.coordinates.lat}, Lng: {listing.coordinates.lng}
-                  </p>
+              {listing.coordinates && (
+                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
+                    <p className="text-muted-foreground">Bản đồ vị trí</p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Lat: {listing.coordinates.lat}, Lng: {listing.coordinates.lng}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              )}
             </Card>
           </div>
 
@@ -381,76 +401,90 @@ const ListingDetail = () => {
             <Card className="p-6 sticky top-4">
               <h2 className="text-xl font-semibold text-foreground mb-4">Thông tin liên hệ</h2>
               
-              <div className="space-y-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <User className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Người đăng</p>
-                    <p className="font-medium text-foreground">{listing.contactInfo.name}</p>
-                  </div>
+              {contactLoading ? (
+                <div className="space-y-4">
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
+                  <Skeleton className="h-16 w-full" />
                 </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Phone className="w-5 h-5 text-primary" />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-sm text-muted-foreground">Số điện thoại</p>
-                    <div className="flex items-center gap-2">
-                      <p className="font-medium text-foreground">
-                        {showPhone 
-                          ? listing.contactInfo.phone 
-                          : `****${listing.contactInfo.phone.slice(-3)}`
-                        }
-                      </p>
-                      {!showPhone && (
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => setShowPhone(true)}
-                          className="h-7 px-3"
-                        >
-                          <Eye className="w-3 h-3 mr-1" />
-                          Hiện
-                        </Button>
-                      )}
+              ) : contactInfo ? (
+                <>
+                  <div className="space-y-4 mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <User className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Người đăng</p>
+                        <p className="font-medium text-foreground">{contactInfo.name}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Phone className="w-5 h-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-muted-foreground">Số điện thoại</p>
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium text-foreground">
+                            {showPhone 
+                              ? contactInfo.phone 
+                              : `****${contactInfo.phone.slice(-3)}`
+                            }
+                          </p>
+                          {!showPhone && (
+                            <Button 
+                              variant="outline" 
+                              size="sm"
+                              onClick={() => setShowPhone(true)}
+                              className="h-7 px-3"
+                            >
+                              <Eye className="w-3 h-3 mr-1" />
+                              Hiện
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-primary/10 rounded-lg">
+                        <Mail className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">Email</p>
+                        <p className="font-medium text-foreground text-sm">{contactInfo.email}</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-primary/10 rounded-lg">
-                    <Mail className="w-5 h-5 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Email</p>
-                    <p className="font-medium text-foreground text-sm">{listing.contactInfo.email}</p>
-                  </div>
-                </div>
-              </div>
 
-              <div className="space-y-3">
-                <Button 
-                  className="w-full" 
-                  size="lg"
-                  onClick={() => window.open(`tel:${listing.contactInfo.phone}`)}
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Gọi điện
-                </Button>
-                
-                <Button 
-                  variant="outline" 
-                  className="w-full" 
-                  size="lg"
-                  onClick={() => window.open(`mailto:${listing.contactInfo.email}`)}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Gửi email
-                </Button>
-              </div>
+                  <div className="space-y-3">
+                    <Button 
+                      className="w-full" 
+                      size="lg"
+                      onClick={() => window.open(`tel:${contactInfo.phone}`)}
+                    >
+                      <Phone className="w-4 h-4 mr-2" />
+                      Gọi điện
+                    </Button>
+                    
+                    <Button 
+                      variant="outline" 
+                      className="w-full" 
+                      size="lg"
+                      onClick={() => window.open(`mailto:${contactInfo.email}`)}
+                    >
+                      <Mail className="w-4 h-4 mr-2" />
+                      Gửi email
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">
+                  Không có thông tin liên hệ
+                </p>
+              )}
             </Card>
           </div>
         </div>
