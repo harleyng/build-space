@@ -9,9 +9,11 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   useSidebar,
+  SidebarFooter,
 } from "@/components/ui/sidebar";
 import { NavLink } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
+import { UserMenu } from "@/components/UserMenu";
 
 const menuItems = [
   { title: "Dashboard", path: "/broker/dashboard", icon: Home, description: "Tổng quan" },
@@ -72,6 +74,10 @@ export const BrokerSidebar = () => {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      
+      <SidebarFooter className="border-t p-2">
+        <UserMenu collapsed={collapsed} redirectPath="/auth" />
+      </SidebarFooter>
     </Sidebar>
   );
 };

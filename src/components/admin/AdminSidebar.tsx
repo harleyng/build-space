@@ -1,4 +1,4 @@
-import { LayoutDashboard, Building, Building2, Shield, LogOut } from "lucide-react";
+import { LayoutDashboard, Building, Building2, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -11,10 +11,8 @@ import {
   useSidebar,
   SidebarFooter,
 } from "@/components/ui/sidebar";
-import { NavLink, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
+import { NavLink } from "react-router-dom";
+import { UserMenu } from "@/components/UserMenu";
 
 const menuItems = [
   { title: "Dashboard", path: "/admin/dashboard", icon: LayoutDashboard },
@@ -26,17 +24,6 @@ const menuItems = [
 export const AdminSidebar = () => {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast({
-      title: "Đăng xuất thành công",
-      description: "Hẹn gặp lại!",
-    });
-    navigate("/admin/login");
-  };
 
   return (
     <Sidebar collapsible="icon">
@@ -69,15 +56,7 @@ export const AdminSidebar = () => {
       </SidebarContent>
       
       <SidebarFooter className="border-t p-2">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          onClick={handleLogout}
-          className="w-full justify-start"
-        >
-          <LogOut className="h-4 w-4" />
-          {!collapsed && <span className="ml-2">Đăng xuất</span>}
-        </Button>
+        <UserMenu collapsed={collapsed} redirectPath="/admin/login" />
       </SidebarFooter>
     </Sidebar>
   );
