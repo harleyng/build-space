@@ -199,7 +199,27 @@ const SubmitListing = () => {
 
   const filteredPropertyTypes = propertyTypes?.filter((type) => {
     const metadata = type.filter_metadata as any;
-    return metadata?.[purpose]?.available === true;
+    const purposeData = metadata?.[purpose];
+    
+    // Nếu không có data cho purpose này
+    if (!purposeData) return false;
+    
+    // Trường hợp mới: có field available
+    if (typeof purposeData === 'object' && 'available' in purposeData) {
+      return purposeData.available === true;
+    }
+    
+    // Trường hợp cũ: có mảng filters trực tiếp
+    if (Array.isArray(purposeData)) {
+      return purposeData.length > 0;
+    }
+    
+    // Trường hợp có object với filters array
+    if (purposeData.filters && Array.isArray(purposeData.filters)) {
+      return true;
+    }
+    
+    return false;
   }) || [];
 
   const currentPropertyType = propertyTypes?.find(pt => pt.slug === propertyTypeSlug);
