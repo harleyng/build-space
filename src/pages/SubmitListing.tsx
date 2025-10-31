@@ -314,10 +314,13 @@ const SubmitListing = () => {
     setIsSaving(true);
 
     try {
-      // Auto-generate temporary title if empty
+      // Auto-generate values for required fields if empty
       const propertyTypeName = currentPropertyType?.name || "BĐS";
       const purposeLabel = purpose === "FOR_SALE" ? "Bán" : "Cho thuê";
       const autoTitle = title.trim() || `[Nháp] ${purposeLabel} ${propertyTypeName}`;
+      const autoDescription = description.trim() || "[Chưa có mô tả]";
+      const autoPrice = price ? parseFloat(price) : 0;
+      const autoArea = area ? parseFloat(area) : 0;
       
       const draftData: any = {
         user_id: session.user.id,
@@ -325,10 +328,10 @@ const SubmitListing = () => {
         purpose,
         property_type_slug: propertyTypeSlug,
         title: autoTitle,
-        description: description.trim() || null,
-        price: price ? parseFloat(price) : null,
+        description: autoDescription,
+        price: autoPrice,
+        area: autoArea,
         price_unit: priceUnit,
-        area: area ? parseFloat(area) : null,
         address: {
           province: province.trim() || null,
           district: district.trim() || null,
