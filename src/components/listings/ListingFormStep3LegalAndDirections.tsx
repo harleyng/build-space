@@ -34,16 +34,11 @@ export const ListingFormStep3LegalAndDirections = ({
   alleyWidth,
   setAlleyWidth,
 }: ListingFormStep3LegalAndDirectionsProps) => {
-  // Determine which fields to show based on property type
-  const showLegalStatus = ["nha-pho", "biet-thu", "dat-nen", "nha-mat-pho"].includes(propertyTypeSlug);
-  const showHouseDirection = ["nha-pho", "biet-thu", "can-ho", "chung-cu", "nha-mat-pho"].includes(propertyTypeSlug);
-  const showFacadeWidth = ["nha-pho", "biet-thu", "nha-mat-pho", "dat-nen"].includes(propertyTypeSlug);
-  const showAlleyWidth = ["nha-pho", "biet-thu", "nha-mat-pho"].includes(propertyTypeSlug);
-
-  // If no fields should be shown, return null (this step will be skipped)
-  if (!showLegalStatus && !showHouseDirection && !showFacadeWidth && !showAlleyWidth) {
-    return null;
-  }
+  // Hiển thị tất cả các field cho tất cả loại BĐS (tạm thời)
+  const showLegalStatus = true;
+  const showHouseDirection = true;
+  const showFacadeWidth = true;
+  const showAlleyWidth = true;
 
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
