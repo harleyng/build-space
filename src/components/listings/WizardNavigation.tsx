@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Loader2, Save } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface WizardNavigationProps {
   currentStep: number;
@@ -7,11 +7,9 @@ interface WizardNavigationProps {
   onBack: () => void;
   onNext: () => void;
   onSubmit?: () => void;
-  onSaveAndExit?: () => void;
   canProceed: boolean;
   isLoading?: boolean;
   isUploading?: boolean;
-  isSaving?: boolean;
 }
 
 export const WizardNavigation = ({
@@ -20,11 +18,9 @@ export const WizardNavigation = ({
   onBack,
   onNext,
   onSubmit,
-  onSaveAndExit,
   canProceed,
   isLoading,
   isUploading,
-  isSaving,
 }: WizardNavigationProps) => {
   const isLastStep = currentStep === totalSteps;
   const isFirstStep = currentStep === 1;
@@ -36,51 +32,34 @@ export const WizardNavigation = ({
           type="button"
           variant="ghost"
           onClick={onBack}
-          disabled={isFirstStep || isLoading || isUploading || isSaving}
+          disabled={isFirstStep || isLoading || isUploading}
           className="text-base font-semibold underline hover:no-underline"
         >
           Quay lại
         </Button>
 
-        <div className="flex items-center gap-3">
-          {onSaveAndExit && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onSaveAndExit}
-              disabled={isLoading || isUploading || isSaving}
-              size="lg"
-              className="min-w-[140px]"
-            >
-              {isSaving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              <Save className="w-4 h-4 mr-2" />
-              {isSaving ? "Đang lưu..." : "Lưu & thoát"}
-            </Button>
-          )}
-
-          {isLastStep ? (
-            <Button
-              type="button"
-              onClick={onSubmit}
-              disabled={!canProceed || isLoading || isUploading || isSaving}
-              size="lg"
-              className="min-w-[120px] bg-gradient-to-r from-[#E61E4D] to-[#D70466] hover:from-[#D01346] hover:to-[#C1003B] text-white font-semibold"
-            >
-              {(isLoading || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-              {isUploading ? "Đang tải..." : "Gửi tin đăng"}
-            </Button>
-          ) : (
-            <Button
-              type="button"
-              onClick={onNext}
-              disabled={!canProceed || isSaving}
-              size="lg"
-              className="min-w-[120px] bg-foreground hover:bg-foreground/90 text-background font-semibold"
-            >
-              Tiếp theo
-            </Button>
-          )}
-        </div>
+        {isLastStep ? (
+          <Button
+            type="button"
+            onClick={onSubmit}
+            disabled={!canProceed || isLoading || isUploading}
+            size="lg"
+            className="min-w-[120px] bg-gradient-to-r from-[#E61E4D] to-[#D70466] hover:from-[#D01346] hover:to-[#C1003B] text-white font-semibold"
+          >
+            {(isLoading || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            {isUploading ? "Đang tải..." : "Gửi tin đăng"}
+          </Button>
+        ) : (
+          <Button
+            type="button"
+            onClick={onNext}
+            disabled={!canProceed}
+            size="lg"
+            className="min-w-[120px] bg-foreground hover:bg-foreground/90 text-background font-semibold"
+          >
+            Tiếp theo
+          </Button>
+        )}
       </div>
     </div>
   );

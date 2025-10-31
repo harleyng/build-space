@@ -314,12 +314,17 @@ const SubmitListing = () => {
     setIsSaving(true);
 
     try {
+      // Auto-generate temporary title if empty
+      const propertyTypeName = currentPropertyType?.name || "BĐS";
+      const purposeLabel = purpose === "FOR_SALE" ? "Bán" : "Cho thuê";
+      const autoTitle = title.trim() || `[Nháp] ${purposeLabel} ${propertyTypeName}`;
+      
       const draftData: any = {
         user_id: session.user.id,
         status: 'DRAFT' as any,
         purpose,
         property_type_slug: propertyTypeSlug,
-        title: title.trim() || null,
+        title: autoTitle,
         description: description.trim() || null,
         price: price ? parseFloat(price) : null,
         price_unit: priceUnit,
@@ -634,7 +639,12 @@ const SubmitListing = () => {
   return (
     <div className="w-full min-h-screen bg-background pb-24">
       {/* Header with Progress */}
-      <WizardHeader currentStep={currentStep} totalSteps={totalSteps} />
+      <WizardHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        onSaveAndExit={handleSaveAsDraft}
+        isSaving={isSaving}
+      />
       
       {/* Form Content */}
       <div className="max-w-3xl mx-auto px-6 py-12">
@@ -751,11 +761,9 @@ const SubmitListing = () => {
           onBack={handleBack}
           onNext={handleNext}
           onSubmit={handleFinalSubmit}
-          onSaveAndExit={handleSaveAsDraft}
           canProceed={canProceedFromStep(currentStep)}
           isLoading={loading}
           isUploading={uploadingImages}
-          isSaving={isSaving}
         />
       </div>
     </div>

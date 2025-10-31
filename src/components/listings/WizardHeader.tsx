@@ -1,14 +1,16 @@
 import { Button } from "@/components/ui/button";
-import { HelpCircle, X } from "lucide-react";
+import { HelpCircle, X, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { WizardProgressBar } from "./WizardProgressBar";
 
 interface WizardHeaderProps {
   currentStep: number;
   totalSteps: number;
+  onSaveAndExit?: () => void;
+  isSaving?: boolean;
 }
 
-export const WizardHeader = ({ currentStep, totalSteps }: WizardHeaderProps) => {
+export const WizardHeader = ({ currentStep, totalSteps, onSaveAndExit, isSaving }: WizardHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -34,8 +36,13 @@ export const WizardHeader = ({ currentStep, totalSteps }: WizardHeaderProps) => 
             <HelpCircle className="h-4 w-4" />
             <span className="hidden sm:inline">Bạn có thắc mắc?</span>
           </Button>
-          <Button variant="outline" onClick={() => navigate("/broker/properties")}>
-            Lưu và thoát
+          <Button 
+            variant="outline" 
+            onClick={onSaveAndExit}
+            disabled={isSaving}
+          >
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            {isSaving ? "Đang lưu..." : "Lưu và thoát"}
           </Button>
         </div>
       </div>
