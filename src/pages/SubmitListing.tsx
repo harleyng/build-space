@@ -235,6 +235,15 @@ const SubmitListing = () => {
     }
   };
 
+  // Check if step 3 (Legal & Directions) should be shown
+  const shouldShowStep3 = () => {
+    const showLegalStatus = ["nha-pho", "biet-thu", "dat-nen", "nha-mat-pho"].includes(propertyTypeSlug);
+    const showHouseDirection = ["nha-pho", "biet-thu", "can-ho", "chung-cu", "nha-mat-pho"].includes(propertyTypeSlug);
+    const showFacadeWidth = ["nha-pho", "biet-thu", "nha-mat-pho", "dat-nen"].includes(propertyTypeSlug);
+    const showAlleyWidth = ["nha-pho", "biet-thu", "nha-mat-pho"].includes(propertyTypeSlug);
+    return showLegalStatus || showHouseDirection || showFacadeWidth || showAlleyWidth;
+  };
+
   const handleNext = () => {
     if (!canProceedFromStep(currentStep)) {
       toast({
@@ -244,11 +253,22 @@ const SubmitListing = () => {
       });
       return;
     }
-    setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+    
+    let nextStep = currentStep + 1;
+    // Skip step 3 if not applicable
+    if (currentStep === 2 && !shouldShowStep3()) {
+      nextStep = 4;
+    }
+    setCurrentStep(Math.min(nextStep, totalSteps));
   };
 
   const handleBack = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 1));
+    let prevStep = currentStep - 1;
+    // Skip step 3 if not applicable when going back
+    if (currentStep === 4 && !shouldShowStep3()) {
+      prevStep = 2;
+    }
+    setCurrentStep(Math.max(prevStep, 1));
   };
 
   const handleFinalSubmit = () => {
