@@ -192,9 +192,9 @@ const SubmitListing = () => {
       case 1:
         return !!purpose && !!propertyTypeSlug;
       case 2:
-        return !!district;
+        return !!province && !!district && !!ward && !!street.trim();
       case 3:
-        return !!area && !!price;
+        return !!area;
       case 4:
         return true;
       case 5:
@@ -427,10 +427,6 @@ const SubmitListing = () => {
           <ListingFormStep3BasicInfo
             area={area}
             setArea={setArea}
-            price={price}
-            setPrice={setPrice}
-            priceUnit={priceUnit}
-            setPriceUnit={setPriceUnit}
             numBedrooms={numBedrooms}
             setNumBedrooms={setNumBedrooms}
             numBathrooms={numBathrooms}

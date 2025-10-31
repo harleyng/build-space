@@ -34,8 +34,11 @@ export const ListingFormStep1PropertyType = ({
 }: ListingFormStep1PropertyTypeProps) => {
   return <div className="space-y-12 animate-fade-in">
       {/* Title Section */}
-      <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Điều gì sau đây mô tả chính xác nhất về bất động sản của bạn?</h1>
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Điều gì sau đây mô tả chính xác nhất về bất động sản của bạn?</h2>
+        <p className="text-muted-foreground text-lg">
+          Chọn mục đích và loại hình bất động sản bạn muốn đăng tin.
+        </p>
       </div>
 
       {/* Purpose Selection */}

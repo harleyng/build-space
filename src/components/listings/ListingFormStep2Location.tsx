@@ -73,9 +73,12 @@ export const ListingFormStep2Location = ({
   const showMap = latitude && longitude && parseFloat(latitude) !== 0 && parseFloat(longitude) !== 0;
 
   return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Bất động sản của bạn nằm ở đâu?</h1>
+    <div className="space-y-8">
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Bất động sản của bạn nằm ở đâu?</h2>
+        <p className="text-muted-foreground text-lg">
+          Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt chỗ thành công.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
