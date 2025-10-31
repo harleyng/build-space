@@ -40,24 +40,40 @@ const ListingDetail = () => {
 
       try {
         setLoading(true);
-        const { data, error } = await supabase
+        
+        // Fetch listing first
+        const { data: listingData, error: listingError } = await supabase
           .from("listings")
-          .select(`
-            *,
-            property_types!inner(name, slug)
-          `)
+          .select("*")
           .eq("id", id)
           .single();
 
-        if (error) throw error;
+        if (listingError) throw listingError;
 
-        if (!data) {
+        if (!listingData) {
           setError("Không tìm thấy tin đăng");
           setLoading(false);
           return;
         }
 
-        setListing(data);
+        // Fetch property type separately
+        const { data: propertyTypeData, error: propertyTypeError } = await supabase
+          .from("property_types")
+          .select("name, slug")
+          .eq("slug", listingData.property_type_slug)
+          .single();
+
+        if (propertyTypeError) {
+          console.error("Error fetching property type:", propertyTypeError);
+        }
+
+        // Combine the data
+        const combinedData = {
+          ...listingData,
+          property_types: propertyTypeData || { name: "BĐS", slug: listingData.property_type_slug }
+        };
+
+        setListing(combinedData);
         setError(null);
       } catch (err: any) {
         console.error("Error fetching listing:", err);
