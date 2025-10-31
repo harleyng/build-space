@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Users, ParkingSquare, Lightbulb, DollarSign, Megaphone } from "lucide-react";
+import { Users, ParkingSquare, Lightbulb, DollarSign } from "lucide-react";
 import { AddFeeDialog } from "./AddFeeDialog";
 
 const paymentFrequencyLabels: Record<string, string> = {
@@ -57,8 +57,8 @@ export const ListingFormStep6CostsAndFees = ({
   };
 
   return (
-    <div className="flex gap-8 max-w-6xl mx-auto">
-      <div className="flex-1 max-w-2xl">
+    <div className="max-w-3xl mx-auto">
+      <div>
         <h1 className="text-3xl font-semibold mb-2">
           Bạn có thu thêm chi phí và phí nào không?
         </h1>
@@ -122,26 +122,6 @@ export const ListingFormStep6CostsAndFees = ({
             ))}
           </div>
         )}
-      </div>
-
-      <div className="w-80 shrink-0">
-        <div className="sticky top-24 p-6 border rounded-lg bg-muted/30">
-          <div className="flex items-center gap-2 mb-4">
-            <Megaphone className="w-5 h-5" />
-            <h3 className="font-semibold">Mẹo thêm chi phí và phí</h3>
-          </div>
-          <ul className="space-y-3 text-sm text-muted-foreground">
-            <li>
-              Chờ đến khi có phí đăng ký — chúng tôi sẽ hỏi về những khoản đó sau.
-            </li>
-            <li>
-              Chỉ thêm các khoản phí bạn cần và ghi chú những khoản phí đã bao gồm trong tiền thuê cơ bản.
-            </li>
-            <li>
-              Một số khu vực yêu cầu tiết lộ các khoản phí nhất định — hãy đảm bảo kiểm tra những gì được yêu cầu ở khu vực của bạn.
-            </li>
-          </ul>
-        </div>
       </div>
 
       <AddFeeDialog
