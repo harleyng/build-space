@@ -5,13 +5,15 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
 import apartmentSample from "@/assets/apartment-sample.jpg";
 import houseSample from "@/assets/house-sample.jpg";
 import penthouseSample from "@/assets/penthouse-sample.jpg";
 
 const Index = () => {
+  const navigate = useNavigate();
+  
   const featuredProperties = [
     {
       id: "1",
@@ -294,7 +296,7 @@ const Index = () => {
           <p className="text-lg text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
             Đăng tin miễn phí và tiếp cận hàng nghìn khách hàng tiềm năng
           </p>
-          <Button size="lg" variant="secondary" className="text-lg">
+          <Button size="lg" variant="secondary" className="text-lg" onClick={() => navigate("/broker/properties/new")}>
             Đăng tin ngay
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>

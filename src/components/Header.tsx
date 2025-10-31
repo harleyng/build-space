@@ -144,7 +144,7 @@ export const Header = () => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <Button onClick={() => navigate("/submit-listing")} className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground">
+              <Button onClick={() => navigate("/broker/properties/new")} className="hidden sm:inline-flex bg-primary hover:bg-primary-hover text-primary-foreground">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Đăng tin
               </Button>
@@ -182,7 +182,7 @@ export const Header = () => {
                     <Link to="/my-listings" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
                       Tin đăng của tôi
                     </Link>
-                    <Button onClick={() => navigate("/submit-listing")} className="mt-4 bg-primary hover:bg-primary-hover text-primary-foreground">
+                    <Button onClick={() => navigate("/broker/properties/new")} className="mt-4 bg-primary hover:bg-primary-hover text-primary-foreground">
                       <PlusCircle className="mr-2 h-4 w-4" />
                       Đăng tin
                     </Button>
