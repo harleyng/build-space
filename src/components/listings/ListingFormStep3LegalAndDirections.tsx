@@ -69,14 +69,6 @@ export const ListingFormStep3LegalAndDirections = ({
           </div>
         )}
 
-        {showHouseDirection && (
-          <DirectionCompass
-            value={houseDirection}
-            onChange={setHouseDirection}
-            label="Hướng nhà"
-          />
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {showFacadeWidth && (
             <div className="space-y-2">
@@ -108,6 +100,14 @@ export const ListingFormStep3LegalAndDirections = ({
             </div>
           )}
         </div>
+
+        {showHouseDirection && (
+          <DirectionCompass
+            value={houseDirection}
+            onChange={setHouseDirection}
+            label="Hướng nhà"
+          />
+        )}
       </div>
     </div>
   );
