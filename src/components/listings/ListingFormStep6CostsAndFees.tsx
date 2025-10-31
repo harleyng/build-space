@@ -3,6 +3,13 @@ import { Button } from "@/components/ui/button";
 import { Users, ParkingSquare, Lightbulb, DollarSign, Megaphone } from "lucide-react";
 import { AddFeeDialog } from "./AddFeeDialog";
 
+const paymentFrequencyLabels: Record<string, string> = {
+  monthly: "Hàng tháng",
+  quarterly: "Hàng quý",
+  yearly: "Hàng năm",
+  "one-time": "Một lần",
+};
+
 interface Fee {
   id: string;
   category: string;
@@ -12,6 +19,7 @@ interface Fee {
   isRefundable?: string;
   feeType: string;
   amount: number;
+  maxAmount?: number;
 }
 
 interface ListingFormStep6CostsAndFeesProps {
@@ -90,11 +98,25 @@ export const ListingFormStep6CostsAndFees = ({
               <div key={fee.id} className="p-3 bg-muted rounded-lg text-sm">
                 <div className="font-medium">{fee.feeName}</div>
                 <div className="text-muted-foreground">
-                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND",
-                  }).format(fee.amount)}{" "}
-                  - {fee.paymentFrequency}
+                  {fee.feeType === "range" && fee.maxAmount ? (
+                    <>
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(fee.amount)}{" "}
+                      -{" "}
+                      {new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(fee.maxAmount)}
+                    </>
+                  ) : (
+                    new Intl.NumberFormat("vi-VN", {
+                      style: "currency",
+                      currency: "VND",
+                    }).format(fee.amount)
+                  )}{" "}
+                  - {paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}
                 </div>
               </div>
             ))}

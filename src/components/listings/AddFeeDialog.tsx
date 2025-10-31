@@ -28,6 +28,7 @@ interface AddFeeDialogProps {
     isRefundable?: string;
     feeType: string;
     amount: number;
+    maxAmount?: number;
   }) => void;
   category: string | null;
 }
@@ -87,6 +88,8 @@ export const AddFeeDialog = ({
   const [isRefundable, setIsRefundable] = useState("");
   const [feeType, setFeeType] = useState("");
   const [amount, setAmount] = useState("");
+  const [minAmount, setMinAmount] = useState("");
+  const [maxAmount, setMaxAmount] = useState("");
 
   useEffect(() => {
     if (!isOpen) {
@@ -97,11 +100,23 @@ export const AddFeeDialog = ({
       setIsRefundable("");
       setFeeType("");
       setAmount("");
+      setMinAmount("");
+      setMaxAmount("");
     }
   }, [isOpen]);
 
   const handleSave = () => {
-    if (!category || !feeName || !paymentFrequency || !isRequired || !feeType || !amount) {
+    if (!category || !feeName || !paymentFrequency || !isRequired || !feeType) {
+      return;
+    }
+
+    // Validation for fee range
+    if (feeType === "range" && (!minAmount || !maxAmount)) {
+      return;
+    }
+
+    // Validation for other fee types
+    if (feeType !== "range" && !amount) {
       return;
     }
 
@@ -112,11 +127,13 @@ export const AddFeeDialog = ({
       isRequired,
       isRefundable: isRefundable || undefined,
       feeType,
-      amount: parseFloat(amount),
+      amount: feeType === "range" ? parseFloat(minAmount) : parseFloat(amount),
+      maxAmount: feeType === "range" ? parseFloat(maxAmount) : undefined,
     });
   };
 
-  const canSave = feeName && paymentFrequency && isRequired && feeType && amount;
+  const canSave = feeName && paymentFrequency && isRequired && feeType && 
+    (feeType === "range" ? (minAmount && maxAmount) : amount);
 
   const dialogTitle = category
     ? `Thêm ${categoryNames[category] || "phí"}`
@@ -246,26 +263,76 @@ export const AddFeeDialog = ({
             </RadioGroup>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="amount">
-              Số tiền phí <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                ₫
-              </span>
-              <Input
-                id="amount"
-                type="number"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                className="pl-7"
-                placeholder="0"
-                min="0"
-                step="1000"
-              />
+          {feeType === "range" ? (
+            <div className="space-y-4">
+              <Label>
+                Khoảng phí <span className="text-red-500">*</span>
+              </Label>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="minAmount" className="text-sm font-normal">
+                    Từ
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      ₫
+                    </span>
+                    <Input
+                      id="minAmount"
+                      type="number"
+                      value={minAmount}
+                      onChange={(e) => setMinAmount(e.target.value)}
+                      className="pl-7"
+                      placeholder="0"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="maxAmount" className="text-sm font-normal">
+                    Đến
+                  </Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      ₫
+                    </span>
+                    <Input
+                      id="maxAmount"
+                      type="number"
+                      value={maxAmount}
+                      onChange={(e) => setMaxAmount(e.target.value)}
+                      className="pl-7"
+                      placeholder="0"
+                      min="0"
+                      step="1000"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="amount">
+                Số tiền phí <span className="text-red-500">*</span>
+              </Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                  ₫
+                </span>
+                <Input
+                  id="amount"
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  className="pl-7"
+                  placeholder="0"
+                  min="0"
+                  step="1000"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
