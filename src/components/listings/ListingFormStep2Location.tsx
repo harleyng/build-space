@@ -1,5 +1,11 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { vietnamProvinces } from "@/constants/vietnam-locations";
+import { useGeocode } from "@/hooks/useGeocode";
+import { LocationMap } from "./LocationMap";
+import { Loader2 } from "lucide-react";
+import { useMemo } from "react";
 
 interface ListingFormStep2LocationProps {
   province: string;
@@ -34,6 +40,38 @@ export const ListingFormStep2Location = ({
   longitude,
   setLongitude,
 }: ListingFormStep2LocationProps) => {
+  // Get available districts based on selected province
+  const availableDistricts = useMemo(() => {
+    if (!province) return [];
+    const selectedProvince = vietnamProvinces.find((p) => p.name === province);
+    return selectedProvince?.districts || [];
+  }, [province]);
+
+  // Get available wards based on selected district
+  const availableWards = useMemo(() => {
+    if (!district) return [];
+    const selectedDistrict = availableDistricts.find((d) => d.name === district);
+    return selectedDistrict?.wards || [];
+  }, [district, availableDistricts]);
+
+  // Geocode the address automatically
+  const { latitude: geocodedLat, longitude: geocodedLng, isLoading: isGeocoding } = useGeocode(
+    province,
+    district,
+    ward,
+    street
+  );
+
+  // Update latitude and longitude when geocoding is complete
+  useMemo(() => {
+    if (geocodedLat && geocodedLng) {
+      setLatitude(geocodedLat.toString());
+      setLongitude(geocodedLng.toString());
+    }
+  }, [geocodedLat, geocodedLng, setLatitude, setLongitude]);
+
+  const showMap = latitude && longitude && parseFloat(latitude) !== 0 && parseFloat(longitude) !== 0;
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-6">
@@ -45,45 +83,85 @@ export const ListingFormStep2Location = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="province">Tỉnh/Thành phố</Label>
-          <Input
-            id="province"
+          <Label htmlFor="province">
+            Tỉnh/Thành phố <span className="text-destructive">*</span>
+          </Label>
+          <Select
             value={province}
-            onChange={(e) => setProvince(e.target.value)}
-            placeholder="Ví dụ: TP. Hồ Chí Minh"
-          />
+            onValueChange={(value) => {
+              setProvince(value);
+              setDistrict("");
+              setWard("");
+            }}
+          >
+            <SelectTrigger id="province">
+              <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
+            </SelectTrigger>
+            <SelectContent>
+              {vietnamProvinces.map((p) => (
+                <SelectItem key={p.name} value={p.name}>
+                  {p.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="district">Quận/Huyện <span className="text-destructive">*</span></Label>
-          <Input
-            id="district"
+          <Label htmlFor="district">
+            Quận/Huyện <span className="text-destructive">*</span>
+          </Label>
+          <Select
             value={district}
-            onChange={(e) => setDistrict(e.target.value)}
-            placeholder="Ví dụ: Quận 1"
-            required
-          />
+            onValueChange={(value) => {
+              setDistrict(value);
+              setWard("");
+            }}
+            disabled={!province}
+          >
+            <SelectTrigger id="district">
+              <SelectValue placeholder="Chọn Quận/Huyện" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableDistricts.map((d) => (
+                <SelectItem key={d.name} value={d.name}>
+                  {d.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="ward">Phường/Xã</Label>
-          <Input
-            id="ward"
-            value={ward}
-            onChange={(e) => setWard(e.target.value)}
-            placeholder="Ví dụ: Phường Bến Nghé"
-          />
+          <Label htmlFor="ward">
+            Phường/Xã <span className="text-destructive">*</span>
+          </Label>
+          <Select value={ward} onValueChange={setWard} disabled={!district}>
+            <SelectTrigger id="ward">
+              <SelectValue placeholder="Chọn Phường/Xã" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableWards.map((w) => (
+                <SelectItem key={w} value={w}>
+                  {w}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="street">Địa chỉ chi tiết</Label>
+          <Label htmlFor="street">
+            Địa chỉ chi tiết <span className="text-destructive">*</span>
+          </Label>
           <Input
             id="street"
             value={street}
             onChange={(e) => setStreet(e.target.value)}
             placeholder="Số nhà, tên đường"
+            required
           />
         </div>
       </div>
@@ -98,34 +176,21 @@ export const ListingFormStep2Location = ({
         />
       </div>
 
-      <div className="border-t pt-4">
-        <h3 className="text-sm font-medium mb-4">Tọa độ (Tùy chọn)</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="latitude">Vĩ độ (Latitude)</Label>
-            <Input
-              id="latitude"
-              type="number"
-              step="any"
-              value={latitude}
-              onChange={(e) => setLatitude(e.target.value)}
-              placeholder="10.762622"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="longitude">Kinh độ (Longitude)</Label>
-            <Input
-              id="longitude"
-              type="number"
-              step="any"
-              value={longitude}
-              onChange={(e) => setLongitude(e.target.value)}
-              placeholder="106.660172"
-            />
-          </div>
+      {isGeocoding && (
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="w-4 h-4 animate-spin" />
+          <span>Đang tìm vị trí trên bản đồ...</span>
         </div>
-      </div>
+      )}
+
+      {showMap && (
+        <div className="border-t pt-4">
+          <LocationMap
+            latitude={parseFloat(latitude)}
+            longitude={parseFloat(longitude)}
+          />
+        </div>
+      )}
     </div>
   );
 };
