@@ -12,6 +12,7 @@ import { WizardNavigation } from "@/components/listings/WizardNavigation";
 import { WizardHeader } from "@/components/listings/WizardHeader";
 import { ListingFormStep1PropertyType } from "@/components/listings/ListingFormStep1PropertyType";
 import { ListingFormStep2Location } from "@/components/listings/ListingFormStep2Location";
+import { ListingFormStep3LegalAndDirections } from "@/components/listings/ListingFormStep3LegalAndDirections";
 import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep3BasicInfo";
 import { ListingFormStep4Amenities } from "@/components/listings/ListingFormStep4Amenities";
 import { ListingFormStep5Price } from "@/components/listings/ListingFormStep5Price";
@@ -30,7 +31,7 @@ const SubmitListing = () => {
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 8;
+  const totalSteps = 9;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -212,20 +213,22 @@ const SubmitListing = () => {
       case 2:
         return !!province && !!district && !!ward && !!street.trim();
       case 3:
-        return !!area;
+        return true; // Legal and directions step is optional (shown conditionally)
       case 4:
+        return !!area;
+      case 5:
         // Check if furniture option is selected (required)
         const hasFurniture = amenities.some(a => 
           ['full_furnished', 'basic_furnished', 'unfurnished'].includes(a)
         );
         return hasFurniture;
-      case 5:
-        return !!price;
       case 6:
-        return true; // Costs & fees is optional
+        return !!price;
       case 7:
-        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+        return true; // Costs & fees is optional
       case 8:
+        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+      case 9:
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
       default:
         return false;
@@ -458,6 +461,21 @@ const SubmitListing = () => {
         )}
 
         {currentStep === 3 && (
+          <ListingFormStep3LegalAndDirections
+            propertyTypeSlug={propertyTypeSlug}
+            purpose={purpose}
+            legalStatus={legalStatus}
+            setLegalStatus={setLegalStatus}
+            houseDirection={houseDirection}
+            setHouseDirection={setHouseDirection}
+            facadeWidth={facadeWidth}
+            setFacadeWidth={setFacadeWidth}
+            alleyWidth={alleyWidth}
+            setAlleyWidth={setAlleyWidth}
+          />
+        )}
+
+        {currentStep === 4 && (
           <ListingFormStep3BasicInfo
             area={area}
             setArea={setArea}
@@ -468,14 +486,14 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 4 && (
+        {currentStep === 5 && (
           <ListingFormStep4Amenities
             amenities={amenities}
             setAmenities={setAmenities}
           />
         )}
 
-        {currentStep === 5 && (
+        {currentStep === 6 && (
           <ListingFormStep5Price
             price={price}
             setPrice={setPrice}
@@ -484,12 +502,24 @@ const SubmitListing = () => {
           />
         )}
 
-          {currentStep === 6 && (
-            <ListingFormStep6CostsAndFees fees={fees} setFees={setFees} />
-          )}
+        {currentStep === 7 && (
+          <ListingFormStep6CostsAndFees fees={fees} setFees={setFees} />
+        )}
 
-          {currentStep === 8 && (
-            <ListingFormStep5Media
+        {currentStep === 8 && (
+          <ListingFormStep6Contact
+            contactName={contactName}
+            setContactName={setContactName}
+            contactPhone={contactPhone}
+            setContactPhone={setContactPhone}
+            contactEmail={contactEmail}
+            setContactEmail={setContactEmail}
+            reviewData={getReviewData()}
+          />
+        )}
+
+        {currentStep === 9 && (
+          <ListingFormStep5Media
             title={title}
             setTitle={setTitle}
             description={description}
@@ -499,18 +529,6 @@ const SubmitListing = () => {
             imagePreviewUrls={imagePreviewUrls}
             onImageSelect={handleImageSelect}
             onRemoveImage={removeImage}
-          />
-        )}
-
-        {currentStep === 7 && (
-          <ListingFormStep6Contact
-            contactName={contactName}
-            setContactName={setContactName}
-            contactPhone={contactPhone}
-            setContactPhone={setContactPhone}
-            contactEmail={contactEmail}
-            setContactEmail={setContactEmail}
-            reviewData={getReviewData()}
           />
         )}
 
