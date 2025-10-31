@@ -63,9 +63,9 @@ export const DirectionCompass = ({ value, onChange, label }: DirectionCompassPro
                   className={cn(
                     "cursor-pointer transition-all duration-200",
                     isSelected
-                      ? "fill-primary/80 stroke-primary"
+                      ? "fill-gray-900 stroke-gray-800"
                       : isHovered
-                      ? "fill-primary/30 stroke-primary/50"
+                      ? "fill-gray-600 stroke-gray-500"
                       : "fill-muted/40 stroke-muted-foreground/20"
                   )}
                   strokeWidth="2"
@@ -81,6 +81,7 @@ export const DirectionCompass = ({ value, onChange, label }: DirectionCompassPro
           {DIRECTIONS.map((direction) => {
             const labelPos = getLabelPosition(direction.angle, 130);
             const isSelected = value === direction.value;
+            const isHovered = hoveredDirection === direction.value;
 
             return (
               <text
@@ -91,7 +92,11 @@ export const DirectionCompass = ({ value, onChange, label }: DirectionCompassPro
                 dominantBaseline="middle"
                 className={cn(
                   "text-sm font-medium pointer-events-none select-none transition-colors",
-                  isSelected ? "fill-primary font-bold" : "fill-foreground"
+                  isSelected 
+                    ? "fill-white font-bold" 
+                    : isHovered
+                    ? "fill-white font-semibold"
+                    : "fill-foreground"
                 )}
               >
                 {direction.label}
