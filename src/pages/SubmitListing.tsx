@@ -544,18 +544,6 @@ const SubmitListing = () => {
         )}
 
         {currentStep === 8 && (
-          <ListingFormStep6Contact
-            contactName={contactName}
-            setContactName={setContactName}
-            contactPhone={contactPhone}
-            setContactPhone={setContactPhone}
-            contactEmail={contactEmail}
-            setContactEmail={setContactEmail}
-            reviewData={getReviewData()}
-          />
-        )}
-
-        {currentStep === 9 && (
           <ListingFormStep5Media
             title={title}
             setTitle={setTitle}
@@ -566,6 +554,18 @@ const SubmitListing = () => {
             imagePreviewUrls={imagePreviewUrls}
             onImageSelect={handleImageSelect}
             onRemoveImage={removeImage}
+          />
+        )}
+
+        {currentStep === 9 && (
+          <ListingFormStep6Contact
+            contactName={contactName}
+            setContactName={setContactName}
+            contactPhone={contactPhone}
+            setContactPhone={setContactPhone}
+            contactEmail={contactEmail}
+            setContactEmail={setContactEmail}
+            reviewData={getReviewData()}
           />
         )}
 
