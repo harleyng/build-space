@@ -4,6 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Session } from "@supabase/supabase-js";
 import { usePropertyTypes } from "@/hooks/usePropertyTypes";
+import { useKycStatus } from "@/hooks/useKycStatus";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ShieldCheck, AlertCircle } from "lucide-react";
 
 import { useImageUpload } from "@/hooks/useImageUpload";
 import { Purpose, PriceUnit } from "@/types/listing.types";
@@ -28,6 +32,7 @@ const SubmitListing = () => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(false);
   const isEditMode = !!listingId;
+  const { kycStatus, loading: kycLoading } = useKycStatus();
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
@@ -435,6 +440,50 @@ const SubmitListing = () => {
 
   if (!session) {
     return null;
+  }
+
+  // Show KYC verification required screen
+  if (!kycLoading && kycStatus && kycStatus !== "APPROVED") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-6">
+        <Card className="max-w-md w-full">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+              {kycStatus === "REJECTED" ? (
+                <AlertCircle className="h-6 w-6 text-destructive" />
+              ) : (
+                <ShieldCheck className="h-6 w-6 text-primary" />
+              )}
+            </div>
+            <CardTitle>
+              {kycStatus === "NOT_APPLIED" && "Yêu cầu xác thực tài khoản"}
+              {kycStatus === "PENDING_KYC" && "Tài khoản đang chờ xác thực"}
+              {kycStatus === "REJECTED" && "Tài khoản bị từ chối"}
+            </CardTitle>
+            <CardDescription className="mt-2">
+              {kycStatus === "NOT_APPLIED" && "Bạn cần hoàn tất xác thực tài khoản trước khi có thể đăng tin."}
+              {kycStatus === "PENDING_KYC" && "Yêu cầu xác thực của bạn đang được xem xét. Vui lòng đợi phê duyệt trước khi đăng tin."}
+              {kycStatus === "REJECTED" && "Yêu cầu xác thực của bạn đã bị từ chối. Vui lòng liên hệ hỗ trợ hoặc thử lại."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-3">
+            <Button 
+              onClick={() => navigate("/broker/profile")}
+              className="w-full"
+            >
+              {kycStatus === "NOT_APPLIED" ? "Đi đến trang xác thực" : "Xem hồ sơ của tôi"}
+            </Button>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/broker/dashboard")}
+              className="w-full"
+            >
+              Quay về Dashboard
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   const getReviewData = () => {
