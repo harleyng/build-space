@@ -13,7 +13,8 @@ import { WizardHeader } from "@/components/listings/WizardHeader";
 import { ListingFormStep1PropertyType } from "@/components/listings/ListingFormStep1PropertyType";
 import { ListingFormStep2Location } from "@/components/listings/ListingFormStep2Location";
 import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep3BasicInfo";
-import { ListingFormAttributes } from "@/components/listings/ListingFormAttributes";
+import { ListingFormStep4Amenities } from "@/components/listings/ListingFormStep4Amenities";
+import { ListingFormStep5Price } from "@/components/listings/ListingFormStep5Price";
 import { ListingFormStep5Media } from "@/components/listings/ListingFormStep5Media";
 import { ListingFormStep6Contact } from "@/components/listings/ListingFormStep6Contact";
 import { PURPOSES, PRICE_UNITS } from "@/constants/listing.constants";
@@ -28,7 +29,7 @@ const SubmitListing = () => {
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 6;
+  const totalSteps = 7;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -66,6 +67,9 @@ const SubmitListing = () => {
   const [legalStatus, setLegalStatus] = useState("");
   const [interiorStatus, setInteriorStatus] = useState("");
   const [landType, setLandType] = useState("");
+  
+  // Amenities
+  const [amenities, setAmenities] = useState<string[]>([]);
   
   // Location coordinates
   const [latitude, setLatitude] = useState("");
@@ -167,6 +171,11 @@ const SubmitListing = () => {
     setLegalStatus(attrs.legal_status || "");
     setInteriorStatus(attrs.interior_status || "");
     setLandType(attrs.land_type || "");
+    
+    // Amenities
+    if (attrs.amenities && Array.isArray(attrs.amenities)) {
+      setAmenities(attrs.amenities);
+    }
 
     // Contact info
     const contacts = listing.listing_contacts as any;
@@ -196,10 +205,16 @@ const SubmitListing = () => {
       case 3:
         return !!area;
       case 4:
-        return true;
+        // Check if furniture option is selected (required)
+        const hasFurniture = amenities.some(a => 
+          ['full_furnished', 'basic_furnished', 'unfurnished'].includes(a)
+        );
+        return hasFurniture;
       case 5:
-        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+        return !!price;
       case 6:
+        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+      case 7:
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
       default:
         return false;
@@ -291,6 +306,7 @@ const SubmitListing = () => {
           legal_status: legalStatus || null,
           interior_status: interiorStatus || null,
           land_type: landType || null,
+          amenities: amenities.length > 0 ? amenities : null,
         },
         num_bedrooms: numBedrooms ? parseInt(numBedrooms) : null,
         num_bathrooms: numBathrooms ? parseInt(numBathrooms) : null,
@@ -434,45 +450,23 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 4 && propertyTypeSlug && (
-          <div className="space-y-6">
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-semibold mb-2">Thuộc tính chi tiết</h2>
-              <p className="text-muted-foreground">
-                Nhập các thông tin bổ sung dựa trên loại hình bất động sản
-              </p>
-            </div>
-            <ListingFormAttributes
-              currentFilters={currentFilters}
-              numBedrooms={numBedrooms}
-              setNumBedrooms={setNumBedrooms}
-              numBathrooms={numBathrooms}
-              setNumBathrooms={setNumBathrooms}
-              numFloors={numFloors}
-              setNumFloors={setNumFloors}
-              floorNumber={floorNumber}
-              setFloorNumber={setFloorNumber}
-              houseDirection={houseDirection}
-              setHouseDirection={setHouseDirection}
-              balconyDirection={balconyDirection}
-              setBalconyDirection={setBalconyDirection}
-              landDirection={landDirection}
-              setLandDirection={setLandDirection}
-              facadeWidth={facadeWidth}
-              setFacadeWidth={setFacadeWidth}
-              alleyWidth={alleyWidth}
-              setAlleyWidth={setAlleyWidth}
-              legalStatus={legalStatus}
-              setLegalStatus={setLegalStatus}
-              interiorStatus={interiorStatus}
-              setInteriorStatus={setInteriorStatus}
-              landType={landType}
-              setLandType={setLandType}
-            />
-          </div>
+        {currentStep === 4 && (
+          <ListingFormStep4Amenities
+            amenities={amenities}
+            setAmenities={setAmenities}
+          />
         )}
 
         {currentStep === 5 && (
+          <ListingFormStep5Price
+            price={price}
+            setPrice={setPrice}
+            priceUnit={priceUnit}
+            setPriceUnit={setPriceUnit}
+          />
+        )}
+
+        {currentStep === 6 && (
           <ListingFormStep5Media
             title={title}
             setTitle={setTitle}
@@ -486,7 +480,7 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 6 && (
+        {currentStep === 7 && (
           <ListingFormStep6Contact
             contactName={contactName}
             setContactName={setContactName}
