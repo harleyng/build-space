@@ -22,6 +22,12 @@ interface ListingFormStep2LocationProps {
   setLatitude: (value: string) => void;
   longitude: string;
   setLongitude: (value: string) => void;
+  propertyTypeSlug: string;
+  purpose: string;
+  numFloors?: string;
+  setNumFloors?: (value: string) => void;
+  floorNumber?: string;
+  setFloorNumber?: (value: string) => void;
 }
 
 export const ListingFormStep2Location = ({
@@ -39,7 +45,18 @@ export const ListingFormStep2Location = ({
   setLatitude,
   longitude,
   setLongitude,
+  propertyTypeSlug,
+  purpose,
+  numFloors,
+  setNumFloors,
+  floorNumber,
+  setFloorNumber,
 }: ListingFormStep2LocationProps) => {
+  // Determine which field to show based on property type
+  // Houses, villas show num_floors (Số tầng)
+  // Apartments, condos show floor_number (Tầng)
+  const showNumFloors = ["nha-pho", "biet-thu", "nha-mat-pho", "nha-rieng"].includes(propertyTypeSlug);
+  const showFloorNumber = ["can-ho", "chung-cu", "officetel", "penthouse"].includes(propertyTypeSlug);
   // Get available districts based on selected province
   const availableDistricts = useMemo(() => {
     if (!province) return [];
@@ -166,14 +183,44 @@ export const ListingFormStep2Location = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="projectName">Tên dự án (Nếu có)</Label>
-        <Input
-          id="projectName"
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value)}
-          placeholder="Ví dụ: Vinhomes Central Park"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="projectName">Tên dự án (Nếu có)</Label>
+          <Input
+            id="projectName"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            placeholder="Ví dụ: Vinhomes Central Park"
+          />
+        </div>
+
+        {showNumFloors && setNumFloors && (
+          <div className="space-y-2">
+            <Label htmlFor="numFloors">Số tầng</Label>
+            <Input
+              id="numFloors"
+              type="number"
+              min="1"
+              value={numFloors}
+              onChange={(e) => setNumFloors(e.target.value)}
+              placeholder="Ví dụ: 3"
+            />
+          </div>
+        )}
+
+        {showFloorNumber && setFloorNumber && (
+          <div className="space-y-2">
+            <Label htmlFor="floorNumber">Tầng</Label>
+            <Input
+              id="floorNumber"
+              type="number"
+              min="1"
+              value={floorNumber}
+              onChange={(e) => setFloorNumber(e.target.value)}
+              placeholder="Ví dụ: 15"
+            />
+          </div>
+        )}
       </div>
 
       {isGeocoding && (

@@ -448,6 +448,12 @@ const SubmitListing = () => {
             setLatitude={setLatitude}
             longitude={longitude}
             setLongitude={setLongitude}
+            propertyTypeSlug={propertyTypeSlug}
+            purpose={purpose}
+            numFloors={numFloors}
+            setNumFloors={setNumFloors}
+            floorNumber={floorNumber}
+            setFloorNumber={setFloorNumber}
           />
         )}
 
