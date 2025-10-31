@@ -1,5 +1,4 @@
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { LEGAL_STATUSES, DIRECTIONS } from "@/constants/listing.constants";
 import { DirectionCompass } from "./DirectionCompass";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface ListingFormStep3LegalAndDirectionsProps {
   propertyTypeSlug: string;
@@ -73,14 +73,11 @@ export const ListingFormStep3LegalAndDirections = ({
           {showFacadeWidth && (
             <div className="space-y-2">
               <Label htmlFor="facade-width">Chiều rộng mặt tiền (m)</Label>
-              <Input
+              <NumberInput
                 id="facade-width"
-                type="number"
-                step="0.1"
-                min="0"
                 placeholder="Nhập chiều rộng mặt tiền"
                 value={facadeWidth}
-                onChange={(e) => setFacadeWidth(e.target.value)}
+                onChange={setFacadeWidth}
               />
             </div>
           )}
@@ -88,14 +85,11 @@ export const ListingFormStep3LegalAndDirections = ({
           {showAlleyWidth && (
             <div className="space-y-2">
               <Label htmlFor="alley-width">Độ rộng đường vào (m)</Label>
-              <Input
+              <NumberInput
                 id="alley-width"
-                type="number"
-                step="0.1"
-                min="0"
                 placeholder="Nhập độ rộng đường vào"
                 value={alleyWidth}
-                onChange={(e) => setAlleyWidth(e.target.value)}
+                onChange={setAlleyWidth}
               />
             </div>
           )}

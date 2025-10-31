@@ -14,8 +14,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface AddFeeDialogProps {
   isOpen: boolean;
@@ -274,18 +274,16 @@ export const AddFeeDialog = ({
                     Từ
                   </Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
                       ₫
                     </span>
-                    <Input
+                    <NumberInput
                       id="minAmount"
-                      type="number"
                       value={minAmount}
-                      onChange={(e) => setMinAmount(e.target.value)}
+                      onChange={setMinAmount}
                       className="pl-7"
                       placeholder="0"
-                      min="0"
-                      step="1000"
+                      allowDecimal={false}
                     />
                   </div>
                 </div>
@@ -294,18 +292,16 @@ export const AddFeeDialog = ({
                     Đến
                   </Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
                       ₫
                     </span>
-                    <Input
+                    <NumberInput
                       id="maxAmount"
-                      type="number"
                       value={maxAmount}
-                      onChange={(e) => setMaxAmount(e.target.value)}
+                      onChange={setMaxAmount}
                       className="pl-7"
                       placeholder="0"
-                      min="0"
-                      step="1000"
+                      allowDecimal={false}
                     />
                   </div>
                 </div>
@@ -317,18 +313,16 @@ export const AddFeeDialog = ({
                 Số tiền phí <span className="text-red-500">*</span>
               </Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
                   ₫
                 </span>
-                <Input
+                <NumberInput
                   id="amount"
-                  type="number"
                   value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
+                  onChange={setAmount}
                   className="pl-7"
                   placeholder="0"
-                  min="0"
-                  step="1000"
+                  allowDecimal={false}
                 />
               </div>
             </div>

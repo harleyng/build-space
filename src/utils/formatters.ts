@@ -33,3 +33,23 @@ export const formatAddress = (address: any): string => {
   ].filter(Boolean);
   return parts.join(", ");
 };
+
+// Format number with thousand separator and decimal point
+export const formatNumberInput = (value: string | number): string => {
+  if (!value && value !== 0) return "";
+  
+  const numStr = value.toString().replace(/,/g, "");
+  const parts = numStr.split(".");
+  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const decimalPart = parts[1] ? `.${parts[1]}` : "";
+  
+  return integerPart + decimalPart;
+};
+
+// Parse formatted number string to number
+export const parseNumberInput = (value: string): number => {
+  if (!value) return 0;
+  const cleaned = value.replace(/,/g, "");
+  const parsed = parseFloat(cleaned);
+  return isNaN(parsed) ? 0 : parsed;
+};

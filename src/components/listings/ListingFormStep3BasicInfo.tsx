@@ -1,7 +1,7 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Minus, Plus } from "lucide-react";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface ListingFormStep3BasicInfoProps {
   area: string;
@@ -47,12 +47,10 @@ export const ListingFormStep3BasicInfo = ({
             <Label htmlFor="area" className="text-base font-normal">Diện tích (m²)</Label>
           </div>
           <div className="w-32">
-            <Input
+            <NumberInput
               id="area"
-              type="number"
-              step="0.01"
               value={area}
-              onChange={(e) => setArea(e.target.value)}
+              onChange={setArea}
               placeholder="100"
               className="text-center"
               required

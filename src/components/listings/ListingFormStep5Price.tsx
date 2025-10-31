@@ -1,7 +1,7 @@
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PriceUnit } from "@/types/listing.types";
+import { NumberInput } from "@/components/ui/number-input";
 
 interface ListingFormStep5PriceProps {
   price: string;
@@ -58,12 +58,10 @@ export const ListingFormStep5Price = ({
             </p>
           </div>
           <div className="w-48">
-            <Input
+            <NumberInput
               id="price"
-              type="number"
-              step="0.01"
               value={price}
-              onChange={(e) => setPrice(e.target.value)}
+              onChange={setPrice}
               placeholder="0"
               className="text-right text-lg"
               required
