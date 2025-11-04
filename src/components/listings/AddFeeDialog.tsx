@@ -17,6 +17,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { NumberInput } from "@/components/ui/number-input";
 
+interface Fee {
+  id: string;
+  category: string;
+  feeName: string;
+  paymentFrequency: string;
+  isRequired: string;
+  isRefundable?: string;
+  feeType: string;
+  amount: number;
+  maxAmount?: number;
+}
+
 interface AddFeeDialogProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,6 +43,7 @@ interface AddFeeDialogProps {
     maxAmount?: number;
   }) => void;
   category: string | null;
+  editingFee?: Fee | null;
 }
 
 const categoryNames: Record<string, string> = {
@@ -81,6 +94,7 @@ export const AddFeeDialog = ({
   onClose,
   onSave,
   category,
+  editingFee,
 }: AddFeeDialogProps) => {
   const [feeName, setFeeName] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("");
@@ -102,8 +116,21 @@ export const AddFeeDialog = ({
       setAmount("");
       setMinAmount("");
       setMaxAmount("");
+    } else if (editingFee) {
+      // Populate form with editing fee data
+      setFeeName(editingFee.feeName);
+      setPaymentFrequency(editingFee.paymentFrequency);
+      setIsRequired(editingFee.isRequired);
+      setIsRefundable(editingFee.isRefundable || "");
+      setFeeType(editingFee.feeType);
+      if (editingFee.feeType === "range") {
+        setMinAmount(editingFee.amount.toString());
+        setMaxAmount(editingFee.maxAmount?.toString() || "");
+      } else {
+        setAmount(editingFee.amount.toString());
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, editingFee]);
 
   const handleSave = () => {
     if (!category || !feeName || !paymentFrequency || !isRequired || !feeType) {
@@ -135,7 +162,9 @@ export const AddFeeDialog = ({
   const canSave = feeName && paymentFrequency && isRequired && feeType && 
     (feeType === "range" ? (minAmount && maxAmount) : amount);
 
-  const dialogTitle = category
+  const dialogTitle = editingFee
+    ? `Chỉnh sửa ${categoryNames[editingFee.category] || "phí"}`
+    : category
     ? `Thêm ${categoryNames[category] || "phí"}`
     : "Thêm phí";
 

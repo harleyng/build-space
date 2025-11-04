@@ -1,7 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Users, ParkingSquare, Lightbulb, DollarSign } from "lucide-react";
+import { Users, ParkingSquare, Lightbulb, DollarSign, MoreVertical } from "lucide-react";
 import { AddFeeDialog } from "./AddFeeDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 const paymentFrequencyLabels: Record<string, string> = {
   monthly: "Hàng tháng",
   quarterly: "Hàng quý",
@@ -29,6 +35,7 @@ export const ListingFormStep6CostsAndFees = ({
 }: ListingFormStep6CostsAndFeesProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [editingFee, setEditingFee] = useState<Fee | null>(null);
   const categories = [{
     id: "administrative",
     name: "Phí hành chính",
@@ -51,13 +58,34 @@ export const ListingFormStep6CostsAndFees = ({
     setIsDialogOpen(true);
   };
   const handleSaveFee = (fee: Omit<Fee, "id">) => {
-    const newFee: Fee = {
-      ...fee,
-      id: Date.now().toString()
-    };
-    setFees([...fees, newFee]);
+    if (editingFee) {
+      // Update existing fee
+      setFees(fees.map(f => f.id === editingFee.id ? { ...fee, id: editingFee.id } : f));
+    } else {
+      // Add new fee
+      const newFee: Fee = {
+        ...fee,
+        id: Date.now().toString()
+      };
+      setFees([...fees, newFee]);
+    }
     setIsDialogOpen(false);
     setSelectedCategory(null);
+    setEditingFee(null);
+  };
+
+  const handleEditFee = (fee: Fee) => {
+    setEditingFee(fee);
+    setSelectedCategory(fee.category);
+    setIsDialogOpen(true);
+  };
+
+  const handleDeleteFee = (feeId: string) => {
+    setFees(fees.filter(f => f.id !== feeId));
+  };
+
+  const getCategoryFees = (categoryId: string) => {
+    return fees.filter(f => f.category === categoryId);
   };
   return <div className="max-w-3xl mx-auto">
       <div>
@@ -67,46 +95,73 @@ export const ListingFormStep6CostsAndFees = ({
         <div className="space-y-4">
           {categories.map(category => {
           const Icon = category.icon;
-          return <div key={category.id} className="flex items-center justify-between p-4 border rounded-lg hover:border-foreground transition-colors">
-                <div className="flex items-center gap-3">
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{category.name}</span>
+          const categoryFees = getCategoryFees(category.id);
+          return <div key={category.id} className="space-y-3">
+                <div className="flex items-center justify-between p-4 border rounded-lg hover:border-foreground transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <Button type="button" variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-transparent underline font-semibold" onClick={() => handleAddFee(category.id)}>
+                    Thêm
+                  </Button>
                 </div>
-                <Button type="button" variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-transparent underline font-semibold" onClick={() => handleAddFee(category.id)}>
-                  Thêm
-                </Button>
+
+                {categoryFees.length > 0 && <div className="ml-4 space-y-2">
+                    {categoryFees.map(fee => <div key={fee.id} className="flex items-start justify-between p-4 bg-background border rounded-lg">
+                        <div className="flex-1">
+                          <div className="font-medium mb-1">{fee.feeName}</div>
+                          <div className="text-sm text-muted-foreground space-y-0.5">
+                            <div>
+                              {fee.feeType === "range" && fee.maxAmount ? <>
+                                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                  }).format(fee.amount)}{" "}
+                                  -{" "}
+                                  {new Intl.NumberFormat("vi-VN", {
+                    style: "currency",
+                    currency: "VND"
+                  }).format(fee.maxAmount)}
+                                </> : new Intl.NumberFormat("vi-VN", {
+                  style: "currency",
+                  currency: "VND"
+                }).format(fee.amount)}
+                            </div>
+                            <div>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</div>
+                            {fee.isRequired === "included" && <div className="text-xs">Bao gồm trong tiền thuê</div>}
+                            {fee.isRequired === "required" && <div className="text-xs">Bắt buộc</div>}
+                            {fee.isRequired === "optional" && <div className="text-xs">Tùy chọn</div>}
+                            {fee.isRefundable === "refundable" && <div className="text-xs">Có hoàn lại</div>}
+                            {fee.isRefundable === "non-refundable" && <div className="text-xs">Không hoàn lại</div>}
+                          </div>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                              <MoreVertical className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleEditFee(fee)}>
+                              Chỉnh sửa
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleDeleteFee(fee.id)} className="text-destructive">
+                              Xóa
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>)}
+                  </div>}
               </div>;
         })}
         </div>
-
-        {fees.length > 0 && <div className="mt-6 space-y-2">
-            <h3 className="font-semibold">Phí đã thêm:</h3>
-            {fees.map(fee => <div key={fee.id} className="p-3 bg-muted rounded-lg text-sm">
-                <div className="font-medium">{fee.feeName}</div>
-                <div className="text-muted-foreground">
-                  {fee.feeType === "range" && fee.maxAmount ? <>
-                      {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND"
-              }).format(fee.amount)}{" "}
-                      -{" "}
-                      {new Intl.NumberFormat("vi-VN", {
-                style: "currency",
-                currency: "VND"
-              }).format(fee.maxAmount)}
-                    </> : new Intl.NumberFormat("vi-VN", {
-              style: "currency",
-              currency: "VND"
-            }).format(fee.amount)}{" "}
-                  - {paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}
-                </div>
-              </div>)}
-          </div>}
       </div>
 
       <AddFeeDialog isOpen={isDialogOpen} onClose={() => {
       setIsDialogOpen(false);
       setSelectedCategory(null);
-    }} onSave={handleSaveFee} category={selectedCategory} />
+      setEditingFee(null);
+    }} onSave={handleSaveFee} category={selectedCategory} editingFee={editingFee} />
     </div>;
 };
