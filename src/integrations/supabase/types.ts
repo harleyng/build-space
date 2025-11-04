@@ -51,9 +51,11 @@ export type Database = {
           access_road_width: number | null
           address: Json | null
           alley_width: number | null
+          apartment_floor_info: string | null
           area: number
           attributes: Json | null
           balcony_direction: string | null
+          building_name: string | null
           ceiling_height: number | null
           contact_info: Json | null
           coordinates: Json | null
@@ -100,9 +102,11 @@ export type Database = {
           access_road_width?: number | null
           address?: Json | null
           alley_width?: number | null
+          apartment_floor_info?: string | null
           area: number
           attributes?: Json | null
           balcony_direction?: string | null
+          building_name?: string | null
           ceiling_height?: number | null
           contact_info?: Json | null
           coordinates?: Json | null
@@ -149,9 +153,11 @@ export type Database = {
           access_road_width?: number | null
           address?: Json | null
           alley_width?: number | null
+          apartment_floor_info?: string | null
           area?: number
           attributes?: Json | null
           balcony_direction?: string | null
+          building_name?: string | null
           ceiling_height?: number | null
           contact_info?: Json | null
           coordinates?: Json | null

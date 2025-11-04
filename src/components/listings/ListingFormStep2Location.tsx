@@ -1,21 +1,21 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { vietnamProvinces } from "@/constants/vietnam-locations";
-import { useGeocode } from "@/hooks/useGeocode";
 import { LocationMap } from "./LocationMap";
-import { Loader2 } from "lucide-react";
-import { useMemo } from "react";
+import { AddressSearchInput } from "./AddressSearchInput";
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ListingFormStep2LocationProps {
   province: string;
   setProvince: (value: string) => void;
-  district: string;
-  setDistrict: (value: string) => void;
   ward: string;
   setWard: (value: string) => void;
   street: string;
   setStreet: (value: string) => void;
+  apartmentFloorInfo: string;
+  setApartmentFloorInfo: (value: string) => void;
+  buildingName: string;
+  setBuildingName: (value: string) => void;
   projectName: string;
   setProjectName: (value: string) => void;
   latitude: string;
@@ -33,12 +33,14 @@ interface ListingFormStep2LocationProps {
 export const ListingFormStep2Location = ({
   province,
   setProvince,
-  district,
-  setDistrict,
   ward,
   setWard,
   street,
   setStreet,
+  apartmentFloorInfo,
+  setApartmentFloorInfo,
+  buildingName,
+  setBuildingName,
   projectName,
   setProjectName,
   latitude,
@@ -52,190 +54,187 @@ export const ListingFormStep2Location = ({
   floorNumber,
   setFloorNumber,
 }: ListingFormStep2LocationProps) => {
+  const [showForm, setShowForm] = useState(false);
+  
   // Determine which field to show based on property type
-  // Houses, villas show num_floors (Số tầng)
-  // Apartments, condos show floor_number (Tầng)
   const showNumFloors = ["nha-pho", "biet-thu", "nha-mat-pho", "nha-rieng"].includes(propertyTypeSlug);
   const showFloorNumber = ["can-ho", "chung-cu", "officetel", "penthouse"].includes(propertyTypeSlug);
-  // Get available districts based on selected province
-  const availableDistricts = useMemo(() => {
-    if (!province) return [];
-    const selectedProvince = vietnamProvinces.find((p) => p.name === province);
-    return selectedProvince?.districts || [];
-  }, [province]);
 
-  // Get available wards based on selected district
-  const availableWards = useMemo(() => {
-    if (!district) return [];
-    const selectedDistrict = availableDistricts.find((d) => d.name === district);
-    return selectedDistrict?.wards || [];
-  }, [district, availableDistricts]);
-
-  // Geocode the address automatically
-  const { latitude: geocodedLat, longitude: geocodedLng, isLoading: isGeocoding } = useGeocode(
-    province,
-    district,
-    ward,
-    street
-  );
-
-  // Update latitude and longitude when geocoding is complete
-  useMemo(() => {
-    if (geocodedLat && geocodedLng) {
-      setLatitude(geocodedLat.toString());
-      setLongitude(geocodedLng.toString());
+  const handleAddressSelect = (address: {
+    street: string;
+    ward: string;
+    province: string;
+    latitude?: number;
+    longitude?: number;
+  }) => {
+    setStreet(address.street);
+    setWard(address.ward);
+    setProvince(address.province);
+    
+    if (address.latitude && address.longitude) {
+      setLatitude(address.latitude.toString());
+      setLongitude(address.longitude.toString());
     }
-  }, [geocodedLat, geocodedLng, setLatitude, setLongitude]);
+    
+    setShowForm(true);
+  };
 
   const showMap = latitude && longitude && parseFloat(latitude) !== 0 && parseFloat(longitude) !== 0;
 
   return (
     <div className="space-y-8">
       <div className="mb-8">
-        <h2 className="text-3xl font-semibold mb-2">Bất động sản của bạn nằm ở đâu?</h2>
+        <h2 className="text-3xl font-semibold mb-2">Chỗ ở của bạn nằm ở đâu?</h2>
         <p className="text-muted-foreground text-lg">
-          Địa chỉ của bạn chỉ được chia sẻ với khách sau khi họ đặt chỗ thành công.
+          Cung cấp địa chỉ chính xác của bạn để tiếp cận khách hàng dễ dàng hơn
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="province">
-            Tỉnh/Thành phố <span className="text-destructive">*</span>
-          </Label>
-          <Select
-            value={province}
-            onValueChange={(value) => {
-              setProvince(value);
-              setDistrict("");
-              setWard("");
-            }}
-          >
-            <SelectTrigger id="province">
-              <SelectValue placeholder="Chọn Tỉnh/Thành phố" />
-            </SelectTrigger>
-            <SelectContent>
-              {vietnamProvinces.map((p) => (
-                <SelectItem key={p.name} value={p.name}>
-                  {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="district">
-            Quận/Huyện <span className="text-destructive">*</span>
-          </Label>
-          <Select
-            value={district}
-            onValueChange={(value) => {
-              setDistrict(value);
-              setWard("");
-            }}
-            disabled={!province}
-          >
-            <SelectTrigger id="district">
-              <SelectValue placeholder="Chọn Quận/Huyện" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableDistricts.map((d) => (
-                <SelectItem key={d.name} value={d.name}>
-                  {d.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="ward">
-            Phường/Xã <span className="text-destructive">*</span>
-          </Label>
-          <Select value={ward} onValueChange={setWard} disabled={!district}>
-            <SelectTrigger id="ward">
-              <SelectValue placeholder="Chọn Phường/Xã" />
-            </SelectTrigger>
-            <SelectContent>
-              {availableWards.map((w) => (
-                <SelectItem key={w} value={w}>
-                  {w}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="street">
-            Địa chỉ chi tiết <span className="text-destructive">*</span>
-          </Label>
-          <Input
-            id="street"
-            value={street}
-            onChange={(e) => setStreet(e.target.value)}
-            placeholder="Số nhà, tên đường"
-            required
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="projectName">Tên dự án (Nếu có)</Label>
-          <Input
-            id="projectName"
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value)}
-            placeholder="Ví dụ: Vinhomes Central Park"
-          />
-        </div>
-
-        {showNumFloors && setNumFloors && (
-          <div className="space-y-2">
-            <Label htmlFor="numFloors">Số tầng</Label>
-            <Input
-              id="numFloors"
-              type="number"
-              min="1"
-              value={numFloors}
-              onChange={(e) => setNumFloors(e.target.value)}
-              placeholder="Ví dụ: 3"
-            />
-          </div>
-        )}
-
-        {showFloorNumber && setFloorNumber && (
-          <div className="space-y-2">
-            <Label htmlFor="floorNumber">Tầng</Label>
-            <Input
-              id="floorNumber"
-              type="number"
-              min="1"
-              value={floorNumber}
-              onChange={(e) => setFloorNumber(e.target.value)}
-              placeholder="Ví dụ: 15"
-            />
-          </div>
-        )}
-      </div>
-
-      {isGeocoding && (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="w-4 h-4 animate-spin" />
-          <span>Đang tìm vị trí trên bản đồ...</span>
-        </div>
-      )}
-
-      {showMap && (
-        <div className="border-t pt-4">
+      {/* Map with search overlay */}
+      <div className="relative min-h-[400px] rounded-lg overflow-hidden border">
+        {showMap ? (
           <LocationMap
             latitude={parseFloat(latitude)}
             longitude={parseFloat(longitude)}
           />
+        ) : (
+          <div className="w-full h-[400px] bg-muted flex items-center justify-center">
+            <p className="text-muted-foreground">Bản đồ sẽ hiển thị sau khi bạn chọn địa chỉ</p>
+          </div>
+        )}
+        
+        {/* Search overlay */}
+        <div className="absolute top-6 left-6 right-6 z-10">
+          <AddressSearchInput
+            onAddressSelect={handleAddressSelect}
+            placeholder="Nhập địa chỉ của bạn"
+          />
+        </div>
+      </div>
+
+      {/* Form fields - shown after address selection */}
+      {showForm && (
+        <div className="space-y-6 animate-in fade-in-0 slide-in-from-top-4">
+          <h3 className="text-xl font-semibold">Địa chỉ chi tiết</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="apartmentFloorInfo">
+                Căn hộ, tầng, v.v. (Nếu có)
+              </Label>
+              <Input
+                id="apartmentFloorInfo"
+                value={apartmentFloorInfo}
+                onChange={(e) => setApartmentFloorInfo(e.target.value)}
+                placeholder="VD: Căn 1205, Tầng 12"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="buildingName">
+                Tên toà nhà, v.v. (Nếu có)
+              </Label>
+              <Input
+                id="buildingName"
+                value={buildingName}
+                onChange={(e) => setBuildingName(e.target.value)}
+                placeholder="VD: Toà S1.01, Vinhomes Grand Park"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="street">
+              Địa chỉ đường/phố <span className="text-destructive">*</span>
+            </Label>
+            <Input
+              id="street"
+              value={street}
+              onChange={(e) => setStreet(e.target.value)}
+              placeholder="Số nhà, tên đường"
+              required
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="ward">
+                Phường/Xã <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="ward"
+                value={ward}
+                onChange={(e) => setWard(e.target.value)}
+                placeholder="VD: Phường Bến Nghé"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="province">
+                Tỉnh/Thành phố <span className="text-destructive">*</span>
+              </Label>
+              <Input
+                id="province"
+                value={province}
+                onChange={(e) => setProvince(e.target.value)}
+                placeholder="VD: TP. Hồ Chí Minh"
+                required
+              />
+            </div>
+          </div>
+
+          {showMap && (
+            <div className="border-t pt-6">
+              <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
+              <div className="rounded-lg overflow-hidden border">
+                <LocationMap
+                  latitude={parseFloat(latitude)}
+                  longitude={parseFloat(longitude)}
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+            <div className="space-y-2">
+              <Label htmlFor="projectName">Tên dự án (Nếu có)</Label>
+              <Input
+                id="projectName"
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value)}
+                placeholder="Ví dụ: Vinhomes Central Park"
+              />
+            </div>
+
+            {showNumFloors && setNumFloors && (
+              <div className="space-y-2">
+                <Label htmlFor="numFloors">Số tầng</Label>
+                <Input
+                  id="numFloors"
+                  type="number"
+                  min="1"
+                  value={numFloors}
+                  onChange={(e) => setNumFloors(e.target.value)}
+                  placeholder="Ví dụ: 3"
+                />
+              </div>
+            )}
+
+            {showFloorNumber && setFloorNumber && (
+              <div className="space-y-2">
+                <Label htmlFor="floorNumber">Tầng</Label>
+                <Input
+                  id="floorNumber"
+                  type="number"
+                  min="1"
+                  value={floorNumber}
+                  onChange={(e) => setFloorNumber(e.target.value)}
+                  placeholder="Ví dụ: 15"
+                />
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>

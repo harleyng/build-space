@@ -49,6 +49,8 @@ const SubmitListing = () => {
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
   const [street, setStreet] = useState("");
+  const [apartmentFloorInfo, setApartmentFloorInfo] = useState("");
+  const [buildingName, setBuildingName] = useState("");
   const [purpose, setPurpose] = useState<Purpose>("FOR_SALE");
   const [propertyTypeSlug, setPropertyTypeSlug] = useState("");
   const [contactName, setContactName] = useState("");
@@ -167,6 +169,8 @@ const SubmitListing = () => {
     setDistrict(address?.district || "");
     setWard(address?.ward || "");
     setStreet(address?.street || "");
+    setApartmentFloorInfo(listing.apartment_floor_info || "");
+    setBuildingName(listing.building_name || "");
     
     // Attributes
     const attrs = listing.attributes as any || {};
@@ -389,6 +393,8 @@ const SubmitListing = () => {
           ward: ward.trim() || null,
           street: street.trim() || null,
         },
+        apartment_floor_info: apartmentFloorInfo.trim() || null,
+        building_name: buildingName.trim() || null,
         prominent_features: prominentFeatures ? prominentFeatures.split(',').map(f => f.trim()) : null,
         project_name: projectName.trim() || null,
         attributes: {
@@ -486,7 +492,7 @@ const SubmitListing = () => {
   const handleSubmit = async () => {
     if (!session) return;
 
-    if (!title.trim() || !description.trim() || !price || !area || !district) {
+    if (!title.trim() || !description.trim() || !price || !area || !province || !ward || !street) {
       toast({
         title: "Thiếu thông tin",
         description: "Vui lòng điền đầy đủ các trường bắt buộc",
@@ -525,10 +531,12 @@ const SubmitListing = () => {
         area: parseFloat(area),
         address: {
           province: province.trim() || null,
-          district: district.trim(),
+          district: district.trim() || null,
           ward: ward.trim() || null,
           street: street.trim() || null,
         },
+        apartment_floor_info: apartmentFloorInfo.trim() || null,
+        building_name: buildingName.trim() || null,
         prominent_features: prominentFeatures ? prominentFeatures.split(',').map(f => f.trim()) : null,
         purpose,
         property_type_slug: propertyTypeSlug,
@@ -716,12 +724,14 @@ const SubmitListing = () => {
           <ListingFormStep2Location
             province={province}
             setProvince={setProvince}
-            district={district}
-            setDistrict={setDistrict}
             ward={ward}
             setWard={setWard}
             street={street}
             setStreet={setStreet}
+            apartmentFloorInfo={apartmentFloorInfo}
+            setApartmentFloorInfo={setApartmentFloorInfo}
+            buildingName={buildingName}
+            setBuildingName={setBuildingName}
             projectName={projectName}
             setProjectName={setProjectName}
             latitude={latitude}
