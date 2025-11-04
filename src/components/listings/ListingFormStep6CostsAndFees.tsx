@@ -115,7 +115,7 @@ export const ListingFormStep6CostsAndFees = ({
                           <div className="font-medium mb-1">{fee.feeName}</div>
                           <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1">
                             <span>
-                              {fee.feeType === "range" && fee.maxAmount ? <>
+                              {fee.feeType === "usage-based" ? "Dựa trên mức độ sử dụng" : fee.feeType === "range" && fee.maxAmount ? <>
                                   {new Intl.NumberFormat("vi-VN", {
                     style: "currency",
                     currency: "VND"
