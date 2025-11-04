@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import React, { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -17,19 +16,47 @@ interface LocationMapProps {
 }
 
 export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps) => {
-  // Cleanup on unmount
+  const mapRef = useRef<L.Map | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [mapReady, setMapReady] = useState(false);
+
   useEffect(() => {
-    return () => {
-      // Cleanup any leaflet resources
-      const containers = document.querySelectorAll('.leaflet-container');
-      containers.forEach(container => {
-        const leafletId = (container as any)._leaflet_id;
-        if (leafletId) {
-          delete (container as any)._leaflet_id;
-        }
+    if (!latitude || !longitude || !containerRef.current) return;
+
+    // Clean up existing map
+    if (mapRef.current) {
+      mapRef.current.remove();
+      mapRef.current = null;
+    }
+
+    // Create new map
+    try {
+      const map = L.map(containerRef.current, {
+        center: [latitude, longitude],
+        zoom: 15,
+        scrollWheelZoom: false,
       });
+
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+
+      L.marker([latitude, longitude]).addTo(map);
+
+      mapRef.current = map;
+      setMapReady(true);
+    } catch (error) {
+      console.error("Error creating map:", error);
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
     };
-  }, []);
+  }, [latitude, longitude]);
 
   if (!latitude || !longitude) {
     return (
@@ -39,25 +66,11 @@ export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps
     );
   }
 
-  const position: [number, number] = [latitude, longitude];
-
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Vị trí trên bản đồ</h3>
       <div className="w-full h-[300px] rounded-lg border overflow-hidden">
-        <MapContainer
-          key={`map-${latitude}-${longitude}`}
-          center={position}
-          zoom={15}
-          scrollWheelZoom={false}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={position} />
-        </MapContainer>
+        <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
       </div>
     </div>
   );
