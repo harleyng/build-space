@@ -118,50 +118,41 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
   
-  /* Overlay scrollbar like Messenger - doesn't take layout space */
+  /* Hide scrollbar globally by default */
   * {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Overlay scrollbar for main content areas - like Messenger */
+  .wizard-content-area {
     scrollbar-width: thin;
-    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.6) transparent;
     scrollbar-gutter: stable;
   }
   
-  /* Webkit scrollbar - overlay style */
-  *::-webkit-scrollbar {
+  .wizard-content-area::-webkit-scrollbar {
+    display: block;
     width: 6px;
     height: 6px;
-    position: absolute;
   }
   
-  *::-webkit-scrollbar-track {
+  .wizard-content-area::-webkit-scrollbar-track {
     background: transparent;
   }
   
-  *::-webkit-scrollbar-thumb {
-    background-color: hsl(var(--muted-foreground) / 0.3);
+  .wizard-content-area::-webkit-scrollbar-thumb {
+    background-color: hsl(var(--muted-foreground) / 0.6);
     border-radius: 3px;
     transition: background-color 0.2s ease;
   }
   
-  *::-webkit-scrollbar-thumb:hover {
-    background-color: hsl(var(--muted-foreground) / 0.5);
-  }
-  
-  /* Hide scrollbar in header, footer, and navigation areas */
-  header::-webkit-scrollbar,
-  footer::-webkit-scrollbar,
-  nav::-webkit-scrollbar,
-  .sticky::-webkit-scrollbar,
-  [role="navigation"]::-webkit-scrollbar {
-    display: none;
-  }
-  
-  header,
-  footer,
-  nav,
-  .sticky,
-  [role="navigation"] {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
+  .wizard-content-area::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(var(--muted-foreground) / 0.8);
   }
 }
 

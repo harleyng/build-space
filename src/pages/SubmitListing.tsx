@@ -760,9 +760,9 @@ const SubmitListing = () => {
   };
 
   return (
-    <div className="w-full h-full bg-background overflow-y-auto">
+    <div className="w-full h-full bg-background flex flex-col">
       {/* Header with Progress */}
-      <div className="sticky top-0 z-50 bg-background">
+      <div className="flex-shrink-0 sticky top-0 z-50 bg-background">
         <WizardHeader 
           currentMajorStep={majorStep}
           currentSubStep={subStep}
@@ -772,9 +772,10 @@ const SubmitListing = () => {
         />
       </div>
       
-      {/* Form Content */}
-      <div className="max-w-3xl mx-auto px-6 py-12 pb-24">
-        {actualStep === 1 && (
+      {/* Form Content - Scrollable Area */}
+      <div className="flex-1 overflow-y-auto wizard-content-area">
+        <div className="max-w-3xl mx-auto px-6 py-12 pb-24">
+          {actualStep === 1 && (
           <ListingFormStep1PropertyType
             purpose={purpose}
             setPurpose={setPurpose}
@@ -902,6 +903,7 @@ const SubmitListing = () => {
           isLoading={loading}
           isUploading={uploadingImages}
         />
+        </div>
       </div>
     </div>
   );
