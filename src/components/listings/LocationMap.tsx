@@ -67,11 +67,8 @@ export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps
   }
 
   return (
-    <div className="space-y-2">
-      <h3 className="text-sm font-medium">Vị trí trên bản đồ</h3>
-      <div className="w-full h-[300px] rounded-lg border overflow-hidden">
-        <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
-      </div>
+    <div className="w-full h-[300px] rounded-lg border overflow-hidden">
+      <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
     </div>
   );
 });
