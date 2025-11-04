@@ -131,14 +131,14 @@ export const AddFeeDialog = ({
   const canSave = feeName && paymentFrequency && feeType && (feeType === "usage-based" ? true : (feeType === "range" ? minAmount && maxAmount : amount));
   const dialogTitle = editingFee ? `Chỉnh sửa ${categoryNames[editingFee.category] || "phí"}` : category ? `Thêm ${categoryNames[category] || "phí"}` : "Thêm phí";
   return <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl h-[600px] flex flex-col">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle className="text-2xl">{dialogTitle}</DialogTitle>
         </DialogHeader>
 
         <p className="text-sm text-muted-foreground">Cho người thuê biết loại phí và số tiền, khi nào được tính phí</p>
 
-        <div className="flex-1 overflow-y-auto space-y-4 pr-2">{/* Changed from space-y-6 to space-y-4 */}
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="feeName">
               Tên phí <span className="text-red-500">*</span>
@@ -188,7 +188,7 @@ export const AddFeeDialog = ({
             </Select>
           </div>
 
-          <div className="min-h-[100px]">{/* Fixed height container for amount fields */}
+          <div className="min-h-[100px]">
             {feeType && feeType !== "usage-based" && (
               <>
                 {feeType === "range" ? <div className="grid grid-cols-2 gap-4">
@@ -229,7 +229,7 @@ export const AddFeeDialog = ({
             )}
           </div>
 
-          <div className="flex items-center justify-between">{/* Removed pt-4 border-t */}
+          <div className="flex items-center justify-between">
             <Label htmlFor="isRefundable" className="cursor-pointer">
               Được hoàn lại phí này?
             </Label>
@@ -240,15 +240,15 @@ export const AddFeeDialog = ({
               className="data-[state=checked]:bg-foreground"
             />
           </div>
-        </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">{/* Removed mt-6 */}
-          <Button type="button" variant="ghost" onClick={onClose}>
-            Hủy
-          </Button>
-          <Button type="button" onClick={handleSave} disabled={!canSave} className="bg-foreground hover:bg-foreground/90 text-background">
-            Lưu
-          </Button>
+          <div className="flex justify-end gap-3 pt-2">
+            <Button type="button" variant="ghost" onClick={onClose}>
+              Hủy
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={!canSave} className="bg-foreground hover:bg-foreground/90 text-background">
+              Lưu
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>;
