@@ -5,6 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { NumberInput } from "@/components/ui/number-input";
 import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 interface Fee {
   id: string;
   category: string;
@@ -143,17 +144,28 @@ export const AddFeeDialog = ({
             <Label htmlFor="feeName">
               Tên phí <span className="text-red-500">*</span>
             </Label>
-            <Select value={feeName} onValueChange={setFeeName}>
-              <SelectTrigger id="feeName">
-                <SelectValue placeholder="Chọn" />
-              </SelectTrigger>
-              <SelectContent>
-                {category && feeNamesByCategory[category]?.map(name => <SelectItem key={name} value={name}>
+            {category === "other" ? (
+              <Input
+                id="feeName"
+                value={feeName}
+                onChange={(e) => setFeeName(e.target.value)}
+                placeholder="Nhập tên phí"
+                maxLength={100}
+              />
+            ) : (
+              <Select value={feeName} onValueChange={setFeeName}>
+                <SelectTrigger id="feeName">
+                  <SelectValue placeholder="Chọn" />
+                </SelectTrigger>
+                <SelectContent>
+                  {category && feeNamesByCategory[category]?.map(name => (
+                    <SelectItem key={name} value={name}>
                       {name}
-                    </SelectItem>)}
-              </SelectContent>
-            </Select>
-            
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
 
           <div className="space-y-2">
