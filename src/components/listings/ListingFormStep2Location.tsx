@@ -6,6 +6,8 @@ import { useState } from "react";
 interface ListingFormStep2LocationProps {
   province: string;
   setProvince: (value: string) => void;
+  district: string;
+  setDistrict: (value: string) => void;
   ward: string;
   setWard: (value: string) => void;
   street: string;
@@ -28,6 +30,8 @@ interface ListingFormStep2LocationProps {
 export const ListingFormStep2Location = ({
   province,
   setProvince,
+  district,
+  setDistrict,
   ward,
   setWard,
   street,
@@ -56,12 +60,14 @@ export const ListingFormStep2Location = ({
   const handleAddressSelect = (address: {
     street: string;
     ward: string;
+    district: string;
     province: string;
     latitude?: number;
     longitude?: number;
   }) => {
     setStreet(address.street);
     setWard(address.ward);
+    setDistrict(address.district);
     setProvince(address.province);
     if (address.latitude && address.longitude) {
       setLatitude(address.latitude.toString());
@@ -131,11 +137,18 @@ export const ListingFormStep2Location = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="province">
-                Tỉnh/Thành phố <span className="text-destructive">*</span>
+              <Label htmlFor="district">
+                Quận/Huyện <span className="text-destructive">*</span>
               </Label>
-              <Input id="province" value={province} onChange={e => setProvince(e.target.value)} placeholder="VD: TP. Hồ Chí Minh" required />
+              <Input id="district" value={district} onChange={e => setDistrict(e.target.value)} placeholder="VD: Quận 1" required />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="province">
+              Tỉnh/Thành phố <span className="text-destructive">*</span>
+            </Label>
+            <Input id="province" value={province} onChange={e => setProvince(e.target.value)} placeholder="VD: TP. Hồ Chí Minh" required />
           </div>
 
           {(showNumFloors || showFloorNumber) && <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">

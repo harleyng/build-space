@@ -9,6 +9,7 @@ interface AddressSearchInputProps {
   onAddressSelect: (address: {
     street: string;
     ward: string;
+    district: string;
     province: string;
     latitude?: number;
     longitude?: number;
@@ -110,6 +111,7 @@ export const AddressSearchInput = ({
           onAddressSelect({
             street: address.road || address.street || "",
             ward: address.suburb || address.neighbourhood || "",
+            district: address.county || address.city_district || address.town || "",
             province: address.city || address.province || address.state || "",
             latitude,
             longitude
@@ -164,6 +166,7 @@ export const AddressSearchInput = ({
     onAddressSelect({
       street: address.road || address.street || suggestion.display_name.split(",")[0] || "",
       ward: address.suburb || address.neighbourhood || address.quarter || "",
+      district: address.county || address.city_district || address.town || "",
       province: address.city || address.province || address.state || "",
       latitude: parseFloat(suggestion.lat),
       longitude: parseFloat(suggestion.lon)

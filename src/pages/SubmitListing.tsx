@@ -789,6 +789,8 @@ const SubmitListing = () => {
           <ListingFormStep2Location
             province={province}
             setProvince={setProvince}
+            district={district}
+            setDistrict={setDistrict}
             ward={ward}
             setWard={setWard}
             street={street}
