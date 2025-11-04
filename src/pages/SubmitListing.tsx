@@ -760,18 +760,20 @@ const SubmitListing = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-background pb-24">
+    <div className="w-full h-full bg-background overflow-y-auto">
       {/* Header with Progress */}
-      <WizardHeader 
-        currentMajorStep={majorStep}
-        currentSubStep={subStep}
-        onSaveAndExit={handleSaveAsDraft}
-        isSaving={isSaving}
-        onStepClick={handleStepClick}
-      />
+      <div className="sticky top-0 z-50 bg-background">
+        <WizardHeader 
+          currentMajorStep={majorStep}
+          currentSubStep={subStep}
+          onSaveAndExit={handleSaveAsDraft}
+          isSaving={isSaving}
+          onStepClick={handleStepClick}
+        />
+      </div>
       
       {/* Form Content */}
-      <div className="max-w-3xl mx-auto px-6 py-12">
+      <div className="max-w-3xl mx-auto px-6 py-12 pb-24">
         {actualStep === 1 && (
           <ListingFormStep1PropertyType
             purpose={purpose}

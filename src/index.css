@@ -143,12 +143,6 @@ All colors MUST be HSL.
   *::-webkit-scrollbar-thumb:hover {
     background-color: hsl(var(--border) / 0.8);
   }
-  
-  /* Prevent body scrolling - scrolling should happen in main content */
-  html, body, #root {
-    overflow: hidden;
-    height: 100vh;
-  }
 }
 
 /* Leaflet map container fixes */
