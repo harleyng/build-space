@@ -215,7 +215,7 @@ const SubmitListing = () => {
     "Đất nền dự án",
     "Đất thổ cư",
     "Trang trại, khu nghỉ dưỡng",
-    "Kho, nhà xưởng",
+    "Kho, nhà xưởng, đất",
     "Khác"
   ];
 
