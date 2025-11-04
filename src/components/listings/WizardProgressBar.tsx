@@ -1,27 +1,64 @@
+import { WIZARD_STRUCTURE } from "@/constants/wizard.constants";
+
 interface WizardProgressBarProps {
-  currentStep: number;
-  totalSteps: number;
+  currentMajorStep: number;
+  currentSubStep: number;
+  onStepClick?: (majorStep: number) => void;
 }
 
-export const WizardProgressBar = ({ currentStep, totalSteps }: WizardProgressBarProps) => {
+export const WizardProgressBar = ({ 
+  currentMajorStep, 
+  currentSubStep,
+  onStepClick 
+}: WizardProgressBarProps) => {
   return (
-    <div className="flex gap-2 w-full">
-      {Array.from({ length: totalSteps }).map((_, index) => {
-        const stepNumber = index + 1;
-        const isCompleted = stepNumber < currentStep;
-        const isCurrent = stepNumber === currentStep;
-        
-        return (
-          <div
-            key={stepNumber}
-            className="flex-1 h-1 rounded-full transition-all duration-300 ease-out"
-            style={{
-              backgroundColor: isCompleted || isCurrent ? "currentColor" : "rgba(var(--muted-foreground-rgb, 156 163 175) / 0.3)",
-              opacity: isCompleted || isCurrent ? 1 : 0.3,
-            }}
-          />
-        );
-      })}
+    <div className="flex flex-col gap-3 w-full">
+      <div className="flex gap-2">
+        {WIZARD_STRUCTURE.map((step) => {
+          const isCompleted = step.id < currentMajorStep;
+          const isCurrent = step.id === currentMajorStep;
+          const isClickable = isCompleted || isCurrent;
+          
+          return (
+            <div
+              key={step.id}
+              className={`flex-1 h-1.5 rounded-full transition-all duration-300 ease-out ${
+                isClickable ? 'cursor-pointer hover:opacity-80' : ''
+              }`}
+              style={{
+                backgroundColor: isCompleted || isCurrent 
+                  ? "hsl(var(--primary))" 
+                  : "hsl(var(--muted))",
+                opacity: isCompleted || isCurrent ? 1 : 0.3,
+              }}
+              onClick={() => isClickable && onStepClick?.(step.id)}
+            />
+          );
+        })}
+      </div>
+      
+      <div className="flex gap-2">
+        {WIZARD_STRUCTURE.map((step) => {
+          const isCurrent = step.id === currentMajorStep;
+          
+          return (
+            <div
+              key={step.id}
+              className="flex-1 text-center"
+            >
+              <span 
+                className={`text-xs transition-colors ${
+                  isCurrent 
+                    ? 'text-foreground font-medium' 
+                    : 'text-muted-foreground'
+                }`}
+              >
+                {step.title}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };

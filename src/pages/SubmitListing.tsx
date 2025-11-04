@@ -21,10 +21,12 @@ import { ListingFormStep3BasicInfo } from "@/components/listings/ListingFormStep
 import { ListingFormStep4Amenities } from "@/components/listings/ListingFormStep4Amenities";
 import { ListingFormStep5Price } from "@/components/listings/ListingFormStep5Price";
 import { ListingFormStep6CostsAndFees } from "@/components/listings/ListingFormStep6CostsAndFees";
-import { ListingFormStep5Media } from "@/components/listings/ListingFormStep5Media";
+import { ListingFormStep5Images } from "@/components/listings/ListingFormStep5Images";
+import { ListingFormStep5Description } from "@/components/listings/ListingFormStep5Description";
 import { ListingFormStep6Contact } from "@/components/listings/ListingFormStep6Contact";
 import { ListingFormStep10Review } from "@/components/listings/ListingFormStep10Review";
 import { PURPOSES, PRICE_UNITS } from "@/constants/listing.constants";
+import { WIZARD_STRUCTURE, getActualStep, getMajorStepFromActual, getTotalSubSteps } from "@/constants/wizard.constants";
 
 const SubmitListing = () => {
   const navigate = useNavigate();
@@ -36,9 +38,10 @@ const SubmitListing = () => {
   const isEditMode = !!listingId;
   const { kycStatus, loading: kycLoading } = useKycStatus();
   
-  // Wizard state
-  const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 10;
+  // Wizard state - using major steps and sub steps
+  const [majorStep, setMajorStep] = useState(1);
+  const [subStep, setSubStep] = useState(1);
+  const actualStep = getActualStep(majorStep, subStep);
 
   // Form state
   const [title, setTitle] = useState("");
@@ -291,43 +294,38 @@ const SubmitListing = () => {
   // Wizard navigation logic
   const canProceedFromStep = (step: number): boolean => {
     switch (step) {
-      case 1:
+      case 1: // Property type
         return !!purpose && !!propertyTypeSlug;
-      case 2:
+      case 2: // Location
         return !!province && !!district && !!ward && !!street.trim();
-      case 3:
-        return true; // Legal and directions step is optional (shown conditionally)
-      case 4:
+      case 3: // Legal and directions
+        return true; // Optional
+      case 4: // Basic info
         return !!area;
-      case 5:
-        // Check if furniture option is selected (required)
+      case 5: // Amenities
         const hasFurniture = amenities.some(a => 
           ['full_furnished', 'basic_furnished', 'unfurnished'].includes(a)
         );
         return hasFurniture;
-      case 6:
+      case 6: // Price
         return !!price;
-      case 7:
-        return true; // Costs & fees is optional
-      case 8:
-        return !!title.trim() && description.length >= 80 && (isEditMode || images.length > 0);
-      case 9:
+      case 7: // Costs & fees
+        return true; // Optional
+      case 8: // Images
+        return isEditMode || images.length > 0;
+      case 9: // Description
+        return !!title.trim() && description.length >= 80;
+      case 10: // Contact
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
-      case 10:
-        return true; // Review step
+      case 11: // Review
+        return true;
       default:
         return false;
     }
   };
 
-  // Check if step 3 (Legal & Directions) should be shown
-  const shouldShowStep3 = () => {
-    // Hiển thị bước 3 cho tất cả loại BĐS tạm thời
-    return true;
-  };
-
   const handleNext = () => {
-    if (!canProceedFromStep(currentStep)) {
+    if (!canProceedFromStep(actualStep)) {
       toast({
         title: "Thiếu thông tin",
         description: "Vui lòng điền đầy đủ các trường bắt buộc",
@@ -336,21 +334,41 @@ const SubmitListing = () => {
       return;
     }
     
-    let nextStep = currentStep + 1;
-    // Skip step 3 if not applicable
-    if (currentStep === 2 && !shouldShowStep3()) {
-      nextStep = 4;
+    const totalSubSteps = getTotalSubSteps(majorStep);
+    
+    // If there are more substeps in current major step, go to next substep
+    if (subStep < totalSubSteps) {
+      setSubStep(subStep + 1);
+    } else {
+      // Move to next major step, first substep
+      if (majorStep < WIZARD_STRUCTURE.length) {
+        setMajorStep(majorStep + 1);
+        setSubStep(1);
+      }
     }
-    setCurrentStep(Math.min(nextStep, totalSteps));
   };
 
   const handleBack = () => {
-    let prevStep = currentStep - 1;
-    // Skip step 3 if not applicable when going back
-    if (currentStep === 4 && !shouldShowStep3()) {
-      prevStep = 2;
+    // If not at first substep, go back one substep
+    if (subStep > 1) {
+      setSubStep(subStep - 1);
+    } else {
+      // Go back to previous major step, last substep
+      if (majorStep > 1) {
+        const prevMajorStep = majorStep - 1;
+        const prevTotalSubSteps = getTotalSubSteps(prevMajorStep);
+        setMajorStep(prevMajorStep);
+        setSubStep(prevTotalSubSteps);
+      }
     }
-    setCurrentStep(Math.max(prevStep, 1));
+  };
+
+  const handleStepClick = (clickedMajorStep: number) => {
+    // Only allow clicking to previous or current major step
+    if (clickedMajorStep <= majorStep) {
+      setMajorStep(clickedMajorStep);
+      setSubStep(1); // Always go to first substep when clicking
+    }
   };
 
   const handleFinalSubmit = () => {
@@ -745,15 +763,16 @@ const SubmitListing = () => {
     <div className="w-full min-h-screen bg-background pb-24">
       {/* Header with Progress */}
       <WizardHeader 
-        currentStep={currentStep} 
-        totalSteps={totalSteps}
+        currentMajorStep={majorStep}
+        currentSubStep={subStep}
         onSaveAndExit={handleSaveAsDraft}
         isSaving={isSaving}
+        onStepClick={handleStepClick}
       />
       
       {/* Form Content */}
       <div className="max-w-3xl mx-auto px-6 py-12">
-        {currentStep === 1 && (
+        {actualStep === 1 && (
           <ListingFormStep1PropertyType
             purpose={purpose}
             setPurpose={setPurpose}
@@ -763,7 +782,7 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 2 && (
+        {actualStep === 2 && (
           <ListingFormStep2Location
             province={province}
             setProvince={setProvince}
@@ -788,7 +807,7 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 3 && (
+        {actualStep === 3 && (
           <ListingFormStep3LegalAndDirections
             propertyTypeSlug={propertyTypeSlug}
             purpose={purpose}
@@ -803,7 +822,7 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 4 && (
+        {actualStep === 4 && (
           <ListingFormStep3BasicInfo
             area={area}
             setArea={setArea}
@@ -814,14 +833,14 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 5 && (
+        {actualStep === 5 && (
           <ListingFormStep4Amenities
             amenities={amenities}
             setAmenities={setAmenities}
           />
         )}
 
-        {currentStep === 6 && (
+        {actualStep === 6 && (
           <ListingFormStep5Price
             price={price}
             setPrice={setPrice}
@@ -830,18 +849,12 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 7 && (
+        {actualStep === 7 && (
           <ListingFormStep6CostsAndFees fees={fees} setFees={setFees} />
         )}
 
-        {currentStep === 8 && (
-          <ListingFormStep5Media
-            title={title}
-            setTitle={setTitle}
-            description={description}
-            setDescription={setDescription}
-            prominentFeatures={prominentFeatures}
-            setProminentFeatures={setProminentFeatures}
+        {actualStep === 8 && (
+          <ListingFormStep5Images
             imagePreviewUrls={imagePreviewUrls}
             setImagePreviewUrls={reorderImages}
             onImageSelect={handleImageSelect}
@@ -849,7 +862,18 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 9 && (
+        {actualStep === 9 && (
+          <ListingFormStep5Description
+            title={title}
+            setTitle={setTitle}
+            description={description}
+            setDescription={setDescription}
+            prominentFeatures={prominentFeatures}
+            setProminentFeatures={setProminentFeatures}
+          />
+        )}
+
+        {actualStep === 10 && (
           <ListingFormStep6Contact
             contactName={contactName}
             setContactName={setContactName}
@@ -860,19 +884,19 @@ const SubmitListing = () => {
           />
         )}
 
-        {currentStep === 10 && (
+        {actualStep === 11 && (
           <ListingFormStep10Review
             data={getComprehensiveReviewData()}
           />
         )}
 
         <WizardNavigation
-          currentStep={currentStep}
-          totalSteps={totalSteps}
+          currentStep={actualStep}
+          totalSteps={11}
           onBack={handleBack}
           onNext={handleNext}
           onSubmit={handleFinalSubmit}
-          canProceed={canProceedFromStep(currentStep)}
+          canProceed={canProceedFromStep(actualStep)}
           isLoading={loading}
           isUploading={uploadingImages}
         />

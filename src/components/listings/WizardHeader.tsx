@@ -4,13 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { WizardProgressBar } from "./WizardProgressBar";
 
 interface WizardHeaderProps {
-  currentStep: number;
-  totalSteps: number;
+  currentMajorStep: number;
+  currentSubStep: number;
   onSaveAndExit?: () => void;
   isSaving?: boolean;
+  onStepClick?: (majorStep: number) => void;
 }
 
-export const WizardHeader = ({ currentStep, totalSteps, onSaveAndExit, isSaving }: WizardHeaderProps) => {
+export const WizardHeader = ({ 
+  currentMajorStep, 
+  currentSubStep, 
+  onSaveAndExit, 
+  isSaving,
+  onStepClick 
+}: WizardHeaderProps) => {
   const navigate = useNavigate();
 
   return (
@@ -26,8 +33,12 @@ export const WizardHeader = ({ currentStep, totalSteps, onSaveAndExit, isSaving 
             <X className="h-5 w-5" />
           </Button>
           
-          <div className="flex-1 max-w-md">
-            <WizardProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+          <div className="flex-1 max-w-2xl">
+            <WizardProgressBar 
+              currentMajorStep={currentMajorStep} 
+              currentSubStep={currentSubStep}
+              onStepClick={onStepClick}
+            />
           </div>
         </div>
 
