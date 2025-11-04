@@ -732,8 +732,6 @@ const SubmitListing = () => {
             setApartmentFloorInfo={setApartmentFloorInfo}
             buildingName={buildingName}
             setBuildingName={setBuildingName}
-            projectName={projectName}
-            setProjectName={setProjectName}
             latitude={latitude}
             setLatitude={setLatitude}
             longitude={longitude}

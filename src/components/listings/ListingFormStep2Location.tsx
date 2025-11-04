@@ -3,7 +3,6 @@ import { Label } from "@/components/ui/label";
 import { LocationMap } from "./LocationMap";
 import { AddressSearchInput } from "./AddressSearchInput";
 import { useState } from "react";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ListingFormStep2LocationProps {
   province: string;
@@ -16,8 +15,6 @@ interface ListingFormStep2LocationProps {
   setApartmentFloorInfo: (value: string) => void;
   buildingName: string;
   setBuildingName: (value: string) => void;
-  projectName: string;
-  setProjectName: (value: string) => void;
   latitude: string;
   setLatitude: (value: string) => void;
   longitude: string;
@@ -41,8 +38,6 @@ export const ListingFormStep2Location = ({
   setApartmentFloorInfo,
   buildingName,
   setBuildingName,
-  projectName,
-  setProjectName,
   latitude,
   setLatitude,
   longitude,
@@ -55,6 +50,7 @@ export const ListingFormStep2Location = ({
   setFloorNumber,
 }: ListingFormStep2LocationProps) => {
   const [showForm, setShowForm] = useState(false);
+  const [showMapOverlay, setShowMapOverlay] = useState(true);
   
   // Determine which field to show based on property type
   const showNumFloors = ["nha-pho", "biet-thu", "nha-mat-pho", "nha-rieng"].includes(propertyTypeSlug);
@@ -76,6 +72,7 @@ export const ListingFormStep2Location = ({
       setLongitude(address.longitude.toString());
     }
     
+    setShowMapOverlay(false);
     setShowForm(true);
   };
 
@@ -91,26 +88,28 @@ export const ListingFormStep2Location = ({
       </div>
 
       {/* Map with search overlay */}
-      <div className="relative min-h-[400px] rounded-lg overflow-hidden border">
-        {showMap ? (
-          <LocationMap
-            latitude={parseFloat(latitude)}
-            longitude={parseFloat(longitude)}
-          />
-        ) : (
-          <div className="w-full h-[400px] bg-muted flex items-center justify-center">
-            <p className="text-muted-foreground">Bản đồ sẽ hiển thị sau khi bạn chọn địa chỉ</p>
+      {showMapOverlay && (
+        <div className="relative w-full h-[500px] rounded-lg overflow-hidden border bg-muted">
+          {showMap ? (
+            <LocationMap
+              latitude={parseFloat(latitude)}
+              longitude={parseFloat(longitude)}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <p className="text-muted-foreground">Bản đồ sẽ hiển thị sau khi bạn chọn địa chỉ</p>
+            </div>
+          )}
+          
+          {/* Search overlay */}
+          <div className="absolute top-6 left-6 right-6 z-10">
+            <AddressSearchInput
+              onAddressSelect={handleAddressSelect}
+              placeholder="Nhập địa chỉ của bạn"
+            />
           </div>
-        )}
-        
-        {/* Search overlay */}
-        <div className="absolute top-6 left-6 right-6 z-10">
-          <AddressSearchInput
-            onAddressSelect={handleAddressSelect}
-            placeholder="Nhập địa chỉ của bạn"
-          />
         </div>
-      </div>
+      )}
 
       {/* Form fields - shown after address selection */}
       {showForm && (
@@ -196,45 +195,37 @@ export const ListingFormStep2Location = ({
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-            <div className="space-y-2">
-              <Label htmlFor="projectName">Tên dự án (Nếu có)</Label>
-              <Input
-                id="projectName"
-                value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                placeholder="Ví dụ: Vinhomes Central Park"
-              />
+          {(showNumFloors || showFloorNumber) && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+              {showNumFloors && setNumFloors && (
+                <div className="space-y-2">
+                  <Label htmlFor="numFloors">Số tầng</Label>
+                  <Input
+                    id="numFloors"
+                    type="number"
+                    min="1"
+                    value={numFloors}
+                    onChange={(e) => setNumFloors(e.target.value)}
+                    placeholder="Ví dụ: 3"
+                  />
+                </div>
+              )}
+
+              {showFloorNumber && setFloorNumber && (
+                <div className="space-y-2">
+                  <Label htmlFor="floorNumber">Tầng</Label>
+                  <Input
+                    id="floorNumber"
+                    type="number"
+                    min="1"
+                    value={floorNumber}
+                    onChange={(e) => setFloorNumber(e.target.value)}
+                    placeholder="Ví dụ: 15"
+                  />
+                </div>
+              )}
             </div>
-
-            {showNumFloors && setNumFloors && (
-              <div className="space-y-2">
-                <Label htmlFor="numFloors">Số tầng</Label>
-                <Input
-                  id="numFloors"
-                  type="number"
-                  min="1"
-                  value={numFloors}
-                  onChange={(e) => setNumFloors(e.target.value)}
-                  placeholder="Ví dụ: 3"
-                />
-              </div>
-            )}
-
-            {showFloorNumber && setFloorNumber && (
-              <div className="space-y-2">
-                <Label htmlFor="floorNumber">Tầng</Label>
-                <Input
-                  id="floorNumber"
-                  type="number"
-                  min="1"
-                  value={floorNumber}
-                  onChange={(e) => setFloorNumber(e.target.value)}
-                  placeholder="Ví dụ: 15"
-                />
-              </div>
-            )}
-          </div>
+          )}
         </div>
       )}
     </div>
