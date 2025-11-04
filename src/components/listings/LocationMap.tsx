@@ -17,14 +17,12 @@ interface LocationMapProps {
 }
 
 // Component to handle map view updates
-function MapUpdater({ latitude, longitude }: { latitude: number; longitude: number }) {
+function MapViewController({ center }: { center: [number, number] }) {
   const map = useMap();
   
   useEffect(() => {
-    if (latitude && longitude) {
-      map.setView([latitude, longitude], 15);
-    }
-  }, [latitude, longitude, map]);
+    map.setView(center, 15);
+  }, [center, map]);
   
   return null;
 }
@@ -38,22 +36,24 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
     );
   }
 
+  const position: [number, number] = [latitude, longitude];
+
   return (
     <div className="space-y-2">
       <h3 className="text-sm font-medium">Vị trí trên bản đồ</h3>
       <div className="w-full h-[300px] rounded-lg border overflow-hidden">
         <MapContainer
-          center={[latitude, longitude]}
+          center={position}
           zoom={15}
-          className="w-full h-full"
           scrollWheelZoom={false}
+          style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={[latitude, longitude]} />
-          <MapUpdater latitude={latitude} longitude={longitude} />
+          <Marker position={position} />
+          <MapViewController center={position} />
         </MapContainer>
       </div>
     </div>
