@@ -203,7 +203,37 @@ const SubmitListing = () => {
     }
   };
 
-  const filteredPropertyTypes = propertyTypes?.filter((type) => {
+  // Custom sort orders for property types
+  const SALE_ORDER = [
+    "Căn hộ chung cư",
+    "Chung cư mini, căn hộ dịch vụ",
+    "Nhà riêng",
+    "Nhà biệt thự",
+    "Nhà liền kề",
+    "Nhà mặt phố",
+    "Shophouse",
+    "Đất nền dự án",
+    "Đất thổ cư",
+    "Trang trại, khu nghỉ dưỡng",
+    "Kho, nhà xưởng",
+    "Khác"
+  ];
+
+  const RENT_ORDER = [
+    "Căn hộ chung cư",
+    "Chung cư mini, căn hộ dịch vụ",
+    "Nhà trọ, phòng trọ",
+    "Nhà riêng",
+    "Nhà biệt thự",
+    "Nhà liền kề",
+    "Nhà mặt phố",
+    "Shophouse",
+    "Văn phòng",
+    "Kho, nhà xưởng, đất",
+    "Khác"
+  ];
+
+  const filteredPropertyTypes = (propertyTypes?.filter((type) => {
     const metadata = type.filter_metadata as any;
     const purposeData = metadata?.[purpose];
     
@@ -226,7 +256,27 @@ const SubmitListing = () => {
     }
     
     return false;
-  }) || [];
+  }) || []).sort((a, b) => {
+    // Select appropriate order based on purpose
+    const order = purpose === "FOR_SALE" ? SALE_ORDER : RENT_ORDER;
+    
+    const indexA = order.indexOf(a.name);
+    const indexB = order.indexOf(b.name);
+    
+    // If both are in the order array, sort by their position
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    
+    // If only A is in the order, it comes first
+    if (indexA !== -1) return -1;
+    
+    // If only B is in the order, it comes first
+    if (indexB !== -1) return 1;
+    
+    // If neither is in the order, sort alphabetically
+    return a.name.localeCompare(b.name);
+  });
 
   const currentPropertyType = propertyTypes?.find(pt => pt.slug === propertyTypeSlug);
   const currentFilters = currentPropertyType?.filter_metadata?.[purpose]?.filters || [];
