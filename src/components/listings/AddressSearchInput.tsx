@@ -200,7 +200,7 @@ export const AddressSearchInput = ({
         >
           <Button
             variant="ghost"
-            className="w-full justify-start gap-3 px-4 py-3 h-auto text-left hover:bg-accent"
+            className="w-full justify-start gap-3 px-4 py-3 h-auto text-left"
             onClick={handleUseCurrentLocation}
             disabled={isGettingLocation}
           >
@@ -226,7 +226,7 @@ export const AddressSearchInput = ({
                 <Button
                   key={index}
                   variant="ghost"
-                  className="w-full justify-start gap-3 px-4 py-3 h-auto text-left hover:bg-accent"
+                  className="w-full justify-start gap-3 px-4 py-3 h-auto text-left"
                   onClick={() => handleSelectSuggestion(suggestion)}
                 >
                   <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0" />
