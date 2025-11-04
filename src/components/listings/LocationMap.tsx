@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import React from "react";
+import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -14,17 +14,6 @@ L.Icon.Default.mergeOptions({
 interface LocationMapProps {
   latitude: number;
   longitude: number;
-}
-
-// Component to handle map view updates
-function MapViewController({ center }: { center: [number, number] }) {
-  const map = useMap();
-  
-  useEffect(() => {
-    map.setView(center, 15);
-  }, [center, map]);
-  
-  return null;
 }
 
 export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
@@ -43,6 +32,7 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
       <h3 className="text-sm font-medium">Vị trí trên bản đồ</h3>
       <div className="w-full h-[300px] rounded-lg border overflow-hidden">
         <MapContainer
+          key={`${latitude}-${longitude}`}
           center={position}
           zoom={15}
           scrollWheelZoom={false}
@@ -53,7 +43,6 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker position={position} />
-          <MapViewController center={position} />
         </MapContainer>
       </div>
     </div>
