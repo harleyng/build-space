@@ -60,11 +60,11 @@ const feeTypes = [{
   value: "flat",
   label: "Phí cố định"
 }, {
-  value: "flat-per-item",
-  label: "Phí cố định, mỗi mục"
-}, {
   value: "range",
   label: "Khoảng phí"
+}, {
+  value: "usage-based",
+  label: "Dựa trên mức độ sử dụng"
 }];
 export const AddFeeDialog = ({
   isOpen,
@@ -114,8 +114,8 @@ export const AddFeeDialog = ({
       return;
     }
 
-    // Validation for other fee types
-    if (feeType !== "range" && !amount) {
+    // Validation for other fee types (except usage-based)
+    if (feeType !== "range" && feeType !== "usage-based" && !amount) {
       return;
     }
     onSave({
@@ -124,11 +124,11 @@ export const AddFeeDialog = ({
       paymentFrequency,
       isRefundable: isRefundable || undefined,
       feeType,
-      amount: feeType === "range" ? parseFloat(minAmount) : parseFloat(amount),
+      amount: feeType === "usage-based" ? 0 : (feeType === "range" ? parseFloat(minAmount) : parseFloat(amount)),
       maxAmount: feeType === "range" ? parseFloat(maxAmount) : undefined
     });
   };
-  const canSave = feeName && paymentFrequency && feeType && (feeType === "range" ? minAmount && maxAmount : amount);
+  const canSave = feeName && paymentFrequency && feeType && (feeType === "usage-based" ? true : (feeType === "range" ? minAmount && maxAmount : amount));
   const dialogTitle = editingFee ? `Chỉnh sửa ${categoryNames[editingFee.category] || "phí"}` : category ? `Thêm ${categoryNames[category] || "phí"}` : "Thêm phí";
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -188,51 +188,60 @@ export const AddFeeDialog = ({
             </Select>
           </div>
 
-          {feeType === "range" ? <div className="space-y-4">
-              <Label>
-                Khoảng phí <span className="text-red-500">*</span>
-              </Label>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="minAmount" className="text-sm font-normal">
-                    Từ
+          {feeType && feeType !== "usage-based" && (
+            <>
+              {feeType === "range" ? <div className="space-y-4">
+                  <Label>
+                    Khoảng phí <span className="text-red-500">*</span>
+                  </Label>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="minAmount" className="text-sm font-normal">
+                        Từ
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
+                          ₫
+                        </span>
+                        <NumberInput id="minAmount" value={minAmount} onChange={setMinAmount} className="pl-7" placeholder="0" allowDecimal={false} />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="maxAmount" className="text-sm font-normal">
+                        Đến
+                      </Label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
+                          ₫
+                        </span>
+                        <NumberInput id="maxAmount" value={maxAmount} onChange={setMaxAmount} className="pl-7" placeholder="0" allowDecimal={false} />
+                      </div>
+                    </div>
+                  </div>
+                </div> : <div className="space-y-2">
+                  <Label htmlFor="amount">
+                    Số tiền phí <span className="text-red-500">*</span>
                   </Label>
                   <div className="relative">
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
                       ₫
                     </span>
-                    <NumberInput id="minAmount" value={minAmount} onChange={setMinAmount} className="pl-7" placeholder="0" allowDecimal={false} />
+                    <NumberInput id="amount" value={amount} onChange={setAmount} className="pl-7" placeholder="0" allowDecimal={false} />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="maxAmount" className="text-sm font-normal">
-                    Đến
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
-                      ₫
-                    </span>
-                    <NumberInput id="maxAmount" value={maxAmount} onChange={setMaxAmount} className="pl-7" placeholder="0" allowDecimal={false} />
-                  </div>
-                </div>
-              </div>
-            </div> : <div className="space-y-2">
-              <Label htmlFor="amount">
-                Số tiền phí <span className="text-red-500">*</span>
-              </Label>
-              <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
-                  ₫
-                </span>
-                <NumberInput id="amount" value={amount} onChange={setAmount} className="pl-7" placeholder="0" allowDecimal={false} />
-              </div>
-            </div>}
+                </div>}
+            </>
+          )}
 
           <div className="flex items-center justify-between pt-4 border-t">
             <Label htmlFor="isRefundable" className="cursor-pointer">
               Được hoàn lại phí này?
             </Label>
-            <Switch id="isRefundable" checked={isRefundable} onCheckedChange={setIsRefundable} />
+            <Switch 
+              id="isRefundable" 
+              checked={isRefundable} 
+              onCheckedChange={setIsRefundable}
+              className="data-[state=checked]:bg-foreground"
+            />
           </div>
         </div>
 
