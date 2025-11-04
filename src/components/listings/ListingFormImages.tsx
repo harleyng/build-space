@@ -17,8 +17,28 @@ export const ListingFormImages = ({
 }: ListingFormImagesProps) => {
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
 
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
+    
+    // Create a custom drag image to prevent distortion
+    const img = e.currentTarget.querySelector('img') as HTMLImageElement;
+    if (img) {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas size to match image display size
+      const rect = img.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      
+      if (ctx) {
+        // Draw the image on canvas maintaining aspect ratio
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Use canvas as drag image
+        e.dataTransfer.setDragImage(canvas, canvas.width / 2, canvas.height / 2);
+      }
+    }
   };
 
   const handleDragOver = (e: React.DragEvent, index: number) => {
@@ -69,10 +89,10 @@ export const ListingFormImages = ({
               <div
                 key={index}
                 draggable
-                onDragStart={() => handleDragStart(index)}
+                onDragStart={(e) => handleDragStart(e, index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDragEnd={handleDragEnd}
-                className={`relative group cursor-move ${draggedIndex === index ? 'opacity-50' : ''}`}
+                className={`relative group cursor-move transition-opacity ${draggedIndex === index ? 'opacity-50' : ''}`}
               >
                 <div className="absolute top-2 left-2 bg-background/80 rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                   <GripVertical className="h-4 w-4 text-muted-foreground" />
@@ -80,7 +100,8 @@ export const ListingFormImages = ({
                 <img
                   src={url}
                   alt={`Hình ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg"
+                  className="w-full h-32 object-cover rounded-lg pointer-events-none"
+                  draggable={false}
                 />
                 <button
                   type="button"
