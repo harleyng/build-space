@@ -1,11 +1,55 @@
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { cn } from "@/lib/utils";
+import { 
+  Sofa, 
+  AirVent, 
+  Fan, 
+  Flame, 
+  Droplets, 
+  WashingMachine, 
+  Refrigerator, 
+  Microwave, 
+  Tv, 
+  ChefHat,
+  Shield,
+  Camera,
+  Fingerprint,
+  Building2,
+  Car,
+  Home,
+  Dumbbell,
+  Waves,
+  Trees,
+  LucideIcon
+} from "lucide-react";
 
 interface ListingFormStep4AmenitiesProps {
   amenities: string[];
   setAmenities: (value: string[]) => void;
 }
+
+// Icon map for amenities
+const AMENITY_ICONS: Record<string, LucideIcon> = {
+  air_conditioning: AirVent,
+  ceiling_fan: Fan,
+  standing_fan: Fan,
+  heater: Flame,
+  water_heater: Droplets,
+  washing_machine: WashingMachine,
+  refrigerator: Refrigerator,
+  microwave: Microwave,
+  tv: Tv,
+  kitchen: ChefHat,
+  security_guard: Shield,
+  cctv: Camera,
+  fingerprint_lock: Fingerprint,
+  elevator: Building2,
+  parking: Car,
+  balcony: Home,
+  gym: Dumbbell,
+  swimming_pool: Waves,
+  garden: Trees,
+};
 
 // Define amenity groups
 const AMENITY_GROUPS = {
@@ -14,9 +58,9 @@ const AMENITY_GROUPS = {
     required: true,
     type: "radio" as const,
     options: [
-      { value: "full_furnished", label: "Đầy đủ nội thất" },
-      { value: "basic_furnished", label: "Nội thất cơ bản" },
-      { value: "unfurnished", label: "Không có nội thất" },
+      { value: "full_furnished", label: "Đầy đủ nội thất", icon: Sofa },
+      { value: "basic_furnished", label: "Nội thất cơ bản", icon: Sofa },
+      { value: "unfurnished", label: "Không có nội thất", icon: Home },
     ],
   },
   cooling: {
@@ -74,15 +118,15 @@ export const ListingFormStep4Amenities = ({
   amenities,
   setAmenities,
 }: ListingFormStep4AmenitiesProps) => {
-  const handleCheckboxChange = (value: string, checked: boolean) => {
-    if (checked) {
-      setAmenities([...amenities, value]);
-    } else {
+  const handleCheckboxToggle = (value: string) => {
+    if (amenities.includes(value)) {
       setAmenities(amenities.filter((a) => a !== value));
+    } else {
+      setAmenities([...amenities, value]);
     }
   };
 
-  const handleRadioChange = (groupKey: string, value: string) => {
+  const handleRadioSelect = (groupKey: string, value: string) => {
     // Remove all options from this radio group first
     const groupOptions = AMENITY_GROUPS[groupKey as keyof typeof AMENITY_GROUPS].options.map(
       (opt) => opt.value
@@ -111,50 +155,57 @@ export const ListingFormStep4Amenities = ({
 
       <div className="space-y-8">
         {Object.entries(AMENITY_GROUPS).map(([groupKey, group]) => (
-          <div key={groupKey} className="space-y-4 border-b pb-6 last:border-b-0">
-            <Label className="text-base font-semibold">
+          <div key={groupKey} className="space-y-4 pb-6">
+            <Label className="text-lg font-semibold">
               {group.title}
               {'required' in group && group.required && <span className="text-destructive ml-1">*</span>}
             </Label>
 
             {group.type === "radio" ? (
-              <RadioGroup
-                value={getRadioValue(groupKey)}
-                onValueChange={(value) => handleRadioChange(groupKey, value)}
-              >
-                <div className="space-y-3">
-                  {group.options.map((option) => (
-                    <div key={option.value} className="flex items-center space-x-3">
-                      <RadioGroupItem value={option.value} id={option.value} />
-                      <Label
-                        htmlFor={option.value}
-                        className="text-base font-normal cursor-pointer"
-                      >
-                        {option.label}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </RadioGroup>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {group.options.map((option) => (
-                  <div key={option.value} className="flex items-center space-x-3">
-                    <Checkbox
-                      id={option.value}
-                      checked={amenities.includes(option.value)}
-                      onCheckedChange={(checked) =>
-                        handleCheckboxChange(option.value, checked as boolean)
-                      }
-                    />
-                    <Label
-                      htmlFor={option.value}
-                      className="text-base font-normal cursor-pointer"
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {group.options.map((option) => {
+                  const isSelected = getRadioValue(groupKey) === option.value;
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleRadioSelect(groupKey, option.value)}
+                      className={cn(
+                        "flex flex-col items-start p-6 rounded-lg border-2 transition-all hover:border-foreground/50",
+                        isSelected
+                          ? "border-foreground bg-accent"
+                          : "border-border bg-background"
+                      )}
                     >
-                      {option.label}
-                    </Label>
-                  </div>
-                ))}
+                      {Icon && <Icon className="h-8 w-8 mb-3" />}
+                      <span className="text-base font-medium">{option.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {group.options.map((option) => {
+                  const isSelected = amenities.includes(option.value);
+                  const Icon = AMENITY_ICONS[option.value];
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => handleCheckboxToggle(option.value)}
+                      className={cn(
+                        "flex items-center gap-3 p-4 rounded-lg border-2 transition-all hover:border-foreground/50",
+                        isSelected
+                          ? "border-foreground bg-accent"
+                          : "border-border bg-background"
+                      )}
+                    >
+                      {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
+                      <span className="text-base font-medium text-left">{option.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>
