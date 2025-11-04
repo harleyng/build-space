@@ -180,15 +180,13 @@ export const ListingFormStep2Location = ({
           </div>
 
           {showMap && !showMapOverlay && (
-            <div className="border-t pt-6">
+            <div className="border-t pt-6 pb-8">
               <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
-              <div className="rounded-lg overflow-hidden border">
-                <LocationMap
-                  key={`form-map-${latitude}-${longitude}`}
-                  latitude={parseFloat(latitude)}
-                  longitude={parseFloat(longitude)}
-                />
-              </div>
+              <LocationMap
+                key={`form-map-${latitude}-${longitude}`}
+                latitude={parseFloat(latitude)}
+                longitude={parseFloat(longitude)}
+              />
             </div>
           )}
 
