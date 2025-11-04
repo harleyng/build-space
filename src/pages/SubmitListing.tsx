@@ -95,6 +95,7 @@ const SubmitListing = () => {
     uploadingImages,
     handleImageSelect,
     removeImage,
+    reorderImages,
     uploadImages: uploadImagesToStorage,
   } = useImageUpload();
 
@@ -800,6 +801,7 @@ const SubmitListing = () => {
             prominentFeatures={prominentFeatures}
             setProminentFeatures={setProminentFeatures}
             imagePreviewUrls={imagePreviewUrls}
+            setImagePreviewUrls={reorderImages}
             onImageSelect={handleImageSelect}
             onRemoveImage={removeImage}
           />

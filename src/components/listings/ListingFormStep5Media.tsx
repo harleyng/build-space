@@ -14,6 +14,7 @@ interface ListingFormStep5MediaProps {
   prominentFeatures: string;
   setProminentFeatures: (value: string) => void;
   imagePreviewUrls: string[];
+  setImagePreviewUrls: (urls: string[]) => void;
   onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveImage: (index: number) => void;
 }
@@ -26,6 +27,7 @@ export const ListingFormStep5Media = ({
   prominentFeatures,
   setProminentFeatures,
   imagePreviewUrls,
+  setImagePreviewUrls,
   onImageSelect,
   onRemoveImage,
 }: ListingFormStep5MediaProps) => {
@@ -53,6 +55,10 @@ export const ListingFormStep5Media = ({
     setProminentFeatures(updatedFeatures.join(", "));
   };
 
+  const handleReorderImages = (newOrder: string[]) => {
+    setImagePreviewUrls(newOrder);
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-8">
@@ -66,6 +72,7 @@ export const ListingFormStep5Media = ({
         imagePreviewUrls={imagePreviewUrls}
         onImageSelect={onImageSelect}
         onRemoveImage={onRemoveImage}
+        onReorderImages={handleReorderImages}
       />
 
       <div className="space-y-2">

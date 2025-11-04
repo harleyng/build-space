@@ -33,6 +33,19 @@ export const useImageUpload = () => {
     setImagePreviewUrls(newPreviews);
   };
 
+  const reorderImages = (newOrder: string[]) => {
+    setImagePreviewUrls(newOrder);
+    // Reorder the actual files to match
+    const newImageFiles: File[] = [];
+    newOrder.forEach((url) => {
+      const index = imagePreviewUrls.indexOf(url);
+      if (index !== -1 && images[index]) {
+        newImageFiles.push(images[index]);
+      }
+    });
+    setImages(newImageFiles);
+  };
+
   const uploadImages = async (userId: string): Promise<string | null> => {
     if (images.length === 0) return null;
 
@@ -82,6 +95,7 @@ export const useImageUpload = () => {
     uploadingImages,
     handleImageSelect,
     removeImage,
+    reorderImages,
     uploadImages,
     resetImages,
   };
