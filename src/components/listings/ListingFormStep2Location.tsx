@@ -109,7 +109,7 @@ export const ListingFormStep2Location = ({
 
       {/* Form fields - shown after address selection */}
       {showForm && (
-        <div className="space-y-6 animate-in fade-in-0 slide-in-from-top-4">
+        <div className="space-y-6 pb-16 animate-in fade-in-0 slide-in-from-top-4">
           <h3 className="text-xl font-semibold">Địa chỉ chi tiết</h3>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -179,17 +179,6 @@ export const ListingFormStep2Location = ({
             </div>
           </div>
 
-          {showMap && !showMapOverlay && (
-            <div className="border-t pt-6 pb-8">
-              <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
-              <LocationMap
-                key={`form-map-${latitude}-${longitude}`}
-                latitude={parseFloat(latitude)}
-                longitude={parseFloat(longitude)}
-              />
-            </div>
-          )}
-
           {(showNumFloors || showFloorNumber) && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
               {showNumFloors && setNumFloors && (
@@ -219,6 +208,17 @@ export const ListingFormStep2Location = ({
                   />
                 </div>
               )}
+            </div>
+          )}
+
+          {showMap && !showMapOverlay && (
+            <div className="border-t pt-6 pb-16 mt-6">
+              <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
+              <LocationMap
+                key={`form-map-${latitude}-${longitude}`}
+                latitude={parseFloat(latitude)}
+                longitude={parseFloat(longitude)}
+              />
             </div>
           )}
         </div>
