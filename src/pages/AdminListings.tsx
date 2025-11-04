@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
-import { Loader2, Check, X, Power, Trash2, Eye, Shield } from "lucide-react";
+import { Loader2, Check, X, Power, Trash2, Eye, Shield, ExternalLink } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -360,12 +360,21 @@ const AdminListings = () => {
                         {/* Admin Actions */}
                         <div className="flex flex-wrap gap-2">
                           <Button
-                            variant="outline"
+                            variant="default"
                             size="sm"
-                            onClick={() => navigate(`/listings/${listing.id}`)}
+                            onClick={() => navigate(`/admin/properties/${listing.id}`)}
                           >
                             <Eye className="mr-2 h-4 w-4" />
                             Xem chi tiết
+                          </Button>
+                          
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => window.open(`/listings/${listing.id}`, '_blank')}
+                          >
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Xem trên sàn
                           </Button>
 
                           {(listing.status === "PENDING_APPROVAL" || listing.status === "DRAFT") && (
@@ -428,22 +437,6 @@ const AdminListings = () => {
                                 <Power className="mr-2 h-4 w-4" />
                               )}
                               Kích hoạt
-                            </Button>
-                          )}
-
-                          {listing.status !== "SOLD_RENTED" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => updateListingStatus(listing.id, "SOLD_RENTED")}
-                              disabled={actionLoading === listing.id}
-                            >
-                              {actionLoading === listing.id ? (
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                              ) : (
-                                <Check className="mr-2 h-4 w-4" />
-                              )}
-                              Đã bán/thuê
                             </Button>
                           )}
 

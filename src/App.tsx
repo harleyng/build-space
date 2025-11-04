@@ -14,11 +14,13 @@ import SubmitListing from "./pages/SubmitListing";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminListings from "./pages/AdminListings";
+import AdminListingDetail from "./pages/admin/AdminListingDetail";
 import AdminBrokers from "./pages/admin/AdminBrokers";
 import AdminOrganizations from "./pages/admin/AdminOrganizations";
 import NotFound from "./pages/NotFound";
 import BrokerDashboard from "./pages/portal/BrokerDashboard";
 import BrokerProperties from "./pages/portal/BrokerProperties";
+import BrokerPropertyDetail from "./pages/portal/BrokerPropertyDetail";
 import BrokerCustomers from "./pages/portal/BrokerCustomers";
 import BrokerMarketing from "./pages/portal/BrokerMarketing";
 import BrokerOrganization from "./pages/portal/BrokerOrganization";
@@ -50,6 +52,7 @@ const App = () => (
             {/* Standalone pages without layout */}
             <Route path="/broker/properties/new" element={<SubmitListing />} />
             <Route path="/broker/properties/:id/edit" element={<SubmitListing />} />
+            <Route path="/broker/properties/:id" element={<BrokerPropertyDetail />} />
             
             {/* Pages with sidebar layout */}
             <Route path="/broker" element={<BrokerLayout />}>
@@ -74,6 +77,7 @@ const App = () => (
               <Route index element={<Navigate to="/admin/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="properties" element={<AdminListings />} />
+              <Route path="properties/:id" element={<AdminListingDetail />} />
               <Route path="brokers" element={<AdminBrokers />} />
               <Route path="organizations" element={<AdminOrganizations />} />
               <Route path="listings" element={<AdminListings />} />

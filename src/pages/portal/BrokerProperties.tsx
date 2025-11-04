@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { PlusCircle, Eye, Edit, Trash2, Loader2 } from "lucide-react";
+import { PlusCircle, Eye, Edit, Trash2, Loader2, ExternalLink } from "lucide-react";
 import { ComingSoonOverlay } from "@/components/portal/ComingSoonOverlay";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { ListingStatus } from "@/types/listing.types";
@@ -170,11 +170,19 @@ export default function BrokerProperties() {
                       <div className="flex gap-2">
                         <Button
                           size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/listings/${listing.id}`)}
+                          variant="default"
+                          onClick={() => navigate(`/broker/properties/${listing.id}`)}
                         >
                           <Eye className="mr-2 h-4 w-4" />
-                          Xem
+                          Xem chi tiết
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => window.open(`/listings/${listing.id}`, '_blank')}
+                        >
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Xem trên sàn
                         </Button>
                         <Button
                           size="sm"
