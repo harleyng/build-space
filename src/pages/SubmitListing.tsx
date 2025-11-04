@@ -215,7 +215,7 @@ const SubmitListing = () => {
     "Đất nền dự án",
     "Đất thổ cư",
     "Trang trại, khu nghỉ dưỡng",
-    "Kho, nhà xưởng, đất",
+    "Kho, nhà xưởng",
     "Khác"
   ];
 
@@ -228,8 +228,9 @@ const SubmitListing = () => {
     "Nhà liền kề",
     "Nhà mặt phố",
     "Shophouse",
+    "Đất thổ cư",
     "Văn phòng",
-    "Kho, nhà xưởng, đất",
+    "Kho, nhà xưởng",
     "Khác"
   ];
 
