@@ -96,23 +96,23 @@ export const ListingFormStep6CostsAndFees = ({
           {categories.map(category => {
           const Icon = category.icon;
           const categoryFees = getCategoryFees(category.id);
-          return <div key={category.id} className="space-y-3">
-                <div className="flex items-center justify-between p-4 border rounded-lg hover:border-foreground transition-colors">
+          return <div key={category.id} className="border rounded-lg overflow-hidden">
+                <div className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors">
                   <div className="flex items-center gap-3">
                     <Icon className="w-5 h-5" />
                     <span className="font-medium">{category.name}</span>
                   </div>
-                  <Button type="button" variant="ghost" className="text-blue-600 hover:text-blue-700 hover:bg-transparent underline font-semibold" onClick={() => handleAddFee(category.id)}>
+                  <Button type="button" variant="ghost" className="text-foreground hover:text-foreground hover:bg-transparent underline font-semibold" onClick={() => handleAddFee(category.id)}>
                     Thêm
                   </Button>
                 </div>
 
-                {categoryFees.length > 0 && <div className="ml-4 space-y-2">
-                    {categoryFees.map(fee => <div key={fee.id} className="flex items-start justify-between p-4 bg-background border rounded-lg">
+                {categoryFees.length > 0 && <div className="border-t">
+                    {categoryFees.map((fee, index) => <div key={fee.id} className={`flex items-center justify-between p-4 ${index !== categoryFees.length - 1 ? 'border-b' : ''}`}>
                         <div className="flex-1">
                           <div className="font-medium mb-1">{fee.feeName}</div>
-                          <div className="text-sm text-muted-foreground space-y-0.5">
-                            <div>
+                          <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1">
+                            <span>
                               {fee.feeType === "range" && fee.maxAmount ? <>
                                   {new Intl.NumberFormat("vi-VN", {
                     style: "currency",
@@ -127,22 +127,33 @@ export const ListingFormStep6CostsAndFees = ({
                   style: "currency",
                   currency: "VND"
                 }).format(fee.amount)}
-                            </div>
-                            <div>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</div>
-                            {fee.isRequired === "included" && <div className="text-xs">Bao gồm trong tiền thuê</div>}
-                            {fee.isRequired === "required" && <div className="text-xs">Bắt buộc</div>}
-                            {fee.isRequired === "optional" && <div className="text-xs">Tùy chọn</div>}
-                            {fee.isRefundable === "refundable" && <div className="text-xs">Có hoàn lại</div>}
-                            {fee.isRefundable === "non-refundable" && <div className="text-xs">Không hoàn lại</div>}
+                            </span>
+                            <span>-</span>
+                            <span>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</span>
+                            {fee.isRequired && <>
+                                <span>-</span>
+                                <span>
+                                  {fee.isRequired === "included" && "Bao gồm trong tiền thuê"}
+                                  {fee.isRequired === "required" && "Bắt buộc"}
+                                  {fee.isRequired === "optional" && "Tùy chọn"}
+                                </span>
+                              </>}
+                            {fee.isRefundable && <>
+                                <span>-</span>
+                                <span>
+                                  {fee.isRefundable === "refundable" && "Có hoàn lại"}
+                                  {fee.isRefundable === "non-refundable" && "Không hoàn lại"}
+                                </span>
+                              </>}
                           </div>
                         </div>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
                               <MoreVertical className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="end" className="bg-background">
                             <DropdownMenuItem onClick={() => handleEditFee(fee)}>
                               Chỉnh sửa
                             </DropdownMenuItem>
