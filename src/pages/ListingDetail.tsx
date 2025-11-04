@@ -432,7 +432,7 @@ const ListingDetail = () => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Người đăng</p>
-                        <p className="font-medium text-foreground">{contactInfo.name}</p>
+                        <p className="font-medium text-foreground">{contactInfo.name || 'N/A'}</p>
                       </div>
                     </div>
                     
@@ -446,7 +446,7 @@ const ListingDetail = () => {
                           <p className="font-medium text-foreground">
                             {showPhone 
                               ? contactInfo.phone 
-                              : `****${contactInfo.phone.slice(-3)}`
+                              : contactInfo.phone ? `****${contactInfo.phone.slice(-3)}` : '****'
                             }
                           </p>
                           {!showPhone && (
@@ -470,7 +470,7 @@ const ListingDetail = () => {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="font-medium text-foreground text-sm">{contactInfo.email}</p>
+                        <p className="font-medium text-foreground text-sm">{contactInfo.email || 'N/A'}</p>
                       </div>
                     </div>
                   </div>
@@ -479,7 +479,8 @@ const ListingDetail = () => {
                     <Button 
                       className="w-full" 
                       size="lg"
-                      onClick={() => window.open(`tel:${contactInfo.phone}`)}
+                      onClick={() => contactInfo.phone && window.open(`tel:${contactInfo.phone}`)}
+                      disabled={!contactInfo.phone}
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       Gọi điện
@@ -489,7 +490,8 @@ const ListingDetail = () => {
                       variant="outline" 
                       className="w-full" 
                       size="lg"
-                      onClick={() => window.open(`mailto:${contactInfo.email}`)}
+                      onClick={() => contactInfo.email && window.open(`mailto:${contactInfo.email}`)}
+                      disabled={!contactInfo.email}
                     >
                       <Mail className="w-4 h-4 mr-2" />
                       Gửi email
