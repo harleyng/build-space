@@ -19,8 +19,7 @@ interface Fee {
   category: string;
   feeName: string;
   paymentFrequency: string;
-  isRequired: string;
-  isRefundable?: string;
+  isRefundable?: boolean;
   feeType: string;
   amount: number;
   maxAmount?: number;
@@ -133,19 +132,10 @@ export const ListingFormStep6CostsAndFees = ({
                             </span>
                             <span>-</span>
                             <span>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</span>
-                            {fee.isRequired && <>
+                            {fee.isRefundable !== undefined && <>
                                 <span>-</span>
                                 <span>
-                                  {fee.isRequired === "included" && "Bao gồm trong tiền thuê"}
-                                  {fee.isRequired === "required" && "Bắt buộc"}
-                                  {fee.isRequired === "optional" && "Tùy chọn"}
-                                </span>
-                              </>}
-                            {fee.isRefundable && <>
-                                <span>-</span>
-                                <span>
-                                  {fee.isRefundable === "refundable" && "Có hoàn lại"}
-                                  {fee.isRefundable === "non-refundable" && "Không hoàn lại"}
+                                  {fee.isRefundable ? "Có hoàn lại" : "Không hoàn lại"}
                                 </span>
                               </>}
                           </div>

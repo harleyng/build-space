@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 import { NumberInput } from "@/components/ui/number-input";
+import { Switch } from "@/components/ui/switch";
 interface Fee {
   id: string;
   category: string;
   feeName: string;
   paymentFrequency: string;
-  isRequired: string;
-  isRefundable?: string;
+  isRefundable?: boolean;
   feeType: string;
   amount: number;
   maxAmount?: number;
@@ -23,8 +22,7 @@ interface AddFeeDialogProps {
     category: string;
     feeName: string;
     paymentFrequency: string;
-    isRequired: string;
-    isRefundable?: string;
+    isRefundable?: boolean;
     feeType: string;
     amount: number;
     maxAmount?: number;
@@ -57,6 +55,17 @@ const paymentFrequencies = [{
   value: "one-time",
   label: "Một lần"
 }];
+
+const feeTypes = [{
+  value: "flat",
+  label: "Phí cố định"
+}, {
+  value: "flat-per-item",
+  label: "Phí cố định, mỗi mục"
+}, {
+  value: "range",
+  label: "Khoảng phí"
+}];
 export const AddFeeDialog = ({
   isOpen,
   onClose,
@@ -66,8 +75,7 @@ export const AddFeeDialog = ({
 }: AddFeeDialogProps) => {
   const [feeName, setFeeName] = useState("");
   const [paymentFrequency, setPaymentFrequency] = useState("");
-  const [isRequired, setIsRequired] = useState("");
-  const [isRefundable, setIsRefundable] = useState("");
+  const [isRefundable, setIsRefundable] = useState(false);
   const [feeType, setFeeType] = useState("");
   const [amount, setAmount] = useState("");
   const [minAmount, setMinAmount] = useState("");
@@ -77,8 +85,7 @@ export const AddFeeDialog = ({
       // Reset form
       setFeeName("");
       setPaymentFrequency("");
-      setIsRequired("");
-      setIsRefundable("");
+      setIsRefundable(false);
       setFeeType("");
       setAmount("");
       setMinAmount("");
@@ -87,8 +94,7 @@ export const AddFeeDialog = ({
       // Populate form with editing fee data
       setFeeName(editingFee.feeName);
       setPaymentFrequency(editingFee.paymentFrequency);
-      setIsRequired(editingFee.isRequired);
-      setIsRefundable(editingFee.isRefundable || "");
+      setIsRefundable(editingFee.isRefundable || false);
       setFeeType(editingFee.feeType);
       if (editingFee.feeType === "range") {
         setMinAmount(editingFee.amount.toString());
@@ -99,7 +105,7 @@ export const AddFeeDialog = ({
     }
   }, [isOpen, editingFee]);
   const handleSave = () => {
-    if (!category || !feeName || !paymentFrequency || !isRequired || !feeType) {
+    if (!category || !feeName || !paymentFrequency || !feeType) {
       return;
     }
 
@@ -116,14 +122,13 @@ export const AddFeeDialog = ({
       category,
       feeName,
       paymentFrequency,
-      isRequired,
       isRefundable: isRefundable || undefined,
       feeType,
       amount: feeType === "range" ? parseFloat(minAmount) : parseFloat(amount),
       maxAmount: feeType === "range" ? parseFloat(maxAmount) : undefined
     });
   };
-  const canSave = feeName && paymentFrequency && isRequired && feeType && (feeType === "range" ? minAmount && maxAmount : amount);
+  const canSave = feeName && paymentFrequency && feeType && (feeType === "range" ? minAmount && maxAmount : amount);
   const dialogTitle = editingFee ? `Chỉnh sửa ${categoryNames[editingFee.category] || "phí"}` : category ? `Thêm ${categoryNames[category] || "phí"}` : "Thêm phí";
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -165,54 +170,22 @@ export const AddFeeDialog = ({
                   </SelectItem>)}
               </SelectContent>
             </Select>
-            
           </div>
 
-          
-
-          <div className="space-y-3">
-            <Label>Phí này có được hoàn lại không? (tùy chọn)</Label>
-            <RadioGroup value={isRefundable} onValueChange={setIsRefundable}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="non-refundable" id="non-refundable" />
-                <Label htmlFor="non-refundable" className="font-normal cursor-pointer">
-                  Không hoàn lại
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="refundable" id="refundable" />
-                <Label htmlFor="refundable" className="font-normal cursor-pointer">
-                  Hoàn lại
-                </Label>
-              </div>
-            </RadioGroup>
-          </div>
-
-          <div className="space-y-3">
-            <Label>
-              Đây là phí cố định hay theo một khoảng?{" "}
-              <span className="text-red-500">*</span>
+          <div className="space-y-2">
+            <Label htmlFor="feeType">
+              Cách tính chi phí <span className="text-red-500">*</span>
             </Label>
-            <RadioGroup value={feeType} onValueChange={setFeeType}>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="flat" id="flat" />
-                <Label htmlFor="flat" className="font-normal cursor-pointer">
-                  Phí cố định
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="flat-per-item" id="flat-per-item" />
-                <Label htmlFor="flat-per-item" className="font-normal cursor-pointer">
-                  Phí cố định, mỗi mục
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="range" id="range" />
-                <Label htmlFor="range" className="font-normal cursor-pointer">
-                  Khoảng phí
-                </Label>
-              </div>
-            </RadioGroup>
+            <Select value={feeType} onValueChange={setFeeType}>
+              <SelectTrigger id="feeType">
+                <SelectValue placeholder="Chọn" />
+              </SelectTrigger>
+              <SelectContent>
+                {feeTypes.map(type => <SelectItem key={type.value} value={type.value}>
+                    {type.label}
+                  </SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
 
           {feeType === "range" ? <div className="space-y-4">
@@ -254,6 +227,13 @@ export const AddFeeDialog = ({
                 <NumberInput id="amount" value={amount} onChange={setAmount} className="pl-7" placeholder="0" allowDecimal={false} />
               </div>
             </div>}
+
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label htmlFor="isRefundable" className="cursor-pointer">
+              Được hoàn lại phí này?
+            </Label>
+            <Switch id="isRefundable" checked={isRefundable} onCheckedChange={setIsRefundable} />
+          </div>
         </div>
 
         <div className="flex justify-end gap-3 mt-6 pt-6 border-t">
