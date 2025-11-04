@@ -12,7 +12,7 @@ export const WizardProgressBar = ({
   onStepClick 
 }: WizardProgressBarProps) => {
   return (
-    <div className="flex flex-col gap-3 w-full">
+    <div className="flex flex-col gap-1.5 w-full">
       <div className="flex gap-2">
         {WIZARD_STRUCTURE.map((step) => {
           const isCompleted = step.id < currentMajorStep;
@@ -27,9 +27,9 @@ export const WizardProgressBar = ({
               }`}
               style={{
                 backgroundColor: isCompleted || isCurrent 
-                  ? "hsl(var(--primary))" 
-                  : "hsl(var(--muted))",
-                opacity: isCompleted || isCurrent ? 1 : 0.3,
+                  ? "hsl(0 0% 0%)" 
+                  : "hsl(0 0% 85%)",
+                opacity: isCompleted || isCurrent ? 1 : 1,
               }}
               onClick={() => isClickable && onStepClick?.(step.id)}
             />
@@ -50,7 +50,7 @@ export const WizardProgressBar = ({
                 className={`text-xs transition-colors ${
                   isCurrent 
                     ? 'text-foreground font-medium' 
-                    : 'text-muted-foreground'
+                    : 'text-muted-foreground/50'
                 }`}
               >
                 {step.title}
