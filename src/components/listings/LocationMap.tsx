@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -18,7 +18,6 @@ interface LocationMapProps {
 export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps) => {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
     if (!latitude || !longitude || !containerRef.current) return;
@@ -29,28 +28,40 @@ export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps
       mapRef.current = null;
     }
 
-    // Create new map
-    try {
-      const map = L.map(containerRef.current, {
-        center: [latitude, longitude],
-        zoom: 15,
-        scrollWheelZoom: false,
-      });
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (!containerRef.current) return;
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
+      try {
+        const map = L.map(containerRef.current, {
+          center: [latitude, longitude],
+          zoom: 15,
+          scrollWheelZoom: false,
+        });
 
-      L.marker([latitude, longitude]).addTo(map);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          maxZoom: 19,
+        }).addTo(map);
 
-      mapRef.current = map;
-      setMapReady(true);
-    } catch (error) {
-      console.error("Error creating map:", error);
-    }
+        L.marker([latitude, longitude]).addTo(map);
+
+        mapRef.current = map;
+
+        // Force map to invalidate size after a short delay
+        setTimeout(() => {
+          if (mapRef.current) {
+            mapRef.current.invalidateSize();
+          }
+        }, 100);
+      } catch (error) {
+        console.error("Error creating map:", error);
+      }
+    }, 50);
 
     // Cleanup on unmount
     return () => {
+      clearTimeout(timeoutId);
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
