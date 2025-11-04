@@ -10,8 +10,8 @@ export const BrokerLayout = () => {
       <div className="flex min-h-screen w-full">
         <BrokerSidebar />
         
-        <div className="flex flex-1 flex-col">
-          <header className="sticky top-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
+        <div className="flex flex-1 flex-col h-screen">
+          <header className="flex-shrink-0 z-40 flex h-16 items-center gap-4 border-b bg-background px-6">
             <SidebarTrigger />
             <div className="flex items-center gap-2">
               <Building2 className="h-5 w-5 text-primary" />
@@ -24,7 +24,7 @@ export const BrokerLayout = () => {
             </div>
           </header>
           
-          <main className="flex-1 p-6 bg-muted/40">
+          <main className="flex-1 overflow-y-auto p-6 bg-muted/40">
             <Outlet />
           </main>
         </div>
