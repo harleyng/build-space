@@ -1,6 +1,9 @@
+import { useState, KeyboardEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 import { ListingFormImages } from "./ListingFormImages";
 
 interface ListingFormStep5MediaProps {
@@ -26,6 +29,30 @@ export const ListingFormStep5Media = ({
   onImageSelect,
   onRemoveImage,
 }: ListingFormStep5MediaProps) => {
+  const [currentFeature, setCurrentFeature] = useState("");
+  const [features, setFeatures] = useState<string[]>(() => {
+    return prominentFeatures ? prominentFeatures.split(",").map(f => f.trim()).filter(Boolean) : [];
+  });
+
+  const handleFeatureKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && currentFeature.trim()) {
+      e.preventDefault();
+      const newFeature = currentFeature.trim();
+      if (newFeature && !features.includes(newFeature)) {
+        const updatedFeatures = [...features, newFeature];
+        setFeatures(updatedFeatures);
+        setProminentFeatures(updatedFeatures.join(", "));
+        setCurrentFeature("");
+      }
+    }
+  };
+
+  const removeFeature = (index: number) => {
+    const updatedFeatures = features.filter((_, i) => i !== index);
+    setFeatures(updatedFeatures);
+    setProminentFeatures(updatedFeatures.join(", "));
+  };
+
   return (
     <div className="space-y-6">
       <div className="mb-8">
@@ -64,19 +91,39 @@ export const ListingFormStep5Media = ({
           rows={8}
           required
         />
-        <p className="text-xs text-muted-foreground">{description.length} ký tự (Tối thiểu 300)</p>
+        <p className="text-xs text-muted-foreground">{description.length} ký tự (Tối thiểu 80)</p>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="prominentFeatures">Đặc điểm nổi bật</Label>
-        <Input
-          id="prominentFeatures"
-          value={prominentFeatures}
-          onChange={(e) => setProminentFeatures(e.target.value)}
-          placeholder="Ví dụ: Gần trường học, Có sân vườn, View sông (cách nhau bởi dấu phẩy)"
-        />
+        <div className="space-y-2">
+          {features.length > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {features.map((feature, index) => (
+                <Badge key={index} variant="secondary" className="text-sm px-3 py-1">
+                  {feature}
+                  <button
+                    type="button"
+                    onClick={() => removeFeature(index)}
+                    className="ml-2 hover:text-destructive"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+          )}
+          <Input
+            id="prominentFeatures"
+            value={currentFeature}
+            onChange={(e) => setCurrentFeature(e.target.value)}
+            onKeyDown={handleFeatureKeyDown}
+            placeholder="Nhập đặc điểm và nhấn Enter"
+            maxLength={50}
+          />
+        </div>
         <p className="text-xs text-muted-foreground">
-          Nhập các đặc điểm nổi bật, cách nhau bởi dấu phẩy
+          Nhập đặc điểm nổi bật và nhấn Enter để thêm
         </p>
       </div>
     </div>

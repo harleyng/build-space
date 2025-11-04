@@ -308,7 +308,7 @@ const SubmitListing = () => {
       case 7:
         return true; // Costs & fees is optional
       case 8:
-        return !!title.trim() && description.length >= 300 && (isEditMode || images.length > 0);
+        return !!title.trim() && description.length >= 80 && (isEditMode || images.length > 0);
       case 9:
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
       default:
