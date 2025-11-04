@@ -131,9 +131,7 @@ export const AddFeeDialog = ({
           <DialogTitle className="text-2xl">{dialogTitle}</DialogTitle>
         </DialogHeader>
 
-        <p className="text-sm text-muted-foreground mb-6">
-          Cho người thuê biết loại phí và số tiền, khi nào được tính phí, và liệu nó có được bao gồm trong tiền thuê cơ bản hay không. Những chi tiết này sẽ xuất hiện trên tin đăng của bạn.
-        </p>
+        <p className="text-sm text-muted-foreground mb-6">Cho người thuê biết loại phí và số tiền, khi nào được tính phí</p>
 
         <div className="space-y-6">
           <div className="space-y-2">
