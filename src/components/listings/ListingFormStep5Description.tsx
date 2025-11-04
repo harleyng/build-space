@@ -84,7 +84,7 @@ export const ListingFormStep5Description = ({
       <div className="space-y-2">
         <Label htmlFor="prominentFeatures">Đặc điểm nổi bật</Label>
         <div 
-          className="flex flex-wrap gap-2 min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+          className="flex flex-wrap gap-2 min-h-[42px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
           onClick={(e) => {
             const input = e.currentTarget.querySelector('input');
             if (input) input.focus();
