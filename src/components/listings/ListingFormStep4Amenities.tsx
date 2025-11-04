@@ -172,14 +172,14 @@ export const ListingFormStep4Amenities = ({
                       type="button"
                       onClick={() => handleRadioSelect(groupKey, option.value)}
                       className={cn(
-                        "flex flex-col items-start p-6 rounded-lg border-2 transition-all hover:border-foreground/50",
+                        "flex flex-col items-start p-6 rounded-xl border-2 transition-all hover:border-foreground hover:shadow-md",
                         isSelected
-                          ? "border-foreground bg-accent"
+                          ? "border-foreground bg-muted shadow-md"
                           : "border-border bg-background"
                       )}
                     >
-                      {Icon && <Icon className="h-8 w-8 mb-3" />}
-                      <span className="text-base font-medium">{option.label}</span>
+                      {Icon && <Icon className={cn("h-8 w-8 mb-3 transition-colors", isSelected ? "text-foreground" : "text-muted-foreground")} />}
+                      <span className={cn("text-base font-medium transition-colors", isSelected ? "text-foreground" : "text-foreground/80")}>{option.label}</span>
                     </button>
                   );
                 })}
@@ -195,14 +195,14 @@ export const ListingFormStep4Amenities = ({
                       type="button"
                       onClick={() => handleCheckboxToggle(option.value)}
                       className={cn(
-                        "flex items-center gap-3 p-4 rounded-lg border-2 transition-all hover:border-foreground/50",
+                        "flex items-center gap-3 p-4 rounded-xl border-2 transition-all hover:border-foreground hover:shadow-md",
                         isSelected
-                          ? "border-foreground bg-accent"
+                          ? "border-foreground bg-muted shadow-md"
                           : "border-border bg-background"
                       )}
                     >
-                      {Icon && <Icon className="h-6 w-6 flex-shrink-0" />}
-                      <span className="text-base font-medium text-left">{option.label}</span>
+                      {Icon && <Icon className={cn("h-6 w-6 flex-shrink-0 transition-colors", isSelected ? "text-foreground" : "text-muted-foreground")} />}
+                      <span className={cn("text-base font-medium text-left transition-colors", isSelected ? "text-foreground" : "text-foreground/80")}>{option.label}</span>
                     </button>
                   );
                 })}
