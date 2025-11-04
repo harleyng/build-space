@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
@@ -16,7 +16,21 @@ interface LocationMapProps {
   longitude: number;
 }
 
-export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
+export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps) => {
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      // Cleanup any leaflet resources
+      const containers = document.querySelectorAll('.leaflet-container');
+      containers.forEach(container => {
+        const leafletId = (container as any)._leaflet_id;
+        if (leafletId) {
+          delete (container as any)._leaflet_id;
+        }
+      });
+    };
+  }, []);
+
   if (!latitude || !longitude) {
     return (
       <div className="w-full h-[300px] rounded-lg border bg-muted flex items-center justify-center">
@@ -32,7 +46,7 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
       <h3 className="text-sm font-medium">Vị trí trên bản đồ</h3>
       <div className="w-full h-[300px] rounded-lg border overflow-hidden">
         <MapContainer
-          key={`${latitude}-${longitude}`}
+          key={`map-${latitude}-${longitude}`}
           center={position}
           zoom={15}
           scrollWheelZoom={false}
@@ -47,4 +61,4 @@ export const LocationMap = ({ latitude, longitude }: LocationMapProps) => {
       </div>
     </div>
   );
-};
+});

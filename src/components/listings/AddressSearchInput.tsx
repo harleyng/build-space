@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MapPin, Navigation } from "lucide-react";
+import { MapPin, Navigation, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/use-toast";
 
 interface AddressSearchInputProps {
   onAddressSelect: (address: {
@@ -23,6 +24,7 @@ export const AddressSearchInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [isGettingLocation, setIsGettingLocation] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -72,38 +74,89 @@ export const AddressSearchInput = ({
   }, [searchQuery]);
 
   const handleUseCurrentLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const { latitude, longitude } = position.coords;
-          
-          // Reverse geocode to get address
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
-            );
-            const data = await response.json();
-            
-            const address = data.address || {};
-            onAddressSelect({
-              street: address.road || address.street || "",
-              ward: address.suburb || address.neighbourhood || "",
-              province: address.city || address.province || address.state || "",
-              latitude,
-              longitude
-            });
-            
-            setSearchQuery(data.display_name || "");
-            setIsOpen(false);
-          } catch (error) {
-            console.error("Error reverse geocoding:", error);
-          }
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-        }
-      );
+    if (!("geolocation" in navigator)) {
+      toast({
+        title: "Lỗi",
+        description: "Trình duyệt của bạn không hỗ trợ định vị",
+        variant: "destructive",
+      });
+      return;
     }
+
+    setIsGettingLocation(true);
+    
+    const timeoutId = setTimeout(() => {
+      setIsGettingLocation(false);
+      toast({
+        title: "Hết thời gian",
+        description: "Không thể lấy vị trí. Vui lòng thử lại hoặc nhập địa chỉ thủ công.",
+        variant: "destructive",
+      });
+    }, 10000); // 10 second timeout
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        clearTimeout(timeoutId);
+        const { latitude, longitude } = position.coords;
+        
+        // Reverse geocode to get address
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`
+          );
+          const data = await response.json();
+          
+          const address = data.address || {};
+          onAddressSelect({
+            street: address.road || address.street || "",
+            ward: address.suburb || address.neighbourhood || "",
+            province: address.city || address.province || address.state || "",
+            latitude,
+            longitude
+          });
+          
+          setSearchQuery(data.display_name || "");
+          setIsOpen(false);
+          setIsGettingLocation(false);
+          
+          toast({
+            title: "Thành công",
+            description: "Đã lấy vị trí hiện tại của bạn",
+          });
+        } catch (error) {
+          console.error("Error reverse geocoding:", error);
+          setIsGettingLocation(false);
+          toast({
+            title: "Lỗi",
+            description: "Không thể xác định địa chỉ từ vị trí của bạn",
+            variant: "destructive",
+          });
+        }
+      },
+      (error) => {
+        clearTimeout(timeoutId);
+        console.error("Error getting location:", error);
+        setIsGettingLocation(false);
+        
+        let errorMessage = "Không thể lấy vị trí của bạn";
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMessage = "Bạn đã từ chối quyền truy cập vị trí";
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMessage = "Thông tin vị trí không khả dụng";
+        }
+        
+        toast({
+          title: "Lỗi",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    );
   };
 
   const handleSelectSuggestion = (suggestion: any) => {
@@ -149,9 +202,16 @@ export const AddressSearchInput = ({
             variant="ghost"
             className="w-full justify-start gap-3 px-4 py-3 h-auto text-left hover:bg-accent"
             onClick={handleUseCurrentLocation}
+            disabled={isGettingLocation}
           >
-            <Navigation className="w-5 h-5 text-primary" />
-            <span className="text-sm">Sử dụng vị trí hiện tại của tôi</span>
+            {isGettingLocation ? (
+              <Loader2 className="w-5 h-5 text-primary animate-spin" />
+            ) : (
+              <Navigation className="w-5 h-5 text-primary" />
+            )}
+            <span className="text-sm">
+              {isGettingLocation ? "Đang lấy vị trí..." : "Sử dụng vị trí hiện tại của tôi"}
+            </span>
           </Button>
 
           {isLoadingSuggestions && searchQuery.length >= 3 && (

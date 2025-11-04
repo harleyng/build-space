@@ -72,8 +72,11 @@ export const ListingFormStep2Location = ({
       setLongitude(address.longitude.toString());
     }
     
+    // Hide overlay first, then show form after a small delay to ensure clean transition
     setShowMapOverlay(false);
-    setShowForm(true);
+    setTimeout(() => {
+      setShowForm(true);
+    }, 100);
   };
 
   const showMap = latitude && longitude && parseFloat(latitude) !== 0 && parseFloat(longitude) !== 0;
@@ -87,19 +90,12 @@ export const ListingFormStep2Location = ({
         </p>
       </div>
 
-      {/* Map with search overlay */}
-      {showMapOverlay && (
+      {/* Map with search overlay - only show when overlay is active */}
+      {showMapOverlay && !showForm && (
         <div className="relative w-full h-[500px] rounded-lg overflow-hidden border bg-muted">
-          {showMap ? (
-            <LocationMap
-              latitude={parseFloat(latitude)}
-              longitude={parseFloat(longitude)}
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-muted-foreground">Bản đồ sẽ hiển thị sau khi bạn chọn địa chỉ</p>
-            </div>
-          )}
+          <div className="w-full h-full flex items-center justify-center bg-muted/50">
+            <p className="text-muted-foreground">Tìm kiếm địa chỉ để xem trên bản đồ</p>
+          </div>
           
           {/* Search overlay */}
           <div className="absolute top-6 left-6 right-6 z-10">
@@ -183,11 +179,12 @@ export const ListingFormStep2Location = ({
             </div>
           </div>
 
-          {showMap && (
+          {showMap && !showMapOverlay && (
             <div className="border-t pt-6">
               <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
               <div className="rounded-lg overflow-hidden border">
                 <LocationMap
+                  key={`form-map-${latitude}-${longitude}`}
                   latitude={parseFloat(latitude)}
                   longitude={parseFloat(longitude)}
                 />
