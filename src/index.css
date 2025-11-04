@@ -118,3 +118,18 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Leaflet map container fixes */
+@layer components {
+  .leaflet-container {
+    @apply relative z-0;
+  }
+  
+  .leaflet-pane {
+    @apply relative z-0;
+  }
+  
+  .leaflet-tile-pane {
+    @apply relative z-0;
+  }
+}

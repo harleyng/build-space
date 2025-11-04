@@ -212,13 +212,15 @@ export const ListingFormStep2Location = ({
           )}
 
           {showMap && !showMapOverlay && (
-            <div className="border-t pt-6 pb-16 mt-6">
+            <div className="relative border-t pt-6 pb-16 mt-6 isolate">
               <h3 className="text-lg font-semibold mb-4">Vị trí trên bản đồ</h3>
-              <LocationMap
-                key={`form-map-${latitude}-${longitude}`}
-                latitude={parseFloat(latitude)}
-                longitude={parseFloat(longitude)}
-              />
+              <div className="relative z-0">
+                <LocationMap
+                  key={`form-map-${latitude}-${longitude}`}
+                  latitude={parseFloat(latitude)}
+                  longitude={parseFloat(longitude)}
+                />
+              </div>
             </div>
           )}
         </div>

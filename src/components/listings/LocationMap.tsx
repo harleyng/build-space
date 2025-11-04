@@ -78,8 +78,8 @@ export const LocationMap = React.memo(({ latitude, longitude }: LocationMapProps
   }
 
   return (
-    <div className="w-full h-[300px] rounded-lg border overflow-hidden">
-      <div ref={containerRef} className="w-full h-full" />
+    <div className="relative w-full h-[300px] rounded-lg border overflow-hidden isolate">
+      <div ref={containerRef} className="w-full h-full relative z-0" />
     </div>
   );
 });
