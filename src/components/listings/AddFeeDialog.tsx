@@ -190,14 +190,10 @@ export const AddFeeDialog = ({
 
           {feeType && feeType !== "usage-based" && (
             <>
-              {feeType === "range" ? <div className="space-y-4">
-                  <Label>
-                    Khoảng phí <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="grid grid-cols-2 gap-4">
+               {feeType === "range" ? <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="minAmount" className="text-sm font-normal">
-                        Từ
+                      <Label htmlFor="minAmount">
+                        Từ <span className="text-red-500">*</span>
                       </Label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
@@ -207,8 +203,8 @@ export const AddFeeDialog = ({
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="maxAmount" className="text-sm font-normal">
-                        Đến
+                      <Label htmlFor="maxAmount">
+                        Đến <span className="text-red-500">*</span>
                       </Label>
                       <div className="relative">
                         <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground z-10">
@@ -217,8 +213,7 @@ export const AddFeeDialog = ({
                         <NumberInput id="maxAmount" value={maxAmount} onChange={setMaxAmount} className="pl-7" placeholder="0" allowDecimal={false} />
                       </div>
                     </div>
-                  </div>
-                </div> : <div className="space-y-2">
+                   </div> : <div className="space-y-2">
                   <Label htmlFor="amount">
                     Số tiền phí <span className="text-red-500">*</span>
                   </Label>
