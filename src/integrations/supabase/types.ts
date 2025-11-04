@@ -57,7 +57,6 @@ export type Database = {
           balcony_direction: string | null
           building_name: string | null
           ceiling_height: number | null
-          contact_info: Json | null
           coordinates: Json | null
           created_at: string
           custom_attributes: Json | null
@@ -108,7 +107,6 @@ export type Database = {
           balcony_direction?: string | null
           building_name?: string | null
           ceiling_height?: number | null
-          contact_info?: Json | null
           coordinates?: Json | null
           created_at?: string
           custom_attributes?: Json | null
@@ -159,7 +157,6 @@ export type Database = {
           balcony_direction?: string | null
           building_name?: string | null
           ceiling_height?: number | null
-          contact_info?: Json | null
           coordinates?: Json | null
           created_at?: string
           custom_attributes?: Json | null

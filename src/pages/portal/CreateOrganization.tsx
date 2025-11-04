@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,16 +11,8 @@ import { useCreateOrganization } from "@/hooks/useOrganization";
 import { useKycStatus } from "@/hooks/useKycStatus";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Building2 } from "lucide-react";
-
-const organizationSchema = z.object({
-  name: z.string().min(1, "Tên tổ chức là bắt buộc"),
-  taxId: z.string().min(1, "Mã số thuế là bắt buộc"),
-  businessLicenseNumber: z.string().min(1, "Số giấy phép kinh doanh là bắt buộc"),
-  address: z.string().min(1, "Địa chỉ trụ sở là bắt buộc"),
-  legalRepresentative: z.string().min(1, "Người đại diện pháp luật là bắt buộc"),
-  phoneNumber: z.string().min(1, "Số điện thoại là bắt buộc"),
-  registrationDate: z.string().optional(),
-});
+import { organizationSchema } from "@/lib/validation";
+import type { z } from "zod";
 
 type OrganizationFormData = z.infer<typeof organizationSchema>;
 
