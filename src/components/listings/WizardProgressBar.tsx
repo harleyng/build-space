@@ -12,7 +12,32 @@ export const WizardProgressBar = ({
   onStepClick 
 }: WizardProgressBarProps) => {
   return (
-    <div className="flex flex-col gap-1.5 w-full">
+    <div className="flex flex-col gap-1 w-full">
+      {/* Labels above stepper */}
+      <div className="flex gap-2">
+        {WIZARD_STRUCTURE.map((step) => {
+          const isCurrent = step.id === currentMajorStep;
+          
+          return (
+            <div
+              key={step.id}
+              className="flex-1 text-center"
+            >
+              <span 
+                className={`text-xs transition-colors ${
+                  isCurrent 
+                    ? 'text-foreground font-medium' 
+                    : 'text-muted-foreground/40'
+                }`}
+              >
+                {step.title}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Stepper bar */}
       <div className="flex gap-2">
         {WIZARD_STRUCTURE.map((step) => {
           const isCompleted = step.id < currentMajorStep;
@@ -33,29 +58,6 @@ export const WizardProgressBar = ({
               }}
               onClick={() => isClickable && onStepClick?.(step.id)}
             />
-          );
-        })}
-      </div>
-      
-      <div className="flex gap-2">
-        {WIZARD_STRUCTURE.map((step) => {
-          const isCurrent = step.id === currentMajorStep;
-          
-          return (
-            <div
-              key={step.id}
-              className="flex-1 text-center"
-            >
-              <span 
-                className={`text-xs transition-colors ${
-                  isCurrent 
-                    ? 'text-foreground font-medium' 
-                    : 'text-muted-foreground/50'
-                }`}
-              >
-                {step.title}
-              </span>
-            </div>
           );
         })}
       </div>

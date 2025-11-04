@@ -42,14 +42,24 @@ export const WizardHeader = ({
               />
             </div>
           </div>
+
+          <Button 
+            variant="outline" 
+            onClick={onSaveAndExit}
+            disabled={isSaving}
+            className="ml-4"
+          >
+            {isSaving && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+            {isSaving ? "Đang lưu..." : "Lưu và thoát"}
+          </Button>
         </div>
       </header>
 
-      {/* Floating help button */}
+      {/* Floating help button - white background, above footer */}
       <Button
-        variant="default"
+        variant="outline"
         size="icon"
-        className="fixed bottom-6 left-6 z-50 h-12 w-12 rounded-full shadow-lg"
+        className="fixed bottom-24 left-6 z-50 h-12 w-12 rounded-full shadow-lg bg-background border"
       >
         <HelpCircle className="h-5 w-5" />
       </Button>

@@ -8,12 +8,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 const paymentFrequencyLabels: Record<string, string> = {
   monthly: "Hàng tháng",
   quarterly: "Hàng quý",
   yearly: "Hàng năm",
   "one-time": "Một lần"
 };
+
 interface Fee {
   id: string;
   category: string;
@@ -24,10 +26,12 @@ interface Fee {
   amount: number;
   maxAmount?: number;
 }
+
 interface ListingFormStep6CostsAndFeesProps {
   fees: Fee[];
   setFees: (fees: Fee[]) => void;
 }
+
 export const ListingFormStep6CostsAndFees = ({
   fees,
   setFees
@@ -35,6 +39,7 @@ export const ListingFormStep6CostsAndFees = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [editingFee, setEditingFee] = useState<Fee | null>(null);
+
   const categories = [{
     id: "administrative",
     name: "Phí hành chính",
@@ -52,10 +57,12 @@ export const ListingFormStep6CostsAndFees = ({
     name: "Các danh mục khác",
     icon: DollarSign
   }];
+
   const handleAddFee = (category: string) => {
     setSelectedCategory(category);
     setIsDialogOpen(true);
   };
+
   const handleSaveFee = (fee: Omit<Fee, "id">) => {
     if (editingFee) {
       // Update existing fee
@@ -86,86 +93,105 @@ export const ListingFormStep6CostsAndFees = ({
   const getCategoryFees = (categoryId: string) => {
     return fees.filter(f => f.category === categoryId);
   };
-  return <div className="max-w-3xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-semibold mb-2">Bạn có thu thêm chi phí nào không?</h1>
-        <p className="text-muted-foreground mb-8">Chúng tôi đã làm nổi bật các loại phí phổ biến nhất. </p>
 
-        <div className="space-y-4">
-          {categories.map(category => {
-          const Icon = category.icon;
-          const categoryFees = getCategoryFees(category.id);
-          return <div key={category.id} className="border rounded-lg overflow-hidden">
-                <div 
-                  className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors cursor-pointer"
-                  onClick={() => handleAddFee(category.id)}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{category.name}</span>
-                  </div>
-                  <span className="text-foreground underline font-semibold">
-                    Thêm
-                  </span>
-                </div>
-
-                {categoryFees.length > 0 && <div className="border-t">
-                    {categoryFees.map((fee, index) => <div key={fee.id} className={`flex items-center justify-between p-4 ${index !== categoryFees.length - 1 ? 'border-b' : ''}`}>
-                        <div className="flex-1">
-                          <div className="font-medium mb-1">{fee.feeName}</div>
-                          <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1">
-                            <span>
-                              {fee.feeType === "usage-based" ? "Dựa trên mức độ sử dụng" : fee.feeType === "range" && fee.maxAmount ? <>
-                                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                  }).format(fee.amount)}{" "}
-                                  -{" "}
-                                  {new Intl.NumberFormat("vi-VN", {
-                    style: "currency",
-                    currency: "VND"
-                  }).format(fee.maxAmount)}
-                                </> : new Intl.NumberFormat("vi-VN", {
-                  style: "currency",
-                  currency: "VND"
-                }).format(fee.amount)}
-                            </span>
-                            <span>-</span>
-                            <span>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</span>
-                            {fee.isRefundable !== undefined && <>
-                                <span>-</span>
-                                <span>
-                                  {fee.isRefundable ? "Có hoàn lại" : "Không hoàn lại"}
-                                </span>
-                              </>}
-                          </div>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-background">
-                            <DropdownMenuItem onClick={() => handleEditFee(fee)}>
-                              Chỉnh sửa
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleDeleteFee(fee.id)} className="text-destructive">
-                              Xóa
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>)}
-                  </div>}
-              </div>;
-        })}
-        </div>
+  return (
+    <div>
+      <div className="mb-8">
+        <h2 className="text-3xl font-semibold mb-2">Bạn có thu thêm chi phí nào không?</h2>
+        <p className="text-muted-foreground text-lg">Chúng tôi đã làm nổi bật các loại phí phổ biến nhất. </p>
       </div>
 
-      <AddFeeDialog isOpen={isDialogOpen} onClose={() => {
-      setIsDialogOpen(false);
-      setSelectedCategory(null);
-      setEditingFee(null);
-    }} onSave={handleSaveFee} category={selectedCategory} editingFee={editingFee} />
-    </div>;
+      <div className="space-y-4">
+        {categories.map(category => {
+          const Icon = category.icon;
+          const categoryFees = getCategoryFees(category.id);
+          return (
+            <div key={category.id} className="border rounded-lg overflow-hidden">
+              <div 
+                className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+                onClick={() => handleAddFee(category.id)}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon className="w-5 h-5" />
+                  <span className="font-medium">{category.name}</span>
+                </div>
+                <span className="text-foreground underline font-semibold">
+                  Thêm
+                </span>
+              </div>
+
+              {categoryFees.length > 0 && (
+                <div className="border-t">
+                  {categoryFees.map((fee, index) => (
+                    <div key={fee.id} className={`flex items-center justify-between p-4 ${index !== categoryFees.length - 1 ? 'border-b' : ''}`}>
+                      <div className="flex-1">
+                        <div className="font-medium mb-1">{fee.feeName}</div>
+                        <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-1">
+                          <span>
+                            {fee.feeType === "usage-based" ? "Dựa trên mức độ sử dụng" : fee.feeType === "range" && fee.maxAmount ? (
+                              <>
+                                {new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND"
+                                }).format(fee.amount)}{" "}
+                                -{" "}
+                                {new Intl.NumberFormat("vi-VN", {
+                                  style: "currency",
+                                  currency: "VND"
+                                }).format(fee.maxAmount)}
+                              </>
+                            ) : new Intl.NumberFormat("vi-VN", {
+                              style: "currency",
+                              currency: "VND"
+                            }).format(fee.amount)}
+                          </span>
+                          <span>-</span>
+                          <span>{paymentFrequencyLabels[fee.paymentFrequency] || fee.paymentFrequency}</span>
+                          {fee.isRefundable !== undefined && (
+                            <>
+                              <span>-</span>
+                              <span>
+                                {fee.isRefundable ? "Có hoàn lại" : "Không hoàn lại"}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-background">
+                          <DropdownMenuItem onClick={() => handleEditFee(fee)}>
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleDeleteFee(fee.id)} className="text-destructive">
+                            Xóa
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <AddFeeDialog 
+        isOpen={isDialogOpen} 
+        onClose={() => {
+          setIsDialogOpen(false);
+          setSelectedCategory(null);
+          setEditingFee(null);
+        }} 
+        onSave={handleSaveFee} 
+        category={selectedCategory} 
+        editingFee={editingFee} 
+      />
+    </div>
+  );
 };

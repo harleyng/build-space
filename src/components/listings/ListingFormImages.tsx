@@ -81,8 +81,8 @@ export const ListingFormImages = ({
         </div>
       ) : (
         <>
-          <p className="text-sm text-muted-foreground">Kéo và thả để sắp xếp lại</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <p className="text-sm text-muted-foreground mb-2">Kéo và thả để sắp xếp lại</p>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
             {imagePreviewUrls.map((url, index) => (
               <div
                 key={index}
@@ -93,25 +93,30 @@ export const ListingFormImages = ({
                 className={`relative group cursor-move transition-all ${draggedIndex === index ? 'opacity-30 scale-95' : ''}`}
               >
                 <div className="absolute top-2 left-2 bg-background/80 rounded p-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                  <GripVertical className="h-4 w-4 text-muted-foreground" />
+                  <GripVertical className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <img
                   src={url}
                   alt={`Hình ${index + 1}`}
-                  className="w-full h-32 object-cover rounded-lg select-none"
+                  className="w-full h-48 object-cover rounded-lg select-none"
                 />
                 <button
                   type="button"
                   onClick={() => onRemoveImage(index)}
-                  className="absolute top-2 right-2 bg-foreground text-background rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-2 right-2 bg-foreground text-background rounded-full p-1.5 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
-                  <X className="h-4 w-4" />
+                  <X className="h-5 w-5" />
                 </button>
+                {index === 0 && (
+                  <div className="absolute bottom-2 left-2 bg-foreground text-background px-2 py-1 rounded text-xs font-medium">
+                    Ảnh bìa
+                  </div>
+                )}
               </div>
             ))}
             
             {imagePreviewUrls.length < 10 && (
-              <div className="border-2 border-dashed rounded-lg flex flex-col items-center justify-center h-32">
+              <div className="border-2 border-dashed rounded-lg flex flex-col items-center justify-center h-48">
                 <input
                   type="file"
                   accept="image/*"
@@ -121,9 +126,9 @@ export const ListingFormImages = ({
                   id="image-upload-more"
                 />
                 <label htmlFor="image-upload-more" className="cursor-pointer text-center p-4 w-full h-full flex flex-col items-center justify-center">
-                  <Upload className="h-8 w-8 text-muted-foreground" />
-                  <p className="mt-1 text-xs text-muted-foreground">Thêm</p>
-                  <p className="text-xs text-muted-foreground font-medium">{imagePreviewUrls.length}/10</p>
+                  <Upload className="h-10 w-10 text-muted-foreground" />
+                  <p className="mt-2 text-sm text-muted-foreground">Thêm ảnh</p>
+                  <p className="text-sm text-muted-foreground font-medium mt-1">{imagePreviewUrls.length}/10</p>
                 </label>
               </div>
             )}
