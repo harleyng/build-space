@@ -83,30 +83,33 @@ export const ListingFormStep5Description = ({
 
       <div className="space-y-2">
         <Label htmlFor="prominentFeatures">Đặc điểm nổi bật</Label>
-        <div className="space-y-2">
-          {features.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {features.map((feature, index) => (
-                <Badge key={index} variant="secondary" className="text-sm px-3 py-1">
-                  {feature}
-                  <button
-                    type="button"
-                    onClick={() => removeFeature(index)}
-                    className="ml-2 hover:text-destructive"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-            </div>
-          )}
-          <Input
+        <div 
+          className="flex flex-wrap gap-2 min-h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2"
+          onClick={(e) => {
+            const input = e.currentTarget.querySelector('input');
+            if (input) input.focus();
+          }}
+        >
+          {features.map((feature, index) => (
+            <Badge key={index} variant="secondary" className="text-sm px-3 py-1">
+              {feature}
+              <button
+                type="button"
+                onClick={() => removeFeature(index)}
+                className="ml-2 hover:text-destructive"
+              >
+                <X className="h-3 w-3" />
+              </button>
+            </Badge>
+          ))}
+          <input
             id="prominentFeatures"
             value={currentFeature}
             onChange={(e) => setCurrentFeature(e.target.value)}
             onKeyDown={handleFeatureKeyDown}
-            placeholder="Nhập đặc điểm và nhấn Enter"
+            placeholder={features.length === 0 ? "Nhập đặc điểm và nhấn Enter" : ""}
             maxLength={50}
+            className="flex-1 min-w-[120px] outline-none bg-transparent placeholder:text-muted-foreground"
           />
         </div>
         <p className="text-xs text-muted-foreground">
