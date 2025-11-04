@@ -17,11 +17,20 @@ const getPropertyIcon = (slug: string) => {
   const iconMap: Record<string, any> = {
     "nha-rieng": Home,
     "can-ho-chung-cu": Building2,
-    "biet-thu-villa": Hotel,
-    "dat-nen": LandPlot,
+    "chung-cu-mini-chdv": Building2,
+    "nha-biet-thu": Hotel,
+    "nha-lien-ke": Home,
     "nha-mat-pho": Store,
-    "nha-xuong-kho": Warehouse,
-    "dat-rung": TreePine
+    "shophouse": Store,
+    "dat-nen-du-an": LandPlot,
+    "dat-tho-cu": LandPlot,
+    "kho-nha-xuong": Warehouse,
+    "trang-trai-khu-nghi-duong": TreePine,
+    "nha-tro-phong-tro": Building2,
+    "van-phong": Building2,
+    "condotel": Hotel,
+    "cua-hang-kiot": Store,
+    "bds-khac": Home
   };
   return iconMap[slug] || Home;
 };
