@@ -44,7 +44,7 @@ export const WizardNavigation = ({
             onClick={onSubmit}
             disabled={!canProceed || isLoading || isUploading}
             size="lg"
-            className="min-w-[120px] bg-gradient-to-r from-[#E61E4D] to-[#D70466] hover:from-[#D01346] hover:to-[#C1003B] text-white font-semibold"
+            className="min-w-[120px] bg-blue-600 hover:bg-blue-700 text-white font-semibold"
           >
             {(isLoading || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             {isUploading ? "Đang tải..." : "Gửi tin đăng"}

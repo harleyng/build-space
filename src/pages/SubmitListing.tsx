@@ -23,6 +23,7 @@ import { ListingFormStep5Price } from "@/components/listings/ListingFormStep5Pri
 import { ListingFormStep6CostsAndFees } from "@/components/listings/ListingFormStep6CostsAndFees";
 import { ListingFormStep5Media } from "@/components/listings/ListingFormStep5Media";
 import { ListingFormStep6Contact } from "@/components/listings/ListingFormStep6Contact";
+import { ListingFormStep10Review } from "@/components/listings/ListingFormStep10Review";
 import { PURPOSES, PRICE_UNITS } from "@/constants/listing.constants";
 
 const SubmitListing = () => {
@@ -37,7 +38,7 @@ const SubmitListing = () => {
   
   // Wizard state
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 9;
+  const totalSteps = 10;
 
   // Form state
   const [title, setTitle] = useState("");
@@ -312,6 +313,8 @@ const SubmitListing = () => {
         return !!title.trim() && description.length >= 80 && (isEditMode || images.length > 0);
       case 9:
         return !!contactName.trim() && !!contactPhone.trim() && !!contactEmail.trim();
+      case 10:
+        return true; // Review step
       default:
         return false;
     }
@@ -699,6 +702,45 @@ const SubmitListing = () => {
     };
   };
 
+  const getComprehensiveReviewData = () => {
+    const purposeLabel = purpose === "FOR_SALE" ? "Bán" : "Cho thuê";
+    const propertyTypeLabel = currentPropertyType?.name || "Chưa chọn";
+    const priceUnitLabel = PRICE_UNITS[priceUnit] || priceUnit;
+
+    return {
+      purpose: purposeLabel,
+      propertyType: propertyTypeLabel,
+      province,
+      district,
+      ward,
+      street,
+      apartmentFloorInfo,
+      buildingName,
+      area,
+      numBedrooms,
+      numBathrooms,
+      numFloors,
+      floorNumber,
+      houseDirection,
+      balconyDirection,
+      legalStatus,
+      interiorStatus,
+      facadeWidth,
+      alleyWidth,
+      amenities,
+      price,
+      priceUnit: priceUnitLabel,
+      fees,
+      title,
+      description,
+      prominentFeatures,
+      imageCount: images.length,
+      contactName,
+      contactPhone,
+      contactEmail,
+    };
+  };
+
   return (
     <div className="w-full min-h-screen bg-background pb-24">
       {/* Header with Progress */}
@@ -815,7 +857,12 @@ const SubmitListing = () => {
             setContactPhone={setContactPhone}
             contactEmail={contactEmail}
             setContactEmail={setContactEmail}
-            reviewData={getReviewData()}
+          />
+        )}
+
+        {currentStep === 10 && (
+          <ListingFormStep10Review
+            data={getComprehensiveReviewData()}
           />
         )}
 

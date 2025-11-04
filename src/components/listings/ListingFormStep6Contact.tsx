@@ -2,7 +2,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { ListingReviewSection } from "./ListingReviewSection";
 
 interface ListingFormStep6ContactProps {
   contactName: string;
@@ -11,15 +10,6 @@ interface ListingFormStep6ContactProps {
   setContactPhone: (value: string) => void;
   contactEmail: string;
   setContactEmail: (value: string) => void;
-  reviewData: {
-    purpose: string;
-    propertyType: string;
-    address: string;
-    area: string;
-    price: string;
-    priceUnit: string;
-    title: string;
-  };
 }
 
 export const ListingFormStep6Contact = ({
@@ -29,14 +19,13 @@ export const ListingFormStep6Contact = ({
   setContactPhone,
   contactEmail,
   setContactEmail,
-  reviewData,
 }: ListingFormStep6ContactProps) => {
   return (
     <div className="space-y-6">
       <div className="mb-8">
-        <h2 className="text-3xl font-semibold mb-2">Thông tin liên hệ và Gửi duyệt</h2>
+        <h2 className="text-3xl font-semibold mb-2">Thông tin liên hệ</h2>
         <p className="text-muted-foreground text-lg">
-          Kiểm tra lại thông tin và gửi tin đăng để được duyệt
+          Nhập thông tin liên hệ để khách hàng có thể liên lạc với bạn
         </p>
       </div>
 
@@ -83,8 +72,6 @@ export const ListingFormStep6Contact = ({
           />
         </div>
       </div>
-
-      <ListingReviewSection data={reviewData} />
     </div>
   );
 };
