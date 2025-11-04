@@ -39,7 +39,7 @@ interface ListingFormStep10ReviewProps {
     title: string;
     description: string;
     prominentFeatures: string;
-    imageCount: number;
+    imagePreviewUrls: string[];
     contactName: string;
     contactPhone: string;
     contactEmail: string;
@@ -293,12 +293,26 @@ export const ListingFormStep10Review = ({ data }: ListingFormStep10ReviewProps) 
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div>
-            <p className="text-sm text-muted-foreground">Số lượng hình ảnh</p>
-            <p className="font-medium">{data.imageCount} ảnh</p>
-          </div>
+          {data.imagePreviewUrls.length > 0 && (
+            <>
+              <div>
+                <p className="text-sm text-muted-foreground mb-3">Hình ảnh ({data.imagePreviewUrls.length} ảnh)</p>
+                <div className="grid grid-cols-3 gap-3">
+                  {data.imagePreviewUrls.map((url, index) => (
+                    <div key={index} className="aspect-square rounded-lg overflow-hidden border bg-muted">
+                      <img
+                        src={url}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <Separator />
+            </>
+          )}
 
-          <Separator />
 
           <div>
             <p className="text-sm text-muted-foreground mb-1">Tiêu đề</p>

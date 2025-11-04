@@ -734,7 +734,7 @@ const SubmitListing = () => {
       title,
       description,
       prominentFeatures,
-      imageCount: images.length,
+      imagePreviewUrls,
       contactName,
       contactPhone,
       contactEmail,
