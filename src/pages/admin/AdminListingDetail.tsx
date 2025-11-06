@@ -8,18 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useAdminCheck } from "@/hooks/useAdminCheck";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { ImageGallery } from "@/components/listings/ImageGallery";
+import { AmenitiesDisplay } from "@/components/listings/AmenitiesDisplay";
+import { FeesTable } from "@/components/listings/FeesTable";
+import { LocationMap } from "@/components/listings/LocationMap";
 import { 
   Bed, Bath, Maximize, MapPin, Phone, Mail, User, Eye, 
-  ArrowLeft, ExternalLink, Check, X, Power, Loader2 
+  ArrowLeft, ExternalLink, Check, X, Power, Loader2, Building2, Calendar 
 } from "lucide-react";
 import { LISTING_STATUSES, PURPOSES } from "@/constants/listing.constants";
+import { formatPrice, formatDate } from "@/utils/formatters";
 
 const AdminListingDetail = () => {
   const { id } = useParams();
@@ -211,6 +209,9 @@ const AdminListingDetail = () => {
   const images = listing.image_url ? [listing.image_url] : [];
   const propertyTypeName = listing.property_types?.name || "BĐS";
   const purposeLabel = listing.purpose === "FOR_SALE" ? PURPOSES.FOR_SALE : PURPOSES.FOR_RENT;
+  const coordinates = listing.coordinates || {};
+  const customAttributes = listing.custom_attributes || {};
+  const amenities = customAttributes.amenities || [];
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -236,78 +237,68 @@ const AdminListingDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Carousel */}
-            {images.length > 0 ? (
-              <Card className="overflow-hidden">
-                <Carousel className="w-full" opts={{ loop: true }}>
-                  <CarouselContent>
-                    {images.map((image, index) => (
-                      <CarouselItem key={index}>
-                        <div className="aspect-video relative">
-                          <img
-                            src={image}
-                            alt={`${listing.title} - Hình ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg";
-                            }}
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {images.length > 1 && (
-                    <>
-                      <CarouselPrevious className="left-4" />
-                      <CarouselNext className="right-4" />
-                    </>
-                  )}
-                </Carousel>
-              </Card>
-            ) : (
-              <Card className="overflow-hidden">
-                <div className="aspect-video relative bg-muted flex items-center justify-center">
-                  <p className="text-muted-foreground">Chưa có hình ảnh</p>
+            {/* Management Info Card */}
+            <Card className="p-6 bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+              <h2 className="text-lg font-semibold mb-4">Thông tin quản lý</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Người đăng</p>
+                  <p className="font-medium">{listing.profiles?.email || "N/A"}</p>
                 </div>
-              </Card>
-            )}
+                <div>
+                  <p className="text-sm text-muted-foreground">Ngày tạo</p>
+                  <p className="font-medium">{formatDate(listing.created_at)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Cập nhật</p>
+                  <p className="font-medium">{formatDate(listing.updated_at)}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Lượt xem</p>
+                  <p className="font-medium">{listing.views_count || 0}</p>
+                </div>
+              </div>
+            </Card>
+
+            {/* Image Gallery */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Hình ảnh ({images.length})</h2>
+              <ImageGallery images={images} title={listing.title} />
+            </Card>
 
             {/* Title, Status and Price */}
-            <div className="space-y-4">
-              <div className="flex items-start justify-between gap-4">
-                <h1 className="text-3xl font-bold text-foreground flex-1">{listing.title}</h1>
-                <Badge variant="outline" className="text-base">
-                  {getStatusLabel(listing.status)}
-                </Badge>
-              </div>
-              
-              <div className="flex items-center gap-4">
-                <p className="text-4xl font-bold text-primary">
-                  {formatPrice(listing.price, listing.price_unit)}
-                </p>
-                {listing.price_unit === "PER_SQM" && (
-                  <span className="text-muted-foreground">/m²</span>
-                )}
-                {listing.price_unit === "PER_MONTH" && (
-                  <span className="text-muted-foreground">/tháng</span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <User className="h-4 w-4" />
-                <span>Người đăng: {listing.profiles?.email || "N/A"}</span>
-              </div>
-              
-              {listing.prominent_features && listing.prominent_features.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {listing.prominent_features.map((feature: string, index: number) => (
-                    <Badge key={index} variant="secondary">
-                      {feature}
-                    </Badge>
-                  ))}
+            <Card className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start justify-between gap-4">
+                  <h1 className="text-3xl font-bold text-foreground flex-1">{listing.title}</h1>
+                  <Badge variant="outline" className="text-base">
+                    {getStatusLabel(listing.status)}
+                  </Badge>
                 </div>
-              )}
-            </div>
+                
+                <div className="flex items-center gap-4">
+                  <p className="text-4xl font-bold text-primary">
+                    {formatPrice(listing.price, listing.price_unit)}
+                  </p>
+                  {listing.price_unit === "PER_SQM" && (
+                    <span className="text-muted-foreground">/m²</span>
+                  )}
+                  {listing.price_unit === "PER_MONTH" && (
+                    <span className="text-muted-foreground">/tháng</span>
+                  )}
+                </div>
+                
+                {listing.prominent_features && listing.prominent_features.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {listing.prominent_features.map((feature: string, index: number) => (
+                      <Badge key={index} variant="secondary">
+                        {feature}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
 
             {/* Admin Actions */}
             <Card className="p-6 bg-primary/5 border-primary/20">
@@ -373,23 +364,78 @@ const AdminListingDetail = () => {
               </div>
             </Card>
 
-            {/* Detailed Attributes */}
+            {/* Basic Info */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Thông tin chi tiết</h2>
+              <h2 className="text-xl font-semibold mb-4">Thông tin cơ bản</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-muted-foreground">Loại giao dịch</span>
+                  <span className="font-medium">{purposeLabel}</span>
+                </div>
+                <div className="flex justify-between py-2 border-b">
+                  <span className="text-muted-foreground">Loại BĐS</span>
+                  <span className="font-medium">{propertyTypeName}</span>
+                </div>
                 <div className="flex justify-between py-2 border-b">
                   <span className="text-muted-foreground">Diện tích</span>
                   <span className="font-medium">{listing.area} m²</span>
                 </div>
+                {listing.project_name && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Dự án</span>
+                    <span className="font-medium">{listing.project_name}</span>
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            {/* Address & Location */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Địa chỉ & vị trí</h2>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                  <p className="text-foreground">{addressText || "Chưa có thông tin địa chỉ"}</p>
+                </div>
+                
+                {listing.building_name && (
+                  <div className="flex items-start gap-3">
+                    <Building2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm text-muted-foreground">Tòa nhà</p>
+                      <p className="font-medium">{listing.building_name}</p>
+                    </div>
+                  </div>
+                )}
+                
+                {listing.apartment_floor_info && (
+                  <div className="pl-8">
+                    <p className="text-sm text-muted-foreground">Thông tin tầng</p>
+                    <p className="font-medium">{listing.apartment_floor_info}</p>
+                  </div>
+                )}
+                
+                {coordinates.lat && coordinates.lng && (
+                  <div className="mt-4">
+                    <LocationMap latitude={coordinates.lat} longitude={coordinates.lng} />
+                  </div>
+                )}
+              </div>
+            </Card>
+
+            {/* Technical Specs - Same as BrokerPropertyDetail */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Thông số kỹ thuật</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {listing.num_bedrooms && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-muted-foreground">Số phòng ngủ</span>
+                    <span className="text-muted-foreground">Phòng ngủ</span>
                     <span className="font-medium">{listing.num_bedrooms}</span>
                   </div>
                 )}
                 {listing.num_bathrooms && (
                   <div className="flex justify-between py-2 border-b">
-                    <span className="text-muted-foreground">Số phòng tắm</span>
+                    <span className="text-muted-foreground">Phòng tắm</span>
                     <span className="font-medium">{listing.num_bathrooms}</span>
                   </div>
                 )}
@@ -441,6 +487,18 @@ const AdminListingDetail = () => {
                     <span className="font-medium">{listing.alley_width} m</span>
                   </div>
                 )}
+                {listing.ceiling_height && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Chiều cao trần</span>
+                    <span className="font-medium">{listing.ceiling_height} m</span>
+                  </div>
+                )}
+                {listing.floor_load && (
+                  <div className="flex justify-between py-2 border-b">
+                    <span className="text-muted-foreground">Tải trọng sàn</span>
+                    <span className="font-medium">{listing.floor_load} kg/m²</span>
+                  </div>
+                )}
                 {listing.legal_status && (
                   <div className="flex justify-between py-2 border-b">
                     <span className="text-muted-foreground">Giấy tờ pháp lý</span>
@@ -453,12 +511,6 @@ const AdminListingDetail = () => {
                     <span className="font-medium">{listing.interior_status}</span>
                   </div>
                 )}
-                {listing.project_name && (
-                  <div className="flex justify-between py-2 border-b">
-                    <span className="text-muted-foreground">Dự án</span>
-                    <span className="font-medium">{listing.project_name}</span>
-                  </div>
-                )}
                 {listing.land_type && (
                   <div className="flex justify-between py-2 border-b">
                     <span className="text-muted-foreground">Loại đất</span>
@@ -468,23 +520,29 @@ const AdminListingDetail = () => {
               </div>
             </Card>
 
+            {/* Amenities */}
+            {amenities.length > 0 && (
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Tiện ích</h2>
+                <AmenitiesDisplay amenities={amenities} />
+              </Card>
+            )}
+
+            {/* Fees */}
+            <Card className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Chi phí & phí</h2>
+              <FeesTable 
+                fees={customAttributes.fees} 
+                serviceCosts={listing.service_costs}
+              />
+            </Card>
+
             {/* Description */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Mô tả</h2>
+              <h2 className="text-xl font-semibold mb-4">Mô tả chi tiết</h2>
               <p className="text-foreground leading-relaxed whitespace-pre-line">
                 {listing.description || "Chưa có mô tả"}
               </p>
-            </Card>
-
-            {/* Location */}
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Vị trí</h2>
-              <div className="flex items-start gap-3 mb-4">
-                <MapPin className="w-5 h-5 text-primary mt-1" />
-                <p className="text-foreground">
-                  {addressText || "Chưa có thông tin địa chỉ"}
-                </p>
-              </div>
             </Card>
           </div>
 

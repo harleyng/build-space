@@ -8,15 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Bed, Bath, Maximize, MapPin, Phone, Mail, User, Eye } from "lucide-react";
+import { ImageGallery } from "@/components/listings/ImageGallery";
+import { AmenitiesDisplay } from "@/components/listings/AmenitiesDisplay";
+import { FeesTable } from "@/components/listings/FeesTable";
+import { LocationMap } from "@/components/listings/LocationMap";
+import { Bed, Bath, Maximize, MapPin, Phone, Mail, User, Eye, Building2 } from "lucide-react";
 import { LISTING_STATUSES, PURPOSES } from "@/constants/listing.constants";
+import { formatPrice, formatDate } from "@/utils/formatters";
 
 const ListingDetail = () => {
   const { id } = useParams();
@@ -145,21 +143,12 @@ const ListingDetail = () => {
     .filter(Boolean)
     .join(", ");
   
-  const attributes = listing.attributes || {};
   const images = listing.image_url ? [listing.image_url] : [];
   const propertyTypeName = listing.property_types?.name || "BĐS";
   const purposeLabel = listing.purpose === "FOR_SALE" ? PURPOSES.FOR_SALE : PURPOSES.FOR_RENT;
-  const formatPrice = (price: number, priceUnit: string) => {
-    if (priceUnit === "TOTAL") {
-      if (price >= 1000000000) {
-        return `${(price / 1000000000).toFixed(1)} tỷ`;
-      } else if (price >= 1000000) {
-        return `${(price / 1000000).toFixed(0)} triệu`;
-      }
-      return `${price.toLocaleString()} VND`;
-    }
-    return `${price.toLocaleString()} VND`;
-  };
+  const coordinates = listing.coordinates || {};
+  const customAttributes = listing.custom_attributes || {};
+  const amenities = customAttributes.amenities || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -177,41 +166,8 @@ const ListingDetail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Image Carousel */}
-            {images.length > 0 ? (
-              <Card className="overflow-hidden">
-                <Carousel className="w-full" opts={{ loop: true }}>
-                  <CarouselContent>
-                    {images.map((image, index) => (
-                      <CarouselItem key={index}>
-                        <div className="aspect-video relative">
-                          <img
-                            src={image}
-                            alt={`${listing.title} - Hình ${index + 1}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.src = "/placeholder.svg";
-                            }}
-                          />
-                        </div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                  {images.length > 1 && (
-                    <>
-                      <CarouselPrevious className="left-4" />
-                      <CarouselNext className="right-4" />
-                    </>
-                  )}
-                </Carousel>
-              </Card>
-            ) : (
-              <Card className="overflow-hidden">
-                <div className="aspect-video relative bg-muted flex items-center justify-center">
-                  <p className="text-muted-foreground">Chưa có hình ảnh</p>
-                </div>
-              </Card>
-            )}
+            {/* Hero Image Gallery */}
+            <ImageGallery images={images} title={listing.title} />
 
             {/* Title and Price */}
             <div className="space-y-4">
@@ -240,144 +196,52 @@ const ListingDetail = () => {
               )}
             </div>
 
-            {/* Key Information */}
+            {/* Key Highlights */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Thông tin chính</h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <Maximize className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Diện tích</p>
-                    <p className="font-semibold text-foreground">{listing.area} m²</p>
-                  </div>
+              <h2 className="text-xl font-semibold mb-4">Điểm nổi bật</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="text-center p-4 bg-primary/5 rounded-lg">
+                  <Maximize className="w-8 h-8 text-primary mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-foreground">{listing.area} m²</p>
+                  <p className="text-sm text-muted-foreground">Diện tích</p>
                 </div>
-                
                 {listing.num_bedrooms && (
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-primary/10 rounded-lg">
-                      <Bed className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Phòng ngủ</p>
-                      <p className="font-semibold text-foreground">{listing.num_bedrooms}</p>
-                    </div>
+                  <div className="text-center p-4 bg-primary/5 rounded-lg">
+                    <Bed className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-foreground">{listing.num_bedrooms}</p>
+                    <p className="text-sm text-muted-foreground">Phòng ngủ</p>
                   </div>
                 )}
-                
                 {listing.num_bathrooms && (
-                  <div className="flex items-center gap-3">
-                    <div className="p-3 bg-primary/10 rounded-lg">
-                      <Bath className="w-6 h-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Phòng vệ sinh</p>
-                      <p className="font-semibold text-foreground">{listing.num_bathrooms}</p>
-                    </div>
+                  <div className="text-center p-4 bg-primary/5 rounded-lg">
+                    <Bath className="w-8 h-8 text-primary mx-auto mb-2" />
+                    <p className="text-2xl font-bold text-foreground">{listing.num_bathrooms}</p>
+                    <p className="text-sm text-muted-foreground">Phòng tắm</p>
                   </div>
                 )}
-                
-                <div className="flex items-center gap-3">
-                  <div className="p-3 bg-primary/10 rounded-lg">
-                    <MapPin className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Loại hình</p>
-                    <p className="font-semibold text-foreground">{propertyTypeName}</p>
-                  </div>
+                <div className="text-center p-4 bg-primary/5 rounded-lg">
+                  <MapPin className="w-8 h-8 text-primary mx-auto mb-2" />
+                  <p className="text-lg font-bold text-foreground">{propertyTypeName}</p>
+                  <p className="text-sm text-muted-foreground">Loại hình</p>
                 </div>
               </div>
             </Card>
 
-            {/* Detailed Attributes */}
-            <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Thông tin chi tiết</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {listing.num_bedrooms && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Số phòng ngủ</span>
-                    <span className="font-medium text-foreground">{listing.num_bedrooms}</span>
-                  </div>
-                )}
-                {listing.num_bathrooms && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Số phòng vệ sinh</span>
-                    <span className="font-medium text-foreground">{listing.num_bathrooms}</span>
-                  </div>
-                )}
-                {listing.floor_number && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Tầng</span>
-                    <span className="font-medium text-foreground">{listing.floor_number}</span>
-                  </div>
-                )}
-                {listing.num_floors && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Số tầng</span>
-                    <span className="font-medium text-foreground">{listing.num_floors}</span>
-                  </div>
-                )}
-                {listing.balcony_direction && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Hướng ban công</span>
-                    <span className="font-medium text-foreground">{listing.balcony_direction}</span>
-                  </div>
-                )}
-                {listing.house_direction && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Hướng nhà</span>
-                    <span className="font-medium text-foreground">{listing.house_direction}</span>
-                  </div>
-                )}
-                {listing.interior_status && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Nội thất</span>
-                    <span className="font-medium text-foreground">{listing.interior_status}</span>
-                  </div>
-                )}
-                {listing.legal_status && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Pháp lý</span>
-                    <span className="font-medium text-foreground">{listing.legal_status}</span>
-                  </div>
-                )}
-                {listing.facade_width && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Mặt tiền</span>
-                    <span className="font-medium text-foreground">{listing.facade_width}m</span>
-                  </div>
-                )}
-                {listing.alley_width && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Hẻm</span>
-                    <span className="font-medium text-foreground">{listing.alley_width}m</span>
-                  </div>
-                )}
-                {listing.land_direction && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Hướng đất</span>
-                    <span className="font-medium text-foreground">{listing.land_direction}</span>
-                  </div>
-                )}
-                {listing.project_name && (
-                  <div className="flex justify-between py-2 border-b border-border">
-                    <span className="text-muted-foreground">Tên dự án</span>
-                    <span className="font-medium text-foreground">{listing.project_name}</span>
-                  </div>
-                )}
-                {attributes.amenities && attributes.amenities.length > 0 && (
-                  <div className="col-span-2 py-2 border-b border-border">
-                    <p className="text-muted-foreground mb-2">Tiện ích</p>
-                    <div className="flex flex-wrap gap-2">
-                      {attributes.amenities.map((amenity: string, index: number) => (
-                        <Badge key={index} variant="outline">{amenity}</Badge>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </Card>
+            {/* Amenities */}
+            {amenities.length > 0 && (
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Tiện ích</h2>
+                <AmenitiesDisplay amenities={amenities} />
+              </Card>
+            )}
+
+            {/* Estimated Costs */}
+            {(listing.service_costs || customAttributes.fees?.length > 0) && (
+              <Card className="p-6">
+                <h2 className="text-xl font-semibold mb-4">Chi phí dự kiến</h2>
+                <FeesTable fees={customAttributes.fees} serviceCosts={listing.service_costs} />
+              </Card>
+            )}
 
             {/* Description */}
             <Card className="p-6">
@@ -389,26 +253,22 @@ const ListingDetail = () => {
 
             {/* Location */}
             <Card className="p-6">
-              <h2 className="text-xl font-semibold text-foreground mb-4">Vị trí</h2>
-              <div className="flex items-start gap-3 mb-4">
-                <MapPin className="w-5 h-5 text-primary mt-1" />
-                <p className="text-foreground">
-                  {addressText || "Chưa có thông tin địa chỉ"}
-                </p>
-              </div>
-              
-              {/* Map Placeholder */}
-              {listing.coordinates && (
-                <div className="aspect-video bg-muted rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-2" />
-                    <p className="text-muted-foreground">Bản đồ vị trí</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Lat: {listing.coordinates.lat}, Lng: {listing.coordinates.lng}
-                    </p>
-                  </div>
+              <h2 className="text-xl font-semibold mb-4">Vị trí</h2>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <MapPin className="w-5 h-5 text-primary mt-1" />
+                  <p className="text-foreground">{addressText || "Chưa có thông tin địa chỉ"}</p>
                 </div>
-              )}
+                {listing.building_name && (
+                  <div className="flex items-start gap-3">
+                    <Building2 className="w-5 h-5 text-primary mt-1" />
+                    <p className="text-foreground">{listing.building_name}</p>
+                  </div>
+                )}
+                {coordinates.lat && coordinates.lng && (
+                  <LocationMap latitude={coordinates.lat} longitude={coordinates.lng} />
+                )}
+              </div>
             </Card>
           </div>
 
