@@ -29,6 +29,7 @@ import BrokerProfile from "./pages/portal/BrokerProfile";
 import CreateOrganization from "./pages/portal/CreateOrganization";
 import InviteMember from "./pages/portal/InviteMember";
 import OrganizationInvites from "./pages/portal/OrganizationInvites";
+import PWAInstall from "./pages/PWAInstall";
 
 const queryClient = new QueryClient();
 
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           <Route path="/listings" element={<Listings />} />
           <Route path="/listings/:id" element={<ListingDetail />} />
+          <Route path="/install" element={<PWAInstall />} />
           
           {/* Auth */}
           <Route path="/auth" element={<Auth />} />
