@@ -20,7 +20,7 @@ import {
 import { 
   MapPin, Phone, Mail, User, Eye, 
   ArrowLeft, ExternalLink, Edit, Loader2, Building2,
-  Power, CheckCircle, FileText, Sparkles
+  Power, CheckCircle, FileText, Sparkles, MoreVertical
 } from "lucide-react";
 import { PURPOSES } from "@/constants/listing.constants";
 import {
@@ -30,12 +30,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { formatDate } from "@/utils/formatters";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const BrokerPropertyDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   const [listing, setListing] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -211,79 +226,130 @@ const BrokerPropertyDetail = () => {
   const amenities = customAttributes.amenities || [];
 
   return (
-    <div className="min-h-screen bg-background p-6">
+    <div className="min-h-screen bg-background p-3 md:p-6 pb-24 md:pb-6">
       <div className="container mx-auto">
-        <div className="flex items-center justify-between mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/broker/properties")}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Quay lại danh sách
-          </Button>
-          
-          <div className="flex gap-2">
-            <Button
-              onClick={() => navigate(`/broker/properties/${listing.id}/edit`)}
+        {/* Mobile Header */}
+        {isMobile ? (
+          <div className="flex items-center justify-between mb-4">
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate("/broker/properties")}
+              className="touch-manipulation active:scale-95"
             >
-              <Edit className="mr-2 h-4 w-4" />
-              Chỉnh sửa
+              <ArrowLeft className="h-4 w-4" />
             </Button>
-            {listing.status === "ACTIVE" && (
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="touch-manipulation active:scale-95">
+                  <MoreVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => navigate(`/broker/properties/${listing.id}/edit`)}>
+                  <Edit className="mr-2 h-4 w-4" />
+                  Chỉnh sửa
+                </DropdownMenuItem>
+                {listing.status === "ACTIVE" && (
+                  <DropdownMenuItem 
+                    onClick={() => updateListingStatus("INACTIVE")}
+                    disabled={actionLoading}
+                  >
+                    <Power className="mr-2 h-4 w-4" />
+                    Ngừng hoạt động
+                  </DropdownMenuItem>
+                )}
+                {listing.status !== "SOLD" && listing.status !== "RENTED" && (
+                  <DropdownMenuItem 
+                    onClick={() => updateListingStatus(listing.purpose === "FOR_SALE" ? "SOLD" : "RENTED")}
+                    disabled={actionLoading}
+                  >
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                    Đánh dấu {listing.purpose === "FOR_SALE" ? "Đã bán" : "Đã cho thuê"}
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem onClick={() => window.open(`/listings/${listing.id}`, '_blank')}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Xem trên sàn
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        ) : (
+          /* Desktop Header */
+          <div className="flex items-center justify-between mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/broker/properties")}
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Quay lại danh sách
+            </Button>
+            
+            <div className="flex gap-2">
               <Button
-                variant="secondary"
-                onClick={() => updateListingStatus("INACTIVE")}
-                disabled={actionLoading}
+                onClick={() => navigate(`/broker/properties/${listing.id}/edit`)}
               >
-                <Power className="mr-2 h-4 w-4" />
-                Ngừng hoạt động
+                <Edit className="mr-2 h-4 w-4" />
+                Chỉnh sửa
               </Button>
-            )}
-            {listing.status !== "SOLD" && listing.status !== "RENTED" && (
+              {listing.status === "ACTIVE" && (
+                <Button
+                  variant="secondary"
+                  onClick={() => updateListingStatus("INACTIVE")}
+                  disabled={actionLoading}
+                >
+                  <Power className="mr-2 h-4 w-4" />
+                  Ngừng hoạt động
+                </Button>
+              )}
+              {listing.status !== "SOLD" && listing.status !== "RENTED" && (
+                <Button
+                  variant="outline"
+                  onClick={() => updateListingStatus(listing.purpose === "FOR_SALE" ? "SOLD" : "RENTED")}
+                  disabled={actionLoading}
+                >
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Đánh dấu {listing.purpose === "FOR_SALE" ? "Đã bán" : "Đã cho thuê"}
+                </Button>
+              )}
               <Button
                 variant="outline"
-                onClick={() => updateListingStatus(listing.purpose === "FOR_SALE" ? "SOLD" : "RENTED")}
-                disabled={actionLoading}
+                onClick={() => window.open(`/listings/${listing.id}`, '_blank')}
               >
-                <CheckCircle className="mr-2 h-4 w-4" />
-                Đánh dấu {listing.purpose === "FOR_SALE" ? "Đã bán" : "Đã cho thuê"}
+                <ExternalLink className="mr-2 h-4 w-4" />
+                Xem trên sàn
               </Button>
-            )}
-            <Button
-              variant="outline"
-              onClick={() => window.open(`/listings/${listing.id}`, '_blank')}
-            >
-              <ExternalLink className="mr-2 h-4 w-4" />
-              Xem trên sàn
-            </Button>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-3 md:space-y-6">
             {/* Tổng quan */}
-            <Card className="p-6">
-              <div className="space-y-4">
-                <div className="flex items-start justify-between gap-4">
-                  <h1 className="text-3xl font-bold text-foreground flex-1">{listing.title}</h1>
+            <Card className="p-4 md:p-6">
+              <div className="space-y-3 md:space-y-4">
+                <div className="flex items-start justify-between gap-2 md:gap-4">
+                  <h1 className="text-xl md:text-3xl font-bold text-foreground flex-1 line-clamp-2">{listing.title}</h1>
                   <Badge 
                     variant={listing.status === "ACTIVE" ? "default" : listing.status === "PENDING_APPROVAL" ? "secondary" : "outline"} 
-                    className="text-base"
+                    className="text-xs md:text-base flex-shrink-0"
                   >
                     {getStatusLabel(listing.status)}
                   </Badge>
                 </div>
                 
-                <div className="flex items-center gap-4">
-                  <p className="text-4xl font-bold text-primary">
+                <div className="flex items-center gap-2 md:gap-4">
+                  <p className="text-2xl md:text-4xl font-bold text-primary">
                     {formatPrice(listing.price, listing.price_unit)}
                   </p>
                   {listing.price_unit === "PER_SQM" && (
-                    <span className="text-muted-foreground">/m²</span>
+                    <span className="text-sm md:text-base text-muted-foreground">/m²</span>
                   )}
                   {listing.price_unit === "PER_MONTH" && (
-                    <span className="text-muted-foreground">/tháng</span>
+                    <span className="text-sm md:text-base text-muted-foreground">/tháng</span>
                   )}
                 </div>
                 
@@ -298,30 +364,30 @@ const BrokerPropertyDetail = () => {
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 pt-3 md:pt-4 border-t">
                   <div>
-                    <p className="text-sm text-muted-foreground">Ngày tạo</p>
-                    <p className="font-medium">{formatDate(listing.created_at)}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Ngày tạo</p>
+                    <p className="text-sm md:text-base font-medium">{formatDate(listing.created_at)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Cập nhật</p>
-                    <p className="font-medium">{formatDate(listing.updated_at)}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Cập nhật</p>
+                    <p className="text-sm md:text-base font-medium">{formatDate(listing.updated_at)}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Lượt xem</p>
-                    <p className="font-medium flex items-center gap-1">
-                      <Eye className="h-4 w-4" />
+                    <p className="text-xs md:text-sm text-muted-foreground">Lượt xem</p>
+                    <p className="text-sm md:text-base font-medium flex items-center gap-1">
+                      <Eye className="h-3 w-3 md:h-4 md:w-4" />
                       {listing.views_count || 0}
                     </p>
                   </div>
-                  <div>
-                    <label className="text-sm text-muted-foreground">Trạng thái</label>
+                  <div className="col-span-2 md:col-span-1">
+                    <label className="text-xs md:text-sm text-muted-foreground">Trạng thái</label>
                     <Select 
                       value={listing.status} 
                       onValueChange={updateListingStatus}
                       disabled={actionLoading}
                     >
-                      <SelectTrigger className="h-8 text-xs">
+                      <SelectTrigger className="h-8 md:h-9 text-xs md:text-sm touch-manipulation">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -339,26 +405,26 @@ const BrokerPropertyDetail = () => {
             </Card>
 
             {/* Accordion Sections */}
-            <Accordion type="multiple" defaultValue={["specs", "content"]} className="space-y-4">
+            <Accordion type="multiple" defaultValue={isMobile ? [] : ["specs", "content"]} className="space-y-3 md:space-y-4">
               {/* THÔNG SỐ KỸ THUẬT */}
               <AccordionItem value="specs">
                 <Card>
-                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 hover:no-underline touch-manipulation">
                     <div className="flex items-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      <h2 className="text-xl font-semibold">Thông số kỹ thuật</h2>
+                      <FileText className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                      <h2 className="text-base md:text-xl font-semibold">Thông số kỹ thuật</h2>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <CardContent className="space-y-6 pt-0">
+                    <CardContent className="space-y-4 md:space-y-6 pt-0 px-4 md:px-6">
                       <div>
-                        <h3 className="font-semibold mb-3">Hình ảnh ({images.length})</h3>
+                        <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Hình ảnh ({images.length})</h3>
                         <ImageGallery images={images} title={listing.title} />
                       </div>
 
                       <div>
-                        <h3 className="font-semibold mb-3">Vị trí & Loại hình</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Vị trí & Loại hình</h3>
+                        <div className="grid grid-cols-1 gap-2 md:gap-4">
                           <div className="flex justify-between py-2 border-b">
                             <span className="text-muted-foreground">Loại giao dịch</span>
                             <span className="font-medium">{purposeLabel}</span>
@@ -392,8 +458,8 @@ const BrokerPropertyDetail = () => {
                       </div>
 
                       <div>
-                        <h3 className="font-semibold mb-3">Thông số vật lý</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Thông số vật lý</h3>
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
                           <div className="flex justify-between py-2 border-b">
                             <span className="text-muted-foreground">Diện tích</span>
                             <span className="font-medium">{listing.area} m²</span>
@@ -444,31 +510,31 @@ const BrokerPropertyDetail = () => {
               {/* NỘI DUNG & CHI PHÍ */}
               <AccordionItem value="content">
                 <Card>
-                  <AccordionTrigger className="px-6 py-4 hover:no-underline">
+                  <AccordionTrigger className="px-4 md:px-6 py-3 md:py-4 hover:no-underline touch-manipulation">
                     <div className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-primary" />
-                      <h2 className="text-xl font-semibold">Nội dung & Chi phí</h2>
+                      <Sparkles className="h-4 w-4 md:h-5 md:w-5 text-primary" />
+                      <h2 className="text-base md:text-xl font-semibold">Nội dung & Chi phí</h2>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <CardContent className="space-y-6 pt-0">
+                    <CardContent className="space-y-4 md:space-y-6 pt-0 px-4 md:px-6">
                       <div>
-                        <h3 className="font-semibold mb-3">Mô tả</h3>
-                        <p className="text-foreground whitespace-pre-line">{listing.description || "Chưa có mô tả"}</p>
+                        <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Mô tả</h3>
+                        <p className="text-sm md:text-base text-foreground whitespace-pre-line">{listing.description || "Chưa có mô tả"}</p>
                       </div>
 
                       {amenities.length > 0 && (
                         <div>
-                          <h3 className="font-semibold mb-3">Tiện ích</h3>
+                          <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Tiện ích</h3>
                           <AmenitiesDisplay amenities={amenities} />
                         </div>
                       )}
 
                       <div>
-                        <h3 className="font-semibold mb-3">Chi phí</h3>
-                        <div className="flex justify-between items-center p-4 bg-primary/5 rounded-lg mb-4">
-                          <span className="text-muted-foreground">Giá chính</span>
-                          <span className="text-2xl font-bold text-primary">
+                        <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Chi phí</h3>
+                        <div className="flex justify-between items-center p-3 md:p-4 bg-primary/5 rounded-lg mb-3 md:mb-4">
+                          <span className="text-sm md:text-base text-muted-foreground">Giá chính</span>
+                          <span className="text-xl md:text-2xl font-bold text-primary">
                             {formatPrice(listing.price, listing.price_unit)}
                           </span>
                         </div>
@@ -481,83 +547,163 @@ const BrokerPropertyDetail = () => {
                 </Card>
               </AccordionItem>
             </Accordion>
-          </div>
 
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <Card className="p-6 sticky top-4">
-              <h2 className="text-xl font-semibold mb-4">Thông tin liên hệ</h2>
-              
-              {contactLoading ? (
-                <div className="space-y-4">
-                  <Skeleton className="h-16 w-full" />
-                  <Skeleton className="h-16 w-full" />
-                </div>
-              ) : contactInfo ? (
-                <>
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <User className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Người đăng</p>
-                        <p className="font-medium">{contactInfo.name || 'N/A'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Phone className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Số điện thoại</p>
-                        <p className="font-medium">{contactInfo.phone || 'N/A'}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg">
-                        <Mail className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Email</p>
-                        <p className="font-medium text-sm">{contactInfo.email || 'N/A'}</p>
-                      </div>
-                    </div>
-                  </div>
-
+            {/* Contact Info on Mobile - Moved from Sidebar */}
+            {isMobile && (
+              <Card className="p-4">
+                <h2 className="text-base font-semibold mb-3">Thông tin liên hệ</h2>
+                
+                {contactLoading ? (
                   <div className="space-y-3">
-                    <Button 
-                      className="w-full" 
-                      size="lg"
-                      onClick={() => contactInfo.phone && window.open(`tel:${contactInfo.phone}`)}
-                      disabled={!contactInfo.phone}
-                    >
-                      <Phone className="w-4 h-4 mr-2" />
-                      Gọi điện
-                    </Button>
-                    
-                    <Button 
-                      variant="outline" 
-                      className="w-full" 
-                      size="lg"
-                      onClick={() => contactInfo.email && window.open(`mailto:${contactInfo.email}`)}
-                      disabled={!contactInfo.email}
-                    >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Gửi email
-                    </Button>
+                    <Skeleton className="h-14 w-full" />
+                    <Skeleton className="h-14 w-full" />
                   </div>
-                </>
-              ) : (
-                <p className="text-muted-foreground text-center py-8">
-                  Không có thông tin liên hệ
-                </p>
-              )}
-            </Card>
+                ) : contactInfo ? (
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                        <User className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Người đăng</p>
+                        <p className="text-sm font-medium truncate">{contactInfo.name || 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                        <Phone className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Số điện thoại</p>
+                        <p className="text-sm font-medium truncate">{contactInfo.phone || 'N/A'}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+                      <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
+                        <Mail className="w-4 h-4 text-primary" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-xs text-muted-foreground">Email</p>
+                        <p className="text-xs font-medium break-all">{contactInfo.email || 'N/A'}</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground text-center py-6">
+                    Không có thông tin liên hệ
+                  </p>
+                )}
+              </Card>
+            )}
           </div>
+
+          {/* Desktop Sidebar - Hidden on Mobile */}
+          {!isMobile && (
+            <div className="lg:col-span-1">
+              <Card className="p-6 sticky top-4">
+                <h2 className="text-xl font-semibold mb-4">Thông tin liên hệ</h2>
+                
+                {contactLoading ? (
+                  <div className="space-y-4">
+                    <Skeleton className="h-16 w-full" />
+                    <Skeleton className="h-16 w-full" />
+                  </div>
+                ) : contactInfo ? (
+                  <>
+                    <div className="space-y-4 mb-6">
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <User className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Người đăng</p>
+                          <p className="font-medium">{contactInfo.name || 'N/A'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Phone className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Số điện thoại</p>
+                          <p className="font-medium">{contactInfo.phone || 'N/A'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-3">
+                        <div className="p-2 bg-primary/10 rounded-lg">
+                          <Mail className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="text-sm text-muted-foreground">Email</p>
+                          <p className="font-medium text-sm">{contactInfo.email || 'N/A'}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <Button 
+                        className="w-full" 
+                        size="lg"
+                        onClick={() => contactInfo.phone && window.open(`tel:${contactInfo.phone}`)}
+                        disabled={!contactInfo.phone}
+                      >
+                        <Phone className="w-4 h-4 mr-2" />
+                        Gọi điện
+                      </Button>
+                      
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        size="lg"
+                        onClick={() => contactInfo.email && window.open(`mailto:${contactInfo.email}`)}
+                        disabled={!contactInfo.email}
+                      >
+                        <Mail className="w-4 h-4 mr-2" />
+                        Gửi email
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-muted-foreground text-center py-8">
+                    Không có thông tin liên hệ
+                  </p>
+                )}
+              </Card>
+            </div>
+          )}
         </div>
+
+        {/* Mobile Bottom Action Bar - Sticky */}
+        {isMobile && contactInfo && (
+          <div className="fixed bottom-0 left-0 right-0 bg-background border-t shadow-lg z-50 safe-area-pb">
+            <div className="grid grid-cols-2 gap-2 p-3">
+              <Button 
+                className="w-full touch-manipulation active:scale-95" 
+                size="lg"
+                onClick={() => contactInfo.phone && window.open(`tel:${contactInfo.phone}`)}
+                disabled={!contactInfo.phone}
+              >
+                <Phone className="w-4 h-4 mr-2" />
+                Gọi điện
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full touch-manipulation active:scale-95" 
+                size="lg"
+                onClick={() => contactInfo.email && window.open(`mailto:${contactInfo.email}`)}
+                disabled={!contactInfo.email}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Email
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
