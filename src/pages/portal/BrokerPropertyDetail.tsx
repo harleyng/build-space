@@ -226,8 +226,8 @@ const BrokerPropertyDetail = () => {
   const amenities = customAttributes.amenities || [];
 
   return (
-    <div className="min-h-screen bg-background p-3 md:p-6 pb-24 md:pb-6">
-      <div className="container mx-auto">
+    <div className="min-h-screen bg-background p-3 md:px-4 md:py-6 pb-24 md:pb-6">
+      <div className="max-w-[1400px] mx-auto">
         {/* Mobile Header */}
         {isMobile ? (
           <div className="flex items-center justify-between mb-4">
