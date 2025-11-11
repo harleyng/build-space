@@ -166,8 +166,8 @@ const BrokerPropertyDetail = () => {
 
   if (!id || error) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="container mx-auto px-4 py-16 text-center">
+      <div className="min-h-screen bg-background p-3 md:px-4 md:py-6">
+        <div className="max-w-[1400px] mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-foreground">
             {error || "Không tìm thấy tin đăng"}
           </h1>
@@ -181,11 +181,11 @@ const BrokerPropertyDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="container mx-auto">
+      <div className="min-h-screen bg-background p-3 md:px-4 md:py-6">
+        <div className="max-w-[1400px] mx-auto">
           <Skeleton className="h-10 w-48 mb-6" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
+            <div className="lg:col-span-2 space-y-3 md:space-y-6">
               <Skeleton className="aspect-video w-full" />
               <Skeleton className="h-12 w-3/4" />
               <Skeleton className="h-8 w-1/2" />
@@ -202,8 +202,8 @@ const BrokerPropertyDetail = () => {
 
   if (!listing) {
     return (
-      <div className="min-h-screen bg-background p-6">
-        <div className="container mx-auto px-4 py-16 text-center">
+      <div className="min-h-screen bg-background p-3 md:px-4 md:py-6">
+        <div className="max-w-[1400px] mx-auto px-4 py-16 text-center">
           <h1 className="text-2xl font-bold text-foreground">Không tìm thấy tin đăng</h1>
           <Button onClick={() => navigate("/broker/properties")} className="mt-4">
             Quay lại danh sách
