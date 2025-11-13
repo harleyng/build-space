@@ -460,7 +460,7 @@ const BrokerPropertyDetail = () => {
 
                       <div>
                         <h3 className="text-sm md:text-base font-semibold mb-2 md:mb-3">Thông số vật lý</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-4">
+                        <div className="grid grid-cols-1 gap-2 md:gap-4">
                           <div className="flex justify-between py-2 border-b">
                             <span className="text-muted-foreground">Diện tích</span>
                             <span className="font-medium">{listing.area} m²</span>
