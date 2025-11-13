@@ -215,14 +215,14 @@ export const Header = () => {
                           <Building2 className="h-5 w-5" />
                           Tổ chức
                         </Link>
+                        <Link to="/broker/properties/new" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg transition-colors mt-3">
+                          <PlusCircle className="h-5 w-5" />
+                          Đăng tin
+                        </Link>
                       </div>}
 
                     {/* Action Buttons */}
                     <div className="pt-4 space-y-2">
-                      <Button onClick={() => navigate("/broker/properties/new")} className="w-full bg-primary hover:bg-primary-hover text-primary-foreground justify-start">
-                        <PlusCircle className="mr-2 h-5 w-5" />
-                        Đăng tin
-                      </Button>
                       <Button onClick={handleLogout} variant="outline" className="w-full justify-start">
                         <LogOut className="mr-2 h-5 w-5" />
                         Đăng xuất
