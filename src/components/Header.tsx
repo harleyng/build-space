@@ -16,7 +16,6 @@ export const Header = () => {
   } = useToast();
   const [session, setSession] = useState<Session | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  
   useEffect(() => {
     supabase.auth.getSession().then(({
       data: {
@@ -42,7 +41,6 @@ export const Header = () => {
     });
     return () => subscription.unsubscribe();
   }, []);
-  
   const checkUserRoles = async (userId: string) => {
     const {
       data
@@ -110,8 +108,7 @@ export const Header = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  {!isAdmin ? (
-                    <>
+                  {!isAdmin ? <>
                       <DropdownMenuItem onClick={() => navigate("/broker/dashboard")}>
                         <Home className="mr-2 h-4 w-4" />
                         Dashboard
@@ -136,8 +133,7 @@ export const Header = () => {
                         <Building2 className="mr-2 h-4 w-4" />
                         Tổ chức
                       </DropdownMenuItem>
-                    </>
-                  ) : null}
+                    </> : null}
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Đăng xuất
@@ -168,7 +164,7 @@ export const Header = () => {
               <nav className="flex flex-col gap-2 mt-8">
                 {/* Marketplace Links */}
                 <div className="pb-4 border-b">
-                  <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Thị trường</h3>
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">marketplace</h3>
                   <Link to="/" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
                     <Home className="h-5 w-5" />
                     Trang chủ
@@ -191,12 +187,10 @@ export const Header = () => {
                   </Link>
                 </div>
 
-                {session ? (
-                  <>
+                {session ? <>
                     {/* Broker Portal Links */}
-                    {!isAdmin && (
-                      <div className="py-4 border-b">
-                        <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Cổng môi giới</h3>
+                    {!isAdmin && <div className="py-4 border-b">
+                        <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">​Broker Portal</h3>
                         <Link to="/broker/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
                           <Home className="h-5 w-5" />
                           Dashboard
@@ -221,8 +215,7 @@ export const Header = () => {
                           <Building2 className="h-5 w-5" />
                           Tổ chức
                         </Link>
-                      </div>
-                    )}
+                      </div>}
 
                     {/* Action Buttons */}
                     <div className="pt-4 space-y-2">
@@ -235,9 +228,7 @@ export const Header = () => {
                         Đăng xuất
                       </Button>
                     </div>
-                  </>
-                ) : (
-                  <>
+                  </> : <>
                     {/* Guest Actions */}
                     <div className="pt-4 space-y-2">
                       <Button onClick={() => navigate("/auth")} className="w-full bg-primary hover:bg-primary-hover text-primary-foreground justify-start">
@@ -248,8 +239,7 @@ export const Header = () => {
                         Tải ứng dụng
                       </Link>
                     </div>
-                  </>
-                )}
+                  </>}
               </nav>
             </SheetContent>
           </Sheet>
