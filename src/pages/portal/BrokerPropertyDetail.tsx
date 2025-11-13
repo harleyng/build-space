@@ -183,12 +183,13 @@ const BrokerPropertyDetail = () => {
     return (
       <div className="min-h-screen bg-background p-3 md:px-4 md:py-6">
         <div className="max-w-[1400px] mx-auto">
-          <Skeleton className="h-10 w-48 mb-6" />
+          <Skeleton className="h-10 w-full max-w-md mb-6" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-8">
             <div className="lg:col-span-2 space-y-3 md:space-y-6">
               <Skeleton className="aspect-video w-full" />
-              <Skeleton className="h-12 w-3/4" />
-              <Skeleton className="h-8 w-1/2" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-8 w-full max-w-xs" />
+              <Skeleton className="h-32 w-full" />
               <Skeleton className="h-64 w-full" />
             </div>
             <div className="lg:col-span-1">
