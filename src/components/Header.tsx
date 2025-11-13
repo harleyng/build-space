@@ -164,29 +164,92 @@ export const Header = () => {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent>
-              <nav className="flex flex-col gap-4 mt-8">
-                <Link to="/" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                  Trang chủ
-                </Link>
-                <Link to="/listings" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                  Mua bán
-                </Link>
-                <Link to="/listings" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                  Cho thuê
-                </Link>
-                <Link to="/listings" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                  Dự án
-                </Link>
-                {session && <>
-                    <Link to="/my-listings" className="text-lg font-medium text-foreground hover:text-primary transition-colors">
-                      Tin đăng của tôi
-                    </Link>
-                    <Button onClick={() => navigate("/broker/properties/new")} className="mt-4 bg-primary hover:bg-primary-hover text-primary-foreground">
-                      <PlusCircle className="mr-2 h-4 w-4" />
-                      Đăng tin
-                    </Button>
-                  </>}
+            <SheetContent className="w-[300px] sm:w-[400px]">
+              <nav className="flex flex-col gap-2 mt-8">
+                {/* Marketplace Links */}
+                <div className="pb-4 border-b">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Thị trường</h3>
+                  <Link to="/" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                    <Home className="h-5 w-5" />
+                    Trang chủ
+                  </Link>
+                  <Link to="/listings?type=ban" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                    <Building className="h-5 w-5" />
+                    Nhà đất bán
+                  </Link>
+                  <Link to="/listings?type=thue" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                    <Building className="h-5 w-5" />
+                    Nhà đất cho thuê
+                  </Link>
+                  <Link to="/listings?type=duan" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                    <Building2 className="h-5 w-5" />
+                    Dự án
+                  </Link>
+                  <Link to="/directory" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                    <Users className="h-5 w-5" />
+                    Danh bạ
+                  </Link>
+                </div>
+
+                {session ? (
+                  <>
+                    {/* Broker Portal Links */}
+                    {!isAdmin && (
+                      <div className="py-4 border-b">
+                        <h3 className="text-xs font-semibold text-muted-foreground uppercase mb-3">Cổng môi giới</h3>
+                        <Link to="/broker/dashboard" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <Home className="h-5 w-5" />
+                          Dashboard
+                        </Link>
+                        <Link to="/broker/profile" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <User className="h-5 w-5" />
+                          Hồ sơ cá nhân
+                        </Link>
+                        <Link to="/broker/properties" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <Building className="h-5 w-5" />
+                          Quản lý tin đăng
+                        </Link>
+                        <Link to="/broker/customers" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <Users className="h-5 w-5" />
+                          Quản lý khách hàng
+                        </Link>
+                        <Link to="/broker/marketing" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <Megaphone className="h-5 w-5" />
+                          Marketing
+                        </Link>
+                        <Link to="/broker/organization" className="flex items-center gap-3 px-3 py-2.5 text-base font-medium text-foreground hover:text-primary hover:bg-muted rounded-lg transition-colors">
+                          <Building2 className="h-5 w-5" />
+                          Tổ chức
+                        </Link>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="pt-4 space-y-2">
+                      <Button onClick={() => navigate("/broker/properties/new")} className="w-full bg-primary hover:bg-primary-hover text-primary-foreground justify-start">
+                        <PlusCircle className="mr-2 h-5 w-5" />
+                        Đăng tin
+                      </Button>
+                      <Button onClick={handleLogout} variant="outline" className="w-full justify-start">
+                        <LogOut className="mr-2 h-5 w-5" />
+                        Đăng xuất
+                      </Button>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Guest Actions */}
+                    <div className="pt-4 space-y-2">
+                      <Button onClick={() => navigate("/auth")} className="w-full bg-primary hover:bg-primary-hover text-primary-foreground justify-start">
+                        <User className="mr-2 h-5 w-5" />
+                        Đăng nhập
+                      </Button>
+                      <Link to="#" className="flex items-center justify-center gap-2 text-sm font-medium text-foreground hover:text-primary py-2">
+                        Tải ứng dụng
+                      </Link>
+                    </div>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
