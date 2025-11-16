@@ -533,7 +533,7 @@ const Listings = () => {
                 <p className="text-muted-foreground">Đang tải dữ liệu...</p>
               </div>
             ) : filteredProperties.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                 {filteredProperties.map((listing) => (
                   <PropertyCard 
                     key={listing.id}
