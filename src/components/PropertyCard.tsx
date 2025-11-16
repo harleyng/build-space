@@ -58,7 +58,7 @@ export const PropertyCard = ({
         <img
           src={image}
           alt={title}
-          className="w-full h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-48 md:h-64 object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <Button
           size="icon"
@@ -86,40 +86,40 @@ export const PropertyCard = ({
         </Badge>
       </div>
 
-      <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors cursor-pointer" onClick={handleViewDetails}>
+      <CardContent className="p-3 md:p-4">
+        <h3 className="font-semibold text-base md:text-lg mb-1.5 md:mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors cursor-pointer" onClick={handleViewDetails}>
           {title}
         </h3>
-        <p className="text-2xl font-bold text-primary mb-3">{price}</p>
+        <p className="text-xl md:text-2xl font-bold text-primary mb-2 md:mb-3">{price}</p>
         
-        <div className="flex items-center gap-1 text-muted-foreground mb-3">
-          <MapPin className="h-4 w-4 flex-shrink-0" />
-          <span className="text-sm line-clamp-1">{location}</span>
+        <div className="flex items-center gap-1 text-muted-foreground mb-2 md:mb-3">
+          <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0" />
+          <span className="text-xs md:text-sm line-clamp-1">{location}</span>
         </div>
 
-        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3 flex-wrap">
+        <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground mb-2 md:mb-3 flex-wrap">
           {bedrooms && (
-            <div className="flex items-center gap-1">
-              <Bed className="h-4 w-4" />
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <Bed className="h-3.5 w-3.5 md:h-4 md:w-4" />
               <span>{bedrooms} PN</span>
             </div>
           )}
           {bathrooms && (
-            <div className="flex items-center gap-1">
-              <Bath className="h-4 w-4" />
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <Bath className="h-3.5 w-3.5 md:h-4 md:w-4" />
               <span>{bathrooms} WC</span>
             </div>
           )}
-          <div className="flex items-center gap-1">
-            <Square className="h-4 w-4" />
+          <div className="flex items-center gap-0.5 md:gap-1">
+            <Square className="h-3.5 w-3.5 md:h-4 md:w-4" />
             <span>{area}m²</span>
           </div>
         </div>
 
         {prominentFeatures && prominentFeatures.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-3">
+          <div className="flex flex-wrap gap-1 mb-2 md:mb-3">
             {prominentFeatures.slice(0, 3).map((feature, index) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} variant="secondary" className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5">
                 {feature}
               </Badge>
             ))}
@@ -127,15 +127,15 @@ export const PropertyCard = ({
         )}
       </CardContent>
 
-      <CardFooter className="p-4 pt-0 flex items-center justify-between gap-2">
-        <Badge variant="secondary" className="text-xs">
+      <CardFooter className="p-3 md:p-4 pt-0 flex items-center justify-between gap-2">
+        <Badge variant="secondary" className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5">
           {type}
         </Badge>
         <Button 
           size="sm" 
           variant="outline"
           onClick={handleViewDetails}
-          className="hover:bg-primary hover:text-primary-foreground transition-colors"
+          className="hover:bg-primary hover:text-primary-foreground transition-colors text-xs md:text-sm h-7 md:h-8 px-2 md:px-3"
         >
           Xem chi tiết
         </Button>
