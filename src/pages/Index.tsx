@@ -5,7 +5,7 @@ import { PropertyCard } from "@/components/PropertyCard";
 import { AuctionSection } from "@/components/AuctionSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
+import { ArrowRight, Building2, Home, LandPlot, Castle, Store, Warehouse, Star, Users, ShieldCheck } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import heroImage from "@/assets/hero-image.jpg";
 import apartmentSample from "@/assets/apartment-sample.jpg";
@@ -28,12 +28,6 @@ const Index = () => {
       type: "Căn hộ chung cư",
       status: "Bán" as const,
       prominentFeatures: ["View đẹp", "Nội thất cao cấp", "An ninh 24/7"],
-      attributes: {
-        balconyDirection: "Đông Nam",
-        interiorStatus: "Nội thất cao cấp",
-        legalStatus: "Sổ hồng",
-        floorNumber: 15,
-      },
     },
     {
       id: "2",
@@ -47,13 +41,6 @@ const Index = () => {
       type: "Nhà riêng",
       status: "Bán" as const,
       prominentFeatures: ["Sân vườn", "Hồ bơi riêng", "Gara ô tô"],
-      attributes: {
-        houseDirection: "Đông",
-        facadeWidth: 6,
-        alleyWidth: 8,
-        numFloors: 3,
-        legalStatus: "Sổ hồng",
-      },
     },
     {
       id: "3",
@@ -67,11 +54,6 @@ const Index = () => {
       type: "Căn hộ cao cấp",
       status: "Cho thuê" as const,
       prominentFeatures: ["Tầng cao", "View sông", "Full nội thất"],
-      attributes: {
-        balconyDirection: "Nam",
-        interiorStatus: "Nội thất cao cấp",
-        floorNumber: 25,
-      },
     },
     {
       id: "4",
@@ -97,7 +79,6 @@ const Index = () => {
       area: 250,
       type: "Biệt thự",
       status: "Bán" as const,
-      prominentFeatures: ["Vườn rộng", "Thiết kế hiện đại", "Khu vip"],
     },
     {
       id: "6",
@@ -110,7 +91,6 @@ const Index = () => {
       area: 65,
       type: "Căn hộ dịch vụ",
       status: "Cho thuê" as const,
-      prominentFeatures: ["Full nội thất", "Dọn dẹp hàng tuần", "Trung tâm"],
     },
     {
       id: "7",
@@ -123,7 +103,6 @@ const Index = () => {
       area: 105,
       type: "Căn hộ chung cư",
       status: "Bán" as const,
-      prominentFeatures: ["Tiện ích 5 sao", "View công viên", "Giao thông thuận lợi"],
     },
     {
       id: "8",
@@ -136,74 +115,82 @@ const Index = () => {
       area: 85,
       type: "Nhà riêng",
       status: "Bán" as const,
-      prominentFeatures: ["Mặt tiền", "Kinh doanh tốt", "Vị trí đắc địa"],
     },
   ];
 
   const stats = [
-    { icon: TrendingUp, value: "50,000+", label: "Tin đăng" },
+    { icon: Star, value: "50,000+", label: "Tin đăng" },
     { icon: Users, value: "100,000+", label: "Người dùng" },
-    { icon: Shield, value: "99%", label: "Tin cậy" },
+    { icon: ShieldCheck, value: "99%", label: "Tin cậy" },
   ];
 
   const propertyTypes = [
-    { label: "Căn hộ chung cư", slug: "can-ho-chung-cu", icon: "🏢" },
-    { label: "Nhà riêng", slug: "nha-rieng", icon: "🏠" },
-    { label: "Đất nền", slug: "dat-nen", icon: "🌾" },
-    { label: "Biệt thự", slug: "biet-thu", icon: "🏰" },
-    { label: "Nhà phố", slug: "nha-pho", icon: "🏘️" },
-    { label: "Kho, nhà xưởng", slug: "kho-nha-xuong", icon: "🏭" },
+    { label: "Căn hộ", slug: "can-ho-chung-cu", icon: Building2 },
+    { label: "Nhà riêng", slug: "nha-rieng", icon: Home },
+    { label: "Đất nền", slug: "dat-nen", icon: LandPlot },
+    { label: "Biệt thự", slug: "biet-thu", icon: Castle },
+    { label: "Nhà phố", slug: "nha-pho", icon: Store },
+    { label: "Kho xưởng", slug: "kho-nha-xuong", icon: Warehouse },
   ];
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
 
-      {/* Hero Section - cleaner style inspired by image 2 */}
-      <section className="relative h-[500px] md:h-[550px] overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Tìm kiếm bất động sản"
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 via-foreground/40 to-transparent" />
-        </div>
+      {/* Hero Section - split layout like reference */}
+      <section className="relative bg-secondary/40 overflow-hidden">
+        <div className="container px-4 py-16 md:py-20 lg:py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Left: Text */}
+            <div>
+              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4 leading-tight">
+                Tìm ngôi nhà<br />mơ ước của bạn
+              </h1>
+              <p className="text-sm md:text-base text-muted-foreground mb-8 max-w-md leading-relaxed">
+                Khám phá hàng nghìn bất động sản chất lượng trên khắp Việt Nam. Mua, thuê hoặc đấu giá với giá tốt nhất.
+              </p>
+              <Button
+                size="lg"
+                className="bg-foreground hover:bg-foreground/90 text-background rounded-lg"
+                onClick={() => navigate("/listings")}
+              >
+                Khám phá ngay
+              </Button>
+            </div>
 
-        <div className="relative container h-full flex flex-col justify-center z-10 px-4">
-          <div className="max-w-xl">
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-3 leading-tight">
-              Tìm ngôi nhà mơ ước của bạn
-            </h1>
-            <p className="text-sm md:text-lg text-primary-foreground/80 mb-6 max-w-md">
-              Khám phá hàng nghìn bất động sản chất lượng trên khắp Việt Nam. Mua, thuê hoặc đấu giá.
-            </p>
+            {/* Right: Image grid */}
+            <div className="hidden lg:grid grid-cols-2 gap-3 h-[380px]">
+              <div className="rounded-xl overflow-hidden">
+                <img src={apartmentSample} alt="Bất động sản" className="w-full h-full object-cover" />
+              </div>
+              <div className="grid grid-rows-2 gap-3">
+                <div className="rounded-xl overflow-hidden">
+                  <img src={houseSample} alt="Bất động sản" className="w-full h-full object-cover" />
+                </div>
+                <div className="rounded-xl overflow-hidden">
+                  <img src={penthouseSample} alt="Bất động sản" className="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Search Bar */}
-      <div className="container px-4">
+      {/* Search Bar - overlapping */}
+      <div className="container px-4 -mt-6 relative z-10">
         <SearchBar />
       </div>
 
       {/* Stats */}
-      <section className="container py-10 md:py-12 px-4">
+      <section className="container py-10 md:py-14 px-4">
         <div className="grid grid-cols-3 gap-3 md:gap-6">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
-              <div
-                key={stat.label}
-                className="flex items-center gap-3 p-4 md:p-6 bg-card rounded-lg border border-border"
-              >
-                <div className="p-2 md:p-3 rounded-full bg-primary/10 hidden sm:block">
-                  <Icon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
-                </div>
-                <div>
-                  <p className="text-lg md:text-2xl font-bold text-foreground">{stat.value}</p>
-                  <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
-                </div>
+              <div key={stat.label} className="text-center p-4 md:p-6">
+                <Icon className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground mx-auto mb-2" strokeWidth={1.5} />
+                <p className="text-xl md:text-3xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-xs md:text-sm text-muted-foreground mt-0.5">{stat.label}</p>
               </div>
             );
           })}
@@ -213,29 +200,32 @@ const Index = () => {
       {/* Property Types */}
       <section className="container py-8 md:py-12 px-4">
         <div className="mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+          <h2 className="text-xl md:text-3xl font-bold text-foreground mb-1">
             Khám phá theo loại hình
           </h2>
-          <p className="text-sm md:text-base text-muted-foreground">
+          <p className="text-xs md:text-sm text-muted-foreground">
             Tìm kiếm nhanh theo danh mục bất động sản
           </p>
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
-          {propertyTypes.map((type) => (
-            <Link key={type.slug} to={`/listings?propertyType=${type.slug}`} className="group">
-              <Card className="h-full border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary">
-                <CardContent className="p-4 md:p-6 text-center">
-                  <div className="text-2xl md:text-4xl mb-2 md:mb-3 group-hover:scale-110 transition-transform">
-                    {type.icon}
-                  </div>
-                  <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors">
-                    {type.label}
-                  </h3>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
+          {propertyTypes.map((type) => {
+            const Icon = type.icon;
+            return (
+              <Link key={type.slug} to={`/listings?propertyType=${type.slug}`} className="group">
+                <Card className="h-full border-border bg-card transition-all duration-200 hover:shadow-md hover:border-primary/30">
+                  <CardContent className="p-4 md:p-5 text-center flex flex-col items-center">
+                    <div className="p-2.5 md:p-3 rounded-xl bg-secondary mb-2 md:mb-3 group-hover:bg-primary/10 transition-colors">
+                      <Icon className="h-5 w-5 md:h-6 md:w-6 text-muted-foreground group-hover:text-primary transition-colors" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="font-medium text-xs md:text-sm text-foreground">
+                      {type.label}
+                    </h3>
+                  </CardContent>
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       </section>
 
@@ -246,22 +236,22 @@ const Index = () => {
       <section className="container py-8 md:py-12 px-4">
         <div className="flex items-center justify-between mb-6 md:mb-8">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+            <h2 className="text-xl md:text-3xl font-bold text-foreground mb-1">
               Bất động sản nổi bật
             </h2>
-            <p className="text-sm md:text-base text-muted-foreground">
+            <p className="text-xs md:text-sm text-muted-foreground">
               Những tin đăng được quan tâm nhất
             </p>
           </div>
           <Link to="/listings">
-            <Button variant="ghost" className="hidden sm:flex text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="hidden sm:flex text-muted-foreground hover:text-foreground text-sm">
               Xem tất cả
-              <ArrowRight className="ml-1 h-4 w-4" />
+              <ArrowRight className="ml-1 h-4 w-4" strokeWidth={1.5} />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
           {featuredProperties.map((property, index) => (
             <PropertyCard key={index} {...property} />
           ))}
@@ -269,30 +259,30 @@ const Index = () => {
 
         <div className="flex justify-center mt-6 sm:hidden">
           <Link to="/listings">
-            <Button variant="outline">
+            <Button variant="outline" size="sm">
               Xem tất cả
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.5} />
             </Button>
           </Link>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="bg-foreground py-14 md:py-16 mt-8 md:mt-12">
+      {/* CTA Section - cleaner */}
+      <section className="bg-secondary/50 py-14 md:py-20 mt-8">
         <div className="container text-center px-4">
-          <h2 className="text-2xl md:text-4xl font-bold text-background mb-3 md:mb-4">
+          <h2 className="text-xl md:text-3xl font-bold text-foreground mb-3">
             Bạn có bất động sản cần bán hoặc cho thuê?
           </h2>
-          <p className="text-sm md:text-lg text-background/70 mb-6 md:mb-8 max-w-2xl mx-auto">
+          <p className="text-xs md:text-base text-muted-foreground mb-6 md:mb-8 max-w-lg mx-auto">
             Đăng tin miễn phí và tiếp cận hàng nghìn khách hàng tiềm năng
           </p>
           <Button
             size="lg"
-            className="bg-primary hover:bg-primary-hover text-primary-foreground text-sm md:text-lg"
+            className="bg-foreground hover:bg-foreground/90 text-background"
             onClick={() => navigate("/broker/properties/new")}
           >
             Đăng tin ngay
-            <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+            <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.5} />
           </Button>
         </div>
       </section>

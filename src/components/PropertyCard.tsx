@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, Bed, Bath, Square, Heart } from "lucide-react";
+import { MapPin, BedDouble, ShowerHead, Maximize2, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -53,93 +53,73 @@ export const PropertyCard = ({
   };
 
   return (
-    <Card className="group overflow-hidden border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1">
-      <div className="relative overflow-hidden cursor-pointer" onClick={handleViewDetails}>
+    <Card className="group overflow-hidden border-border bg-card transition-all duration-300 hover:shadow-md cursor-pointer" onClick={handleViewDetails}>
+      <div className="relative overflow-hidden">
         <img
           src={image}
           alt={title}
-          className="w-full h-48 md:h-64 object-cover transition-transform duration-500 group-hover:scale-110"
+          className="w-full h-44 md:h-52 object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute top-3 right-3 bg-background/80 backdrop-blur-sm hover:bg-background"
+        <button
+          className="absolute top-3 right-3 p-2 rounded-full bg-card/80 backdrop-blur-sm hover:bg-card transition-colors"
           onClick={(e) => {
             e.stopPropagation();
             setIsFavorite(!isFavorite);
           }}
         >
           <Heart
-            className={`h-5 w-5 ${
-              isFavorite ? "fill-destructive text-destructive" : "text-foreground"
+            className={`h-4 w-4 ${
+              isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"
             }`}
           />
-        </Button>
+        </button>
         <Badge
-          className={`absolute top-3 left-3 ${
+          className={`absolute top-3 left-3 text-xs font-medium ${
             status === "Bán"
-              ? "bg-primary text-primary-foreground"
-              : "bg-accent text-accent-foreground"
+              ? "bg-foreground/80 text-background hover:bg-foreground/80"
+              : "bg-accent text-accent-foreground hover:bg-accent"
           }`}
         >
           {status}
         </Badge>
       </div>
 
-      <CardContent className="p-3 md:p-4">
-        <h3 className="font-semibold text-base md:text-lg mb-1.5 md:mb-2 line-clamp-2 text-foreground group-hover:text-primary transition-colors cursor-pointer" onClick={handleViewDetails}>
+      <CardContent className="p-3.5 md:p-4">
+        <h3 className="font-semibold text-sm md:text-base mb-1.5 line-clamp-2 text-foreground group-hover:text-primary transition-colors leading-snug">
           {title}
         </h3>
-        <p className="text-xl md:text-2xl font-bold text-primary mb-2 md:mb-3">{price}</p>
-        
-        <div className="flex items-center gap-1 text-muted-foreground mb-2 md:mb-3">
-          <MapPin className="h-3.5 w-3.5 md:h-4 md:w-4 flex-shrink-0" />
-          <span className="text-xs md:text-sm line-clamp-1">{location}</span>
+
+        <div className="flex items-center gap-1 text-muted-foreground mb-2">
+          <MapPin className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={1.5} />
+          <span className="text-xs line-clamp-1">{location}</span>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-4 text-xs md:text-sm text-muted-foreground mb-2 md:mb-3 flex-wrap">
+        <div className="flex items-center gap-3 text-xs text-muted-foreground mb-3">
           {bedrooms && (
-            <div className="flex items-center gap-0.5 md:gap-1">
-              <Bed className="h-3.5 w-3.5 md:h-4 md:w-4" />
+            <div className="flex items-center gap-1">
+              <BedDouble className="h-3.5 w-3.5" strokeWidth={1.5} />
               <span>{bedrooms} PN</span>
             </div>
           )}
           {bathrooms && (
-            <div className="flex items-center gap-0.5 md:gap-1">
-              <Bath className="h-3.5 w-3.5 md:h-4 md:w-4" />
+            <div className="flex items-center gap-1">
+              <ShowerHead className="h-3.5 w-3.5" strokeWidth={1.5} />
               <span>{bathrooms} WC</span>
             </div>
           )}
-          <div className="flex items-center gap-0.5 md:gap-1">
-            <Square className="h-3.5 w-3.5 md:h-4 md:w-4" />
+          <div className="flex items-center gap-1">
+            <Maximize2 className="h-3.5 w-3.5" strokeWidth={1.5} />
             <span>{area}m²</span>
           </div>
         </div>
 
-        {prominentFeatures && prominentFeatures.length > 0 && (
-          <div className="flex flex-wrap gap-1 mb-2 md:mb-3">
-            {prominentFeatures.slice(0, 3).map((feature, index) => (
-              <Badge key={index} variant="secondary" className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5">
-                {feature}
-              </Badge>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center justify-between pt-2.5 border-t border-border">
+          <p className="text-lg md:text-xl font-bold text-primary">{price}</p>
+          <span className="text-[10px] md:text-xs text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+            {type}
+          </span>
+        </div>
       </CardContent>
-
-      <CardFooter className="p-3 md:p-4 pt-0 flex items-center justify-between gap-2">
-        <Badge variant="secondary" className="text-[10px] md:text-xs px-1.5 md:px-2 py-0.5">
-          {type}
-        </Badge>
-        <Button 
-          size="sm" 
-          variant="outline"
-          onClick={handleViewDetails}
-          className="hover:bg-primary hover:text-primary-foreground transition-colors text-xs md:text-sm h-7 md:h-8 px-2 md:px-3"
-        >
-          Xem chi tiết
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
