@@ -2,6 +2,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { SearchBar } from "@/components/SearchBar";
 import { PropertyCard } from "@/components/PropertyCard";
+import { AuctionSection } from "@/components/AuctionSection";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
@@ -13,7 +14,7 @@ import penthouseSample from "@/assets/penthouse-sample.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
-  
+
   const featuredProperties = [
     {
       id: "1",
@@ -140,21 +141,9 @@ const Index = () => {
   ];
 
   const stats = [
-    {
-      icon: TrendingUp,
-      value: "50,000+",
-      label: "Tin đăng",
-    },
-    {
-      icon: Users,
-      value: "100,000+",
-      label: "Người dùng",
-    },
-    {
-      icon: Shield,
-      value: "99%",
-      label: "Tin cậy",
-    },
+    { icon: TrendingUp, value: "50,000+", label: "Tin đăng" },
+    { icon: Users, value: "100,000+", label: "Người dùng" },
+    { icon: Shield, value: "99%", label: "Tin cậy" },
   ];
 
   const propertyTypes = [
@@ -167,51 +156,53 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      
-      {/* Hero Section with Search Overlay */}
-      <section className="relative h-[600px] bg-gradient-to-r from-primary to-primary-hover overflow-hidden">
+
+      {/* Hero Section - cleaner style inspired by image 2 */}
+      <section className="relative h-[500px] md:h-[550px] overflow-hidden">
         <div className="absolute inset-0">
           <img
             src={heroImage}
             alt="Tìm kiếm bất động sản"
-            className="w-full h-full object-cover opacity-40"
+            className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/60 to-primary/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground/60 via-foreground/40 to-transparent" />
         </div>
-        
-        <div className="relative container h-full flex flex-col justify-center items-center text-center z-10 px-4">
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-3 drop-shadow-lg">
-            Tìm kiếm bất động sản mơ ước của bạn
-          </h1>
-          <p className="text-base md:text-lg lg:text-xl text-primary-foreground/95 mb-12 max-w-2xl drop-shadow">
-            Khám phá hàng nghìn bất động sản chất lượng trên khắp Việt Nam
-          </p>
+
+        <div className="relative container h-full flex flex-col justify-center z-10 px-4">
+          <div className="max-w-xl">
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold text-primary-foreground mb-3 leading-tight">
+              Tìm ngôi nhà mơ ước của bạn
+            </h1>
+            <p className="text-sm md:text-lg text-primary-foreground/80 mb-6 max-w-md">
+              Khám phá hàng nghìn bất động sản chất lượng trên khắp Việt Nam. Mua, thuê hoặc đấu giá.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Search Bar */}
-      <div className="container">
+      <div className="container px-4">
         <SearchBar />
       </div>
 
-      {/* Stats Section */}
-      <section className="container py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Stats */}
+      <section className="container py-10 md:py-12 px-4">
+        <div className="grid grid-cols-3 gap-3 md:gap-6">
           {stats.map((stat) => {
             const Icon = stat.icon;
             return (
               <div
                 key={stat.label}
-                className="flex items-center gap-4 p-6 bg-card rounded-lg border border-border"
+                className="flex items-center gap-3 p-4 md:p-6 bg-card rounded-lg border border-border"
               >
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Icon className="h-6 w-6 text-primary" />
+                <div className="p-2 md:p-3 rounded-full bg-primary/10 hidden sm:block">
+                  <Icon className="h-5 w-5 md:h-6 md:w-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground">{stat.label}</p>
+                  <p className="text-lg md:text-2xl font-bold text-foreground">{stat.value}</p>
+                  <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
                 </div>
               </div>
             );
@@ -219,30 +210,26 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Popular Property Types - Khám phá theo loại hình */}
-      <section className="container py-12">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-foreground mb-2">
+      {/* Property Types */}
+      <section className="container py-8 md:py-12 px-4">
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
             Khám phá theo loại hình
           </h2>
-          <p className="text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Tìm kiếm nhanh theo danh mục bất động sản
           </p>
         </div>
-        
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+
+        <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
           {propertyTypes.map((type) => (
-            <Link
-              key={type.slug}
-              to={`/listings?propertyType=${type.slug}`}
-              className="group"
-            >
+            <Link key={type.slug} to={`/listings?propertyType=${type.slug}`} className="group">
               <Card className="h-full border-border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary">
-                <CardContent className="p-6 text-center">
-                  <div className="text-4xl mb-3 group-hover:scale-110 transition-transform">
+                <CardContent className="p-4 md:p-6 text-center">
+                  <div className="text-2xl md:text-4xl mb-2 md:mb-3 group-hover:scale-110 transition-transform">
                     {type.icon}
                   </div>
-                  <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors">
+                  <h3 className="font-semibold text-xs md:text-sm text-foreground group-hover:text-primary transition-colors">
                     {type.label}
                   </h3>
                 </CardContent>
@@ -252,32 +239,35 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Featured Listings - Bất động sản nổi bật */}
-      <section className="container py-12">
-        <div className="flex items-center justify-between mb-8">
+      {/* Auction Section */}
+      <AuctionSection />
+
+      {/* Featured Listings */}
+      <section className="container py-8 md:py-12 px-4">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground mb-2">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
               Bất động sản nổi bật
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Những tin đăng được quan tâm nhất
             </p>
           </div>
           <Link to="/listings">
-            <Button variant="outline" className="hidden sm:flex">
+            <Button variant="ghost" className="hidden sm:flex text-muted-foreground hover:text-foreground">
               Xem tất cả
-              <ArrowRight className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
           {featuredProperties.map((property, index) => (
             <PropertyCard key={index} {...property} />
           ))}
         </div>
 
-        <div className="flex justify-center mt-8 sm:hidden">
+        <div className="flex justify-center mt-6 sm:hidden">
           <Link to="/listings">
             <Button variant="outline">
               Xem tất cả
@@ -288,17 +278,21 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="bg-gradient-to-r from-primary to-primary-hover py-16 mt-12">
-        <div className="container text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+      <section className="bg-foreground py-14 md:py-16 mt-8 md:mt-12">
+        <div className="container text-center px-4">
+          <h2 className="text-2xl md:text-4xl font-bold text-background mb-3 md:mb-4">
             Bạn có bất động sản cần bán hoặc cho thuê?
           </h2>
-          <p className="text-lg text-primary-foreground/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-sm md:text-lg text-background/70 mb-6 md:mb-8 max-w-2xl mx-auto">
             Đăng tin miễn phí và tiếp cận hàng nghìn khách hàng tiềm năng
           </p>
-          <Button size="lg" variant="secondary" className="text-lg" onClick={() => navigate("/broker/properties/new")}>
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary-hover text-primary-foreground text-sm md:text-lg"
+            onClick={() => navigate("/broker/properties/new")}
+          >
             Đăng tin ngay
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
           </Button>
         </div>
       </section>
