@@ -49,82 +49,84 @@ const auctionItems: AuctionItem[] = [
 
 export const AuctionSection = () => {
   return (
-    <section className="container py-12 md:py-16">
-      <div className="flex items-center justify-between mb-6 md:mb-8">
-        <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Gavel className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-              Phiên đấu giá nổi bật
-            </h2>
-          </div>
-          <p className="text-sm md:text-base text-muted-foreground">
-            Các bất động sản đang diễn ra phiên đấu giá với cơ hội mua với giá tốt nhất
-          </p>
-        </div>
-        <Link to="/listings?purpose=auction" className="hidden sm:block">
-          <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-            Xem tất cả
-            <ArrowRight className="ml-1 h-4 w-4" />
-          </Button>
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {auctionItems.map((item) => (
-          <Card key={item.id} className="overflow-hidden border-border hover:shadow-lg transition-shadow group">
-            <div className="relative">
-              <img
-                src={item.image}
-                alt={item.title}
-                className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500"
-              />
-              <Badge className="absolute top-3 left-3 bg-foreground/80 text-background hover:bg-foreground/80">
-                <Gavel className="h-3 w-3 mr-1" />
-                Sắp diễn ra
-              </Badge>
+    <section className="py-12 md:py-16">
+      <div className="container px-4">
+        <div className="flex items-center justify-between mb-6 md:mb-8">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Gavel className="h-5 w-5 md:h-6 md:w-6 text-foreground" strokeWidth={1.5} />
+              <h2 className="text-xl md:text-3xl font-bold text-foreground">
+                Phiên đấu giá nổi bật
+              </h2>
             </div>
+            <p className="text-xs md:text-sm text-muted-foreground">
+              Các bất động sản đang diễn ra phiên đấu giá với cơ hội mua với giá tốt nhất
+            </p>
+          </div>
+          <Link to="/listings?purpose=auction" className="hidden sm:block">
+            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground text-sm">
+              Xem tất cả
+              <ArrowRight className="ml-1 h-4 w-4" strokeWidth={1.5} />
+            </Button>
+          </Link>
+        </div>
 
-            <CardContent className="p-4 md:p-5">
-              <h3 className="font-semibold text-base md:text-lg mb-2 line-clamp-2 text-foreground">
-                {item.title}
-              </h3>
-
-              <div className="flex items-center gap-1 text-muted-foreground mb-1.5">
-                <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                <span className="text-xs md:text-sm line-clamp-1">{item.location}</span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+          {auctionItems.map((item) => (
+            <Card key={item.id} className="overflow-hidden border-border bg-card hover:shadow-md transition-shadow group">
+              <div className="relative overflow-hidden">
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-44 md:h-52 object-cover group-hover:scale-105 transition-transform duration-500"
+                />
+                <Badge className="absolute top-3 left-3 bg-foreground/80 text-background hover:bg-foreground/80 text-xs">
+                  <Gavel className="h-3 w-3 mr-1" strokeWidth={1.5} />
+                  Sắp diễn ra
+                </Badge>
               </div>
 
-              <div className="flex items-center gap-1 text-muted-foreground mb-4">
-                <Maximize2 className="h-3.5 w-3.5 flex-shrink-0" />
-                <span className="text-xs md:text-sm">{item.area} m²</span>
-              </div>
+              <CardContent className="p-4">
+                <h3 className="font-semibold text-sm md:text-base mb-2 line-clamp-2 text-foreground leading-snug">
+                  {item.title}
+                </h3>
 
-              <div className="bg-secondary rounded-lg p-3 mb-4">
-                <p className="text-xs text-muted-foreground mb-1">Giá khởi điểm</p>
-                <p className="text-xl md:text-2xl font-bold text-primary">
-                  {item.startingPrice} <span className="text-sm font-normal text-muted-foreground">đ</span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Bước nhảy: <span className="font-semibold text-foreground">{item.bidStep} đ</span>
-                </p>
-              </div>
+                <div className="flex items-center gap-1 text-muted-foreground mb-1">
+                  <MapPin className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={1.5} />
+                  <span className="text-xs line-clamp-1">{item.location}</span>
+                </div>
 
-              <Button className="w-full bg-foreground hover:bg-foreground/90 text-background">
-                Đăng ký tham gia
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                <div className="flex items-center gap-1 text-muted-foreground mb-3">
+                  <Maximize2 className="h-3.5 w-3.5 flex-shrink-0" strokeWidth={1.5} />
+                  <span className="text-xs">{item.area} m²</span>
+                </div>
 
-      <div className="flex justify-center mt-6 sm:hidden">
-        <Link to="/listings?purpose=auction">
-          <Button variant="outline">
-            Xem tất cả
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
-        </Link>
+                <div className="bg-secondary/60 rounded-lg p-3 mb-3">
+                  <p className="text-[10px] md:text-xs text-muted-foreground mb-0.5">Giá khởi điểm</p>
+                  <p className="text-lg md:text-xl font-bold text-primary">
+                    {item.startingPrice} <span className="text-xs font-normal text-muted-foreground">đ</span>
+                  </p>
+                  <p className="text-[10px] md:text-xs text-muted-foreground mt-0.5">
+                    Bước nhảy: <span className="font-semibold text-foreground">{item.bidStep} đ</span>
+                  </p>
+                </div>
+
+                <Button className="w-full h-9 bg-foreground hover:bg-foreground/90 text-background text-sm">
+                  Đăng ký tham gia
+                </Button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
+        <div className="flex justify-center mt-6 sm:hidden">
+          <Link to="/listings?purpose=auction">
+            <Button variant="outline" size="sm">
+              Xem tất cả
+              <ArrowRight className="ml-2 h-4 w-4" strokeWidth={1.5} />
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
